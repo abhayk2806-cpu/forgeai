@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up — ConversionOS</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/supabase.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #F4F2EE;
+      --card: #FFFFFF;
+      --text: #1A1A1A;
+      --muted: #7A7A7A;
+      --border: #E2E0DA;
+      --accent: #1A1A1A;
+      --accent-hover: #000;
+      --error: #C0392B;
+      --success: #2D6A4F;
+      --input-focus: #1A1A1A;
+      --shadow: 0 2px 16px rgba(0,0,0,0.08), 0 1px 4px rgba(0,0,0,0.04);
+    }
+
+    html, body {
+      min-height: 100%;
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        radial-gradient(circle at 20% 20%, rgba(44,44,44,0.04) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(44,44,44,0.03) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .page-wrapper {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ─── Branding ─── */
+    .branding {
+      text-align: center;
+      margin-bottom: 28px;
+      animation: fadeDown 0.5s ease both;
+    }
+
+    .logo-mark {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 48px;
+      height: 48px;
+      background: var(--accent);
+      border-radius: 10px;
+      margin-bottom: 14px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      transition: transform 200ms ease;
+      cursor: default;
+    }
+
+    .logo-mark:hover { transform: rotate(-5deg) scale(1.05); }
+
+    .logo-mark svg { width: 26px; height: 26px; fill: #fff; }
+
+    .brand-name {
+      font-family: 'Syne', sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .brand-tagline {
+      font-size: 13px;
+      color: var(--muted);
+      font-weight: 400;
+    }
+
+    /* ─── Card ─── */
+    .card {
+      background: var(--card);
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+      padding: 36px 32px 32px;
+      width: 100%;
+      max-width: 420px;
+      border: 1px solid var(--border);
+      animation: fadeUp 0.5s ease 0.1s both;
+    }
+
+    .card-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.5px;
+      margin-bottom: 6px;
+    }
+
+    .card-subtitle {
+      font-size: 14px;
+      color: var(--muted);
+      margin-bottom: 28px;
+    }
+
+    /* ─── Form ─── */
+    .form-group { margin-bottom: 18px; }
+
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text);
+      margin-bottom: 7px;
+      letter-spacing: 0.1px;
+    }
+
+    .input-wrap { position: relative; }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"] {
+      width: 100%;
+      height: 48px;
+      padding: 0 16px;
+      font-size: 15px;
+      font-family: 'DM Sans', sans-serif;
+      color: var(--text);
+      background: #FAFAF8;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      outline: none;
+      transition: border-color 180ms ease, box-shadow 180ms ease, background 180ms ease;
+      -webkit-appearance: none;
+    }
+
+    input::placeholder { color: #ABABAB; }
+
+    input:focus {
+      border-color: var(--input-focus);
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(26,26,26,0.07);
+    }
+
+    input.has-error {
+      border-color: var(--error);
+      box-shadow: 0 0 0 3px rgba(192,57,43,0.08);
+    }
+
+    input.has-success {
+      border-color: #27AE60;
+      box-shadow: 0 0 0 3px rgba(39,174,96,0.08);
+    }
+
+    .field-error {
+      font-size: 12px;
+      color: var(--error);
+      margin-top: 5px;
+      display: none;
+    }
+
+    .field-error.visible { display: block; }
+
+    /* License key hint */
+    .field-hint {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 5px;
+    }
+
+    /* License key input with icon */
+    .license-wrap input { padding-right: 48px; }
+
+    .license-status {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 20px;
+      height: 20px;
+      display: none;
+    }
+
+    .license-status.visible { display: block; }
+
+    .license-status.valid svg { color: #27AE60; }
+    .license-status.invalid svg { color: var(--error); }
+
+    /* Password toggle */
+    .pw-wrap input { padding-right: 48px; }
+
+    .toggle-pw {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 6px;
+      color: var(--muted);
+      transition: color 150ms ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 36px;
+      min-height: 36px;
+    }
+
+    .toggle-pw:hover { color: var(--text); }
+    .toggle-pw svg { width: 18px; height: 18px; pointer-events: none; }
+
+    /* Password strength */
+    .pw-strength {
+      display: flex;
+      gap: 4px;
+      margin-top: 8px;
+    }
+
+    .pw-strength-bar {
+      flex: 1;
+      height: 3px;
+      background: var(--border);
+      border-radius: 2px;
+      transition: background 300ms ease;
+    }
+
+    .pw-strength-bar.weak   { background: #E74C3C; }
+    .pw-strength-bar.medium { background: #F39C12; }
+    .pw-strength-bar.strong { background: #27AE60; }
+
+    .pw-strength-label {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 4px;
+      min-height: 16px;
+    }
+
+    /* ─── Checkboxes ─── */
+    .checkbox-group {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .checkbox-group input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      min-width: 20px;
+      min-height: 20px;
+      margin-top: 1px;
+      cursor: pointer;
+      accent-color: var(--accent);
+      border-radius: 4px;
+      -webkit-appearance: auto;
+      appearance: auto;
+    }
+
+    .checkbox-label {
+      font-size: 13.5px;
+      color: var(--muted);
+      line-height: 1.5;
+      cursor: pointer;
+    }
+
+    .checkbox-label a {
+      color: var(--text);
+      font-weight: 500;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+      transition: opacity 150ms ease;
+    }
+
+    .checkbox-label a:hover { opacity: 0.65; }
+
+    .required-star { color: #E74C3C; margin-left: 2px; }
+
+    .terms-error {
+      font-size: 12px;
+      color: var(--error);
+      margin-bottom: 14px;
+      display: none;
+    }
+
+    .terms-error.visible { display: block; }
+
+    /* Divider between checkboxes and button */
+    .checkbox-divider {
+      height: 1px;
+      background: var(--border);
+      margin: 20px 0;
+    }
+
+    /* ─── Submit button ─── */
+    .btn-submit {
+      width: 100%;
+      height: 50px;
+      background: var(--accent);
+      color: #fff;
+      font-family: 'Syne', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: 0.2px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 180ms ease, transform 150ms ease, box-shadow 150ms ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-submit:hover {
+      background: var(--accent-hover);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(0,0,0,0.18);
+    }
+
+    .btn-submit:active { transform: translateY(0); box-shadow: none; }
+
+    .btn-submit:disabled {
+      background: #C8C6C2;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .spinner {
+      width: 18px;
+      height: 18px;
+      border: 2px solid rgba(255,255,255,0.4);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      display: none;
+    }
+
+    .btn-submit.loading .btn-text { display: none; }
+    .btn-submit.loading .spinner  { display: block; }
+
+    /* ─── Alert ─── */
+    .alert {
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-size: 13.5px;
+      margin-bottom: 20px;
+      display: none;
+    }
+
+    .alert.visible { display: flex; align-items: flex-start; gap: 10px; }
+
+    .alert-error {
+      background: #FEF2F0;
+      border: 1px solid #FACCC8;
+      color: #922B21;
+    }
+
+    .alert svg { width: 16px; height: 16px; flex-shrink: 0; margin-top: 1px; }
+
+    /* ─── Divider & login link ─── */
+    .card-divider { height: 1px; background: var(--border); margin: 24px 0; }
+
+    .login-prompt {
+      text-align: center;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .login-prompt a {
+      color: var(--text);
+      font-weight: 500;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+      transition: opacity 150ms ease;
+    }
+
+    .login-prompt a:hover { opacity: 0.7; }
+
+    /* ─── Footer ─── */
+    .page-footer {
+      margin-top: 28px;
+      text-align: center;
+      font-size: 12px;
+      color: #B0ADA6;
+      animation: fadeIn 0.5s ease 0.3s both;
+    }
+
+    .page-footer a {
+      color: #B0ADA6;
+      text-decoration: none;
+      transition: color 150ms ease;
+      margin: 0 6px;
+    }
+
+    .page-footer a:hover { color: var(--muted); }
+
+    /* ─── Animations ─── */
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ─── Responsive ─── */
+    @media (max-width: 440px) {
+      .card { padding: 28px 20px 24px; border-radius: 12px; }
+      .card-title { font-size: 22px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="page-wrapper">
+
+  <!-- Branding -->
+  <div class="branding">
+    <div class="logo-mark">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M13 2L4.5 13.5H11L10 22L19.5 10.5H13L13 2Z"/>
+      </svg>
+    </div>
+    <div class="brand-name">ConversionOS</div>
+    <div class="brand-tagline">Build Funnels That Convert. Powered by AI.</div>
+  </div>
+
+  <!-- Signup Card -->
+  <div class="card">
+
+    <h1 class="card-title">Create Account</h1>
+    <p class="card-subtitle">Sign up to access your engines</p>
+
+    <!-- Alert -->
+    <div class="alert alert-error" id="alert-error" role="alert">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="15" y1="9" x2="9" y2="15"/>
+        <line x1="9" y1="9" x2="15" y2="15"/>
+      </svg>
+      <span id="alert-error-text">Something went wrong. Please try again.</span>
+    </div>
+
+    <form id="signup-form" novalidate>
+
+      <!-- Full Name -->
+      <div class="form-group">
+        <label for="name">Full Name</label>
+        <div class="input-wrap">
+          <input
+            type="text"
+            id="name"
+            name="name"
+            placeholder="Your full name"
+            required
+            autocomplete="name"
+          >
+        </div>
+        <div class="field-error" id="name-error">Please enter your name.</div>
+      </div>
+
+      <!-- Email -->
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <div class="input-wrap">
+          <input
+            type="email"
+            id="email"
+            name="email"
+            placeholder="you@example.com"
+            required
+            autocomplete="email"
+            inputmode="email"
+          >
+        </div>
+        <div class="field-error" id="email-error">Please enter a valid email address.</div>
+      </div>
+
+      <!-- License Key -->
+      <div class="form-group">
+        <label for="license">License Key</label>
+        <div class="input-wrap license-wrap">
+          <input
+            type="text"
+            id="license"
+            name="license"
+            placeholder="Your license key from purchase email"
+            required
+            autocomplete="off"
+            autocapitalize="characters"
+            spellcheck="false"
+            style="letter-spacing: 0.5px; text-transform: uppercase;"
+          >
+          <!-- Status icon (shown after validation) -->
+          <div class="license-status" id="license-status">
+            <svg id="license-valid-icon" viewBox="0 0 24 24" fill="none" stroke="#27AE60" stroke-width="2.5" style="display:none">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+            <svg id="license-invalid-icon" viewBox="0 0 24 24" fill="none" stroke="#E74C3C" stroke-width="2.5" style="display:none">
+              <line x1="18" y1="6" x2="6" y2="18"/>
+              <line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </div>
+        </div>
+        <p class="field-hint">📧 Your license key was emailed after purchase. Check your inbox.</p>
+        <div class="field-error" id="license-error">Please enter a valid license key.</div>
+      </div>
+
+      <!-- Password -->
+      <div class="form-group">
+        <label for="password">Password</label>
+        <div class="input-wrap pw-wrap">
+          <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="Min. 8 characters"
+            required
+            autocomplete="new-password"
+          >
+          <button type="button" class="toggle-pw" id="toggle-pw1" aria-label="Show/hide password">
+            <svg id="eye1-show" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+              <circle cx="12" cy="12" r="3"/>
+            </svg>
+            <svg id="eye1-hide" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none">
+              <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+              <line x1="1" y1="1" x2="23" y2="23"/>
+            </svg>
+          </button>
+        </div>
+        <!-- Password strength bars -->
+        <div class="pw-strength" id="pw-strength-bars">
+          <div class="pw-strength-bar" id="bar1"></div>
+          <div class="pw-strength-bar" id="bar2"></div>
+          <div class="pw-strength-bar" id="bar3"></div>
+          <div class="pw-strength-bar" id="bar4"></div>
+        </div>
+        <div class="pw-strength-label" id="pw-strength-label"></div>
+        <div class="field-error" id="password-error">Password must be at least 8 characters.</div>
+      </div>
+
+      <!-- Confirm Password -->
+      <div class="form-group">
+        <label for="confirm-password">Confirm Password</label>
+        <div class="input-wrap pw-wrap">
+          <input
+            type="password"
+            id="confirm-password"
+            name="confirm-password"
+            placeholder="Re-enter your password"
+            required
+            autocomplete="new-password"
+          >
+          <button type="button" class="toggle-pw" id="toggle-pw2" aria-label="Show/hide confirm password">
+            <svg id="eye2-show" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+              <circle cx="12" cy="12" r="3"/>
+            </svg>
+            <svg id="eye2-hide" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none">
+              <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+              <line x1="1" y1="1" x2="23" y2="23"/>
+            </svg>
+          </button>
+        </div>
+        <div class="field-error" id="confirm-error">Passwords do not match.</div>
+      </div>
+
+      <div class="checkbox-divider"></div>
+
+      <!-- MANDATORY: Terms & Conditions -->
+      <div class="checkbox-group">
+        <input
+          type="checkbox"
+          id="terms-agree"
+          name="terms-agree"
+          required
+        >
+        <label class="checkbox-label" for="terms-agree">
+          I agree to the
+          <a href="/terms.html" target="_blank" rel="noopener">Terms of Service</a>
+          and
+          <a href="/privacy.html" target="_blank" rel="noopener">Privacy Policy</a>
+          <span class="required-star">*</span>
+        </label>
+      </div>
+      <div class="terms-error" id="terms-error">
+        ⚠️ You must agree to our Terms of Service and Privacy Policy to create an account.
+      </div>
+
+      <!-- OPTIONAL: Newsletter -->
+      <div class="checkbox-group">
+        <input
+          type="checkbox"
+          id="newsletter"
+          name="newsletter"
+          checked
+        >
+        <label class="checkbox-label" for="newsletter">
+          Subscribe to newsletter for AI tips &amp; product updates
+        </label>
+      </div>
+
+      <!-- Submit -->
+      <button type="submit" class="btn-submit" id="btn-submit">
+        <span class="btn-text">Create Account →</span>
+        <div class="spinner"></div>
+      </button>
+
+    </form>
+
+    <div class="card-divider"></div>
+
+    <p class="login-prompt">
+      Already have an account? <a href="/login.html">Sign in</a>
+    </p>
+
+  </div>
+
+  <!-- Footer -->
+  <div class="page-footer">
+    <a href="/privacy.html">Privacy Policy</a>
+    <a href="/terms.html">Terms of Service</a>
+    <a href="/refund-policy.html">Refund Policy</a>
+    <a href="/contact.html">Support</a>
+  </div>
+
+</div>
+
+<script>
+  // ─── Helpers ────────────────────────────────────────────────────
+  function showFieldError(inputId, errorId, message) {
+    const input = document.getElementById(inputId);
+    const error = document.getElementById(errorId);
+    input.classList.add('has-error');
+    input.classList.remove('has-success');
+    if (message) error.textContent = message;
+    error.classList.add('visible');
+  }
+
+  function clearFieldError(inputId, errorId) {
+    const input = document.getElementById(inputId);
+    const error = document.getElementById(errorId);
+    input.classList.remove('has-error');
+    error.classList.remove('visible');
+  }
+
+  function setFieldSuccess(inputId) {
+    const input = document.getElementById(inputId);
+    input.classList.remove('has-error');
+    input.classList.add('has-success');
+  }
+
+  // ─── Password Toggle ─────────────────────────────────────────────
+  function setupToggle(btnId, inputId, showId, hideId) {
+    document.getElementById(btnId).addEventListener('click', () => {
+      const input = document.getElementById(inputId);
+      const isHidden = input.type === 'password';
+      input.type = isHidden ? 'text' : 'password';
+      document.getElementById(showId).style.display = isHidden ? 'none' : 'block';
+      document.getElementById(hideId).style.display = isHidden ? 'block' : 'none';
+    });
+  }
+
+  setupToggle('toggle-pw1', 'password',         'eye1-show', 'eye1-hide');
+  setupToggle('toggle-pw2', 'confirm-password',  'eye2-show', 'eye2-hide');
+
+  // ─── Password Strength ───────────────────────────────────────────
+  const bars  = ['bar1','bar2','bar3','bar4'];
+  const label = document.getElementById('pw-strength-label');
+
+  const strengthLevels = [
+    { label: '',              class: '' },
+    { label: 'Weak',         class: 'weak' },
+    { label: 'Fair',         class: 'medium' },
+    { label: 'Good',         class: 'medium' },
+    { label: 'Strong ✓',    class: 'strong' },
+  ];
+
+  document.getElementById('password').addEventListener('input', function() {
+    const val = this.value;
+    let score = 0;
+    if (val.length >= 8)                         score++;
+    if (/[A-Z]/.test(val))                       score++;
+    if (/[0-9]/.test(val))                       score++;
+    if (/[^A-Za-z0-9]/.test(val))               score++;
+
+    bars.forEach((id, i) => {
+      const bar = document.getElementById(id);
+      bar.className = 'pw-strength-bar';
+      if (i < score) bar.classList.add(strengthLevels[score].class);
+    });
+
+    label.textContent = val.length ? strengthLevels[score].label : '';
+    label.style.color = score === 4 ? '#27AE60' : score >= 2 ? '#F39C12' : '#E74C3C';
+
+    if (val) clearFieldError('password', 'password-error');
+  });
+
+  // ─── License Key Formatting ──────────────────────────────────────
+  document.getElementById('license').addEventListener('input', function() {
+    // Auto-uppercase
+    const val = this.value.toUpperCase().replace(/[^A-Z0-9-]/g, '');
+    this.value = val;
+    clearFieldError('license', 'license-error');
+
+    // Reset status icon
+    document.getElementById('license-status').classList.remove('visible');
+    document.getElementById('license-valid-icon').style.display   = 'none';
+    document.getElementById('license-invalid-icon').style.display = 'none';
+  });
+
+  // ─── Clear Errors on Input ───────────────────────────────────────
+  ['name','email','confirm-password'].forEach(id => {
+    document.getElementById(id).addEventListener('input', () => {
+      const errId = id === 'confirm-password' ? 'confirm-error' : id + '-error';
+      clearFieldError(id, errId);
+    });
+  });
+
+  document.getElementById('terms-agree').addEventListener('change', function() {
+    if (this.checked) {
+      document.getElementById('terms-error').classList.remove('visible');
+    }
+  });
+
+  // ─── Form Validation & Submit ────────────────────────────────────
+  document.getElementById('signup-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const name    = document.getElementById('name').value.trim();
+    const email   = document.getElementById('email').value.trim();
+    const license = document.getElementById('license').value.trim();
+    const pw      = document.getElementById('password').value;
+    const confirm = document.getElementById('confirm-password').value;
+    const terms   = document.getElementById('terms-agree').checked;
+
+    let hasError = false;
+
+    // Name
+    if (!name) {
+      showFieldError('name', 'name-error', 'Please enter your name.');
+      hasError = true;
+    } else {
+      clearFieldError('name', 'name-error');
+    }
+
+    // Email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email || !emailRegex.test(email)) {
+      showFieldError('email', 'email-error', 'Please enter a valid email address.');
+      hasError = true;
+    } else {
+      clearFieldError('email', 'email-error');
+    }
+
+    // License Key — accepts any uppercase alphanumeric key with hyphens (min 8 chars)
+    const licenseRegex = /^[A-Z0-9][A-Z0-9-]{6,}[A-Z0-9]$/;
+    if (!license || !licenseRegex.test(license)) {
+      showFieldError('license', 'license-error', 'Invalid license key. Check your purchase confirmation email.');
+      document.getElementById('license-status').classList.add('visible');
+      document.getElementById('license-invalid-icon').style.display = 'block';
+      document.getElementById('license-valid-icon').style.display   = 'none';
+      hasError = true;
+    } else {
+      clearFieldError('license', 'license-error');
+    }
+
+    // Password
+    if (!pw || pw.length < 8) {
+      showFieldError('password', 'password-error', 'Password must be at least 8 characters.');
+      hasError = true;
+    } else {
+      clearFieldError('password', 'password-error');
+    }
+
+    // Confirm Password
+    if (!confirm || confirm !== pw) {
+      showFieldError('confirm-password', 'confirm-error', 'Passwords do not match.');
+      hasError = true;
+    } else {
+      clearFieldError('confirm-password', 'confirm-error');
+    }
+
+    // ── MANDATORY: Terms Checkbox ──────────────────────────────────
+    if (!terms) {
+      document.getElementById('terms-error').classList.add('visible');
+      // Scroll to checkbox so user notices
+      document.getElementById('terms-agree').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      hasError = true;
+    } else {
+      document.getElementById('terms-error').classList.remove('visible');
+    }
+
+    if (hasError) return;
+
+    // ── Loading state ──────────────────────────────────────────────
+    const btn = document.getElementById('btn-submit');
+    btn.classList.add('loading');
+    btn.disabled = true;
+    document.getElementById('alert-error').classList.remove('visible');
+
+    // ── Supabase Integration ───────────────────────────────────────
+    try {
+      // Step 1: Validate license key
+      const { data: purchase, error: licenseErr } = await window.supabase
+        .from('purchases')
+        .select('id, tier, used')
+        .eq('license_key', license.toUpperCase())
+        .single();
+
+      if (licenseErr || !purchase) {
+        showGlobalError('Invalid license key. Please check your purchase confirmation email.');
+        return;
+      }
+
+      if (purchase.used) {
+        showGlobalError('This license key is already registered to an account.');
+        return;
+      }
+
+      // Step 2: Create account
+      const { data: authData, error: signupErr } = await window.supabase.auth.signUp({
+        email,
+        password: pw,
+        options: {
+          data: {
+            name: name,
+            tier: purchase.tier,
+          }
+        }
+      });
+
+      if (signupErr) {
+        if (signupErr.message.includes('already registered')) {
+          showGlobalError('An account with this email already exists. Please log in instead.');
+        } else {
+          showGlobalError(signupErr.message);
+        }
+        return;
+      }
+
+      // Step 3: Mark license as used + link user_id
+      await window.supabase
+        .from('purchases')
+        .update({ used: true, user_id: authData.user.id })
+        .eq('id', purchase.id);
+
+      // Step 4: Redirect to welcome
+      window.location.href = '/welcome.html';
+
+    } catch (err) {
+      showGlobalError('Connection error. Please check your internet and try again.');
+    }
+  });
+
+  function showGlobalError(msg) {
+    const btn = document.getElementById('btn-submit');
+    btn.classList.remove('loading');
+    btn.disabled = false;
+    const el = document.getElementById('alert-error');
+    document.getElementById('alert-error-text').textContent = msg;
+    el.classList.add('visible');
+    el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  // ─── Facebook CAPI param capture ────────────────────────────────
+  const urlParams = new URLSearchParams(window.location.search);
+  const fbclid    = urlParams.get('fbclid');
+  if (fbclid) { try { sessionStorage.setItem('fbclid', fbclid); } catch(e) {} }
+
+  function getCookie(name) {
+    const v = `; ${document.cookie}`;
+    const p = v.split(`; ${name}=`);
+    if (p.length === 2) return p.pop().split(';').shift();
+  }
+
+  const fbp = getCookie('_fbp');
+  if (fbp) { try { sessionStorage.setItem('fbp', fbp); } catch(e) {} }
+</script>
+
+</body>
+</html>
