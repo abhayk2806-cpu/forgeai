@@ -300,8 +300,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
   <script src="/supabase.js"></script>
   <script src="/auth.js"></script>
 <script>
-const SUPABASE_URL='https://hutpurgvhbiouxmqkmpz.supabase.co';
-const ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh1dHB1cmd2aGJpb3V4bXFrbXB6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM3NTI2NTMsImV4cCI6MjA4OTMyODY1M30.3eYMP2vePoNjpLdOM7IfQ4b9isBrwxfME3r9ljbmIIQ';
+// SUPABASE_URL already declared in supabase.js
+const ANON_KEY = SUPABASE_ANON; // use value from supabase.js
 
 let allEngines=[], allCategories=[], userTier='starter', currentEngine=null;
 
