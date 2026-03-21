@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Access Denied — ConversionOS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: #F4F2EE;
+      min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      padding: 24px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .card {
+      background: #fff;
+      border: 1px solid #E2E0DA;
+      border-radius: 16px;
+      padding: 48px 40px;
+      max-width: 440px; width: 100%;
+      text-align: center;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+      animation: fadeUp 0.4s ease both;
+    }
+
+    @keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
+
+    .icon-wrap {
+      width: 64px; height: 64px;
+      background: #FFF4F4;
+      border-radius: 16px;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 20px;
+    }
+
+    .icon-wrap svg { width: 28px; height: 28px; color: #DC2626; }
+
+    h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: 22px; font-weight: 800;
+      color: #1A1A1A; letter-spacing: -0.3px;
+      margin-bottom: 10px;
+    }
+
+    p {
+      font-size: 14px; color: #7A7A7A;
+      line-height: 1.65; margin-bottom: 28px;
+    }
+
+    .btn-primary {
+      display: block;
+      background: #1A1A1A; color: #fff;
+      font-family: 'Syne', sans-serif;
+      font-size: 14px; font-weight: 700;
+      padding: 12px 24px; border-radius: 8px;
+      text-decoration: none;
+      margin-bottom: 10px;
+      transition: background 150ms;
+    }
+
+    .btn-primary:hover { background: #000; }
+
+    .btn-secondary {
+      display: block;
+      background: #F4F2EE; color: #1A1A1A;
+      font-size: 14px; font-weight: 500;
+      padding: 12px 24px; border-radius: 8px;
+      text-decoration: none;
+      border: 1px solid #E2E0DA;
+      transition: background 150ms;
+    }
+
+    .btn-secondary:hover { background: #E2E0DA; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="icon-wrap">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="3" y="11" width="18" height="11" rx="2"/>
+        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+      </svg>
+    </div>
+    <h1>Access Denied</h1>
+    <p>You don't have access to this page. Please log in or upgrade your plan to continue.</p>
+    <a href="/login.html" class="btn-primary">Go to Login</a>
+    <a href="/dashboard.html" class="btn-secondary">Back to Dashboard</a>
+  </div>
+</body>
+</html>

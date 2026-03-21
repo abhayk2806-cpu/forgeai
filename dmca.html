@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DMCA Policy — ForgeAI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#09090B;--bg-secondary:#111114;--bg-tertiary:#18181B;--bg-card:#1C1C20;
+  --text:#FAFAFA;--text-secondary:#A1A1AA;--text-tertiary:#71717A;
+  --accent:#F97316;--accent-glow:rgba(249,115,22,0.15);
+  --border:rgba(255,255,255,0.06);--border-medium:rgba(255,255,255,0.1);
+  --green:#22C55E;--red:#EF4444;--blue:#3B82F6;--yellow:#EAB308;
+}
+html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);line-height:1.65}
+a{color:var(--accent);font-weight:500;text-decoration:none;transition:opacity 0.2s}
+a:hover{opacity:0.8;text-decoration:underline}
+
+/* NAV */
+.nav{position:sticky;top:0;z-index:90;padding:14px 0;background:rgba(9,9,11,0.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
+.nav-inner{max-width:760px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between}
+.nav-logo{font-family:'JetBrains Mono',monospace;font-size:1.1rem;font-weight:600;color:var(--text);text-decoration:none;letter-spacing:-0.02em}
+.nav-logo span{color:var(--accent)}
+.nav-right{display:flex;align-items:center;gap:16px}
+.nav-link{font-size:0.85rem;color:var(--text-tertiary);text-decoration:none;transition:color 0.2s}
+.nav-link:hover{color:var(--text);text-decoration:none}
+.nav-back{display:flex;align-items:center;gap:5px}
+.nav-back svg{width:14px;height:14px}
+
+/* PAGE */
+.page{max-width:760px;margin:0 auto;padding:48px 24px 80px}
+
+/* DOC HEADER */
+.doc-header{margin-bottom:40px;padding-bottom:28px;border-bottom:1px solid var(--border-medium)}
+.doc-badge{display:inline-block;background:var(--accent-glow);color:var(--accent);font-family:'JetBrains Mono',monospace;font-size:0.7rem;font-weight:600;padding:5px 14px;border-radius:100px;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:16px;border:1px solid rgba(249,115,22,0.2)}
+.doc-title{font-size:clamp(1.6rem,5vw,2.25rem);font-weight:700;letter-spacing:-0.03em;margin-bottom:12px;color:var(--text)}
+.doc-meta{font-size:0.85rem;color:var(--text-tertiary);display:flex;flex-wrap:wrap;gap:16px}
+.doc-meta span{display:flex;align-items:center;gap:6px}
+.doc-meta svg{width:14px;height:14px;opacity:0.5}
+.doc-sub{font-size:1rem;color:var(--text-secondary);margin-bottom:40px;padding-bottom:28px;border-bottom:1px solid var(--border-medium)}
+
+/* TOC */
+.toc{background:var(--bg-secondary);border:1px solid var(--border-medium);border-radius:12px;padding:20px 24px;margin-bottom:40px}
+.toc-title{font-family:'JetBrains Mono',monospace;font-size:0.7rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-tertiary);margin-bottom:12px}
+.toc ol{padding-left:18px}
+.toc li{margin-bottom:6px}
+.toc a{font-size:0.9rem;color:var(--text-secondary);text-decoration:none}
+.toc a:hover{color:var(--accent);text-decoration:underline}
+
+/* SECTIONS */
+.section{margin-bottom:40px;scroll-margin-top:80px}
+h2{font-size:1.2rem;font-weight:700;color:var(--text);margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--border-medium)}
+h3{font-size:0.95rem;font-weight:600;color:var(--text);margin:20px 0 10px}
+p{font-size:0.95rem;line-height:1.75;color:var(--text-secondary);margin-bottom:12px}
+ul,ol{padding-left:22px;margin-bottom:12px}
+li{font-size:0.95rem;line-height:1.75;color:var(--text-secondary);margin-bottom:6px}
+strong{color:var(--text);font-weight:600}
+code{font-family:'JetBrains Mono',monospace;font-size:0.85em;background:var(--bg-tertiary);padding:2px 6px;border-radius:4px;color:var(--accent)}
+
+/* BOXES */
+.box{border-radius:10px;padding:16px 20px;margin:16px 0;font-size:0.875rem;line-height:1.65}
+.box-info{background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.2);color:#93C5FD}
+.box-info strong{color:#93C5FD}
+.box-info a{color:#93C5FD}
+.box-warning{background:rgba(234,179,8,0.08);border:1px solid rgba(234,179,8,0.2);color:#FDE68A}
+.box-warning strong{color:#FDE68A}
+.box-danger{background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);color:#FCA5A5}
+.box-danger strong{color:#FCA5A5}
+.box-danger a{color:#FCA5A5}
+.box-success{background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.2);color:#86EFAC}
+.box-success strong{color:#86EFAC}
+.box-success a{color:#86EFAC}
+
+/* TABLES */
+.data-table,.cookie-table{width:100%;border-collapse:collapse;margin:16px 0 20px;font-size:0.85rem}
+.data-table th,.cookie-table th{background:var(--bg-tertiary);text-align:left;padding:10px 14px;font-weight:600;border:1px solid var(--border-medium);color:var(--text)}
+.data-table td,.cookie-table td{padding:10px 14px;border:1px solid var(--border-medium);vertical-align:top;line-height:1.55;color:var(--text-secondary)}
+.data-table tr:nth-child(even) td,.cookie-table tr:nth-child(even) td{background:var(--bg-secondary)}
+.tag{display:inline-block;font-size:0.65rem;font-weight:600;padding:2px 8px;border-radius:100px;text-transform:uppercase;letter-spacing:0.3px}
+.tag-required{background:rgba(239,68,68,0.1);color:#FCA5A5}
+.tag-optional{background:rgba(234,179,8,0.1);color:#FDE68A}
+.tag-ad{background:rgba(59,130,246,0.1);color:#93C5FD}
+
+/* SPECIAL SECTIONS */
+.big-no{text-align:center;background:var(--bg-secondary);border:1px solid var(--border-medium);border-radius:14px;padding:36px 24px;margin:24px 0}
+.big-no .no-text{font-size:2.5rem;font-weight:700;margin-bottom:8px;color:var(--text)}
+.big-no .no-sub{font-size:1rem;color:var(--text-tertiary)}
+.support-step{display:flex;gap:14px;margin-bottom:16px;align-items:flex-start}
+.step-num,.step-n{width:28px;height:28px;min-width:28px;background:var(--accent);color:#fff;border-radius:50%;font-family:'JetBrains Mono',monospace;font-size:0.75rem;font-weight:700;display:flex;align-items:center;justify-content:center;margin-top:2px}
+.step-text,.step-body{font-size:0.95rem;line-height:1.65;color:var(--text-secondary)}
+.rule-list li{list-style:none;padding-left:0;display:flex;align-items:flex-start;gap:10px;margin-bottom:10px}
+.rule-list li::before{content:"✕";color:var(--red);font-weight:700;flex-shrink:0;margin-top:2px}
+.allow-list li{list-style:none;padding-left:0;display:flex;align-items:flex-start;gap:10px;margin-bottom:10px}
+.allow-list li::before{content:"✓";color:var(--green);font-weight:700;flex-shrink:0;margin-top:2px}
+.numbered-steps{counter-reset:steps}
+.step{display:flex;gap:14px;margin-bottom:14px;align-items:flex-start}
+
+/* CONTACT CARDS */
+.contact-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin:20px 0}
+.contact-card{background:var(--bg-secondary);border:1px solid var(--border-medium);border-radius:12px;padding:20px;transition:border-color 0.2s}
+.contact-card:hover{border-color:rgba(249,115,22,0.3)}
+.cc-icon{width:40px;height:40px;background:var(--bg-tertiary);border-radius:9px;display:flex;align-items:center;justify-content:center;margin-bottom:12px}
+.cc-icon svg{width:20px;height:20px;stroke:var(--text-tertiary)}
+.cc-title{font-size:0.95rem;font-weight:700;margin-bottom:4px;color:var(--text)}
+.cc-desc{font-size:0.82rem;color:var(--text-tertiary);line-height:1.5;margin-bottom:10px}
+.cc-link{font-size:0.875rem;font-weight:500;color:var(--accent);text-decoration:none;word-break:break-all}
+.cc-link:hover{text-decoration:underline}
+
+/* HOURS */
+.hours-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}
+.hours-row{display:flex;justify-content:space-between;font-size:0.875rem;padding:10px 14px;background:var(--bg-secondary);border:1px solid var(--border-medium);border-radius:8px}
+.hours-day{color:var(--text-tertiary)}
+.hours-time{font-weight:500;color:var(--text-secondary)}
+
+/* EMAIL TEMPLATE */
+.email-template{background:var(--bg-secondary);border:1px solid var(--border-medium);border-radius:12px;padding:20px 24px;font-family:'JetBrains Mono',monospace;font-size:0.82rem;line-height:1.8;margin:16px 0}
+.email-template .label{color:var(--text-tertiary);font-size:0.7rem;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.email-template .value{color:var(--text-secondary)}
+.email-template .placeholder{color:var(--accent)}
+
+/* FAQ */
+.faq-item{border-bottom:1px solid var(--border-medium);padding:18px 0}
+.faq-item:first-child{padding-top:0}
+.faq-q{font-size:0.95rem;font-weight:600;color:var(--text);margin-bottom:8px;cursor:pointer;display:flex;align-items:flex-start;justify-content:space-between;gap:12px;background:none;border:none;width:100%;text-align:left;padding:0;font-family:inherit}
+.faq-q svg{width:16px;height:16px;flex-shrink:0;margin-top:3px;transition:transform 200ms;stroke:var(--text-tertiary)}
+.faq-a{font-size:0.875rem;line-height:1.7;color:var(--text-tertiary);display:none}
+.faq-item.open .faq-a{display:block}
+.faq-item.open .faq-q svg{transform:rotate(180deg)}
+
+/* CONTACT BOX */
+.contact-box{background:var(--bg-secondary);border:1px solid rgba(249,115,22,0.2);border-radius:12px;padding:24px;margin-top:20px}
+.contact-box h3{color:var(--text);margin-top:0;font-size:1rem;margin-bottom:12px}
+.contact-box p{color:var(--text-secondary);margin-bottom:8px;font-size:0.875rem}
+.contact-box a{color:var(--accent);font-weight:600}
+
+/* FOOTER */
+.legal-footer{margin-top:60px;padding-top:28px;border-top:1px solid var(--border-medium)}
+.legal-footer-links{display:flex;flex-wrap:wrap;gap:8px 20px;margin-bottom:16px}
+.legal-footer-links a{font-size:0.8rem;color:var(--text-tertiary);text-decoration:none;transition:color 0.2s}
+.legal-footer-links a:hover{color:var(--text-secondary);text-decoration:none}
+.legal-footer-copy{font-size:0.75rem;color:rgba(255,255,255,0.2)}
+
+/* ─── Tablet ─── */
+@media(max-width:768px){
+  .page{padding:40px 20px 64px}
+  .contact-cards{grid-template-columns:1fr}
+  .hours-grid{grid-template-columns:1fr}
+  .data-table,.cookie-table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .doc-meta{flex-direction:column;gap:8px}
+}
+/* ─── Mobile ─── */
+@media(max-width:480px){
+  .page{padding:32px 16px 56px}
+  .nav-inner{padding:0 16px}
+  .doc-title{font-size:1.5rem}
+  h2{font-size:1.05rem}
+  .big-no .no-text{font-size:2rem}
+  .toc{padding:16px 18px}
+  .box{padding:14px 16px}
+  .contact-box{padding:20px}
+  .step,.support-step{gap:10px}
+  .step-n,.step-num{width:24px;height:24px;min-width:24px;font-size:0.65rem}
+}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="/" class="nav-logo">Forge<span>AI</span></a>
+    <div class="nav-right">
+      <a href="/login.html" class="nav-link">Login</a>
+      <a href="javascript:history.back()" class="nav-link nav-back">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+        Back
+      </a>
+    </div>
+  </div>
+</nav>
+<div class="page">
+<div class="doc-badge">Legal</div>
+  <h1 class="doc-title">DMCA Policy</h1>
+  <div class="doc-meta">Last updated: January 1, 2025</div>
+
+  <div class="section">
+    <h2>Copyright Protection</h2>
+    <p>All content on ForgeAI — including but not limited to engine text, tool logic, design, code, and documentation — is the intellectual property of The Saanvi Hub and is protected under copyright law. Unauthorized reproduction, distribution, or use is strictly prohibited.</p>
+    <p>We take intellectual property rights seriously and respond promptly to valid copyright infringement claims.</p>
+  </div>
+
+  <div class="section">
+    <h2>Filing a DMCA Takedown Notice</h2>
+    <p>If you believe that content on ForgeAI infringes your copyright, please send a written notice to <a href="mailto:support@forgeai.digital">support@forgeai.digital</a> with the subject line <strong>"DMCA Takedown Notice"</strong>.</p>
+    <p>Your notice must include all of the following:</p>
+    <div class="numbered-steps">
+      <div class="step"><div class="step-n">1</div><div class="step-body">Your full name, address, phone number, and email address.</div></div>
+      <div class="step"><div class="step-n">2</div><div class="step-body">A description of the copyrighted work you claim has been infringed.</div></div>
+      <div class="step"><div class="step-n">3</div><div class="step-body">The specific URL or location on ForgeAI where the infringing material is located.</div></div>
+      <div class="step"><div class="step-n">4</div><div class="step-body">A statement that you have a good-faith belief that the use is not authorized by the copyright owner, its agent, or the law.</div></div>
+      <div class="step"><div class="step-n">5</div><div class="step-body">A statement made under penalty of perjury that you are authorized to act on behalf of the copyright owner.</div></div>
+      <div class="step"><div class="step-n">6</div><div class="step-body">Your physical or electronic signature.</div></div>
+    </div>
+    <div class="box box-info">Incomplete notices will not be processed. Please ensure all 6 elements are included.</div>
+  </div>
+
+  <div class="section">
+    <h2>Our Response</h2>
+    <ul>
+      <li>We will review your notice within <strong>5–7 business days</strong>.</li>
+      <li>If the claim appears valid, we will remove or disable access to the infringing content.</li>
+      <li>We will notify the alleged infringer of the takedown.</li>
+      <li>Repeat infringers will have their accounts permanently terminated.</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>Counter-Notice</h2>
+    <p>If you believe content was removed from ForgeAI in error or due to misidentification, you may file a counter-notice by emailing <a href="mailto:support@forgeai.digital">support@forgeai.digital</a> with subject <strong>"DMCA Counter-Notice"</strong>. Your counter-notice must include:</p>
+    <ul>
+      <li>Your name, address, phone, and email</li>
+      <li>Identification of the material that was removed and its original location</li>
+      <li>A statement under penalty of perjury that you believe the removal was a mistake</li>
+      <li>Your consent to the jurisdiction of your local federal court</li>
+      <li>Your physical or electronic signature</li>
+    </ul>
+    <p>If a valid counter-notice is received, the content may be restored within 10–14 business days, unless the original complainant files a legal action.</p>
+  </div>
+
+  <div class="section">
+    <h2>Reporting Infringement of Our Copyright</h2>
+    <p>If you discover ForgeAI content being shared, resold, or distributed without authorization (e.g., on YouTube, blogs, other portals), please report it to us at <a href="mailto:support@forgeai.digital">support@forgeai.digital</a> with subject <strong>"Copyright Infringement Report"</strong>. We will take immediate action.</p>
+  </div>
+
+  <div class="section">
+    <h2>Contact</h2>
+    <div class="contact-box">
+      <h3>DMCA Agent</h3>
+      <p>The Saanvi Hub</p>
+      <p>📧 <a href="mailto:support@forgeai.digital">support@forgeai.digital</a></p>
+      <p>Subject: "DMCA Takedo
+
+  <div class="legal-footer">
+    <div class="legal-footer-links">
+      <a href="/privacy.html">Privacy Policy</a>
+      <a href="/terms.html">Terms of Service</a>
+      <a href="/refund-policy.html">Refund Policy</a>
+      <a href="/cookie-policy.html">Cookie Policy</a>
+      <a href="/disclaimer.html">Disclaimer</a>
+      <a href="/acceptable-use.html">Acceptable Use</a>
+      <a href="/dmca.html">DMCA</a>
+      <a href="/contact.html">Contact</a>
+    </div>
+    <div class="legal-footer-copy">© 2026 ForgeAI (The Saanvi Hub). All rights reserved.</div>
+  </div>
+</div>
+
+</body>
+</html>

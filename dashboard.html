@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard — ForgeAI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F7F7F5;--surface:#FFFFFF;--border:#E8E8E4;--text:#1A1A1A;--text-muted:#6B6B6B;
+  --text-light:#9B9B9B;--accent:#F97316;--accent-light:#FFF4ED;--accent-hover:#EA6C0A;
+  --green:#10B981;--green-light:#ECFDF5;--blue:#3B82F6;--blue-light:#EFF6FF;
+  --red:#EF4444;--sidebar-w:260px;--radius:12px;
+  --shadow:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.04);
+  --shadow-lg:0 10px 15px rgba(0,0,0,.08),0 4px 6px rgba(0,0,0,.04);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+
+/* SIDEBAR */
+.sidebar{position:fixed;top:0;left:0;width:var(--sidebar-w);height:100vh;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:100;transition:transform .3s cubic-bezier(.4,0,.2,1);overflow-y:auto}
+.sidebar-logo{padding:20px 20px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.logo-icon{width:36px;height:36px;background:var(--accent);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.logo-text{font-size:17px;font-weight:700;color:var(--text);letter-spacing:-.3px}
+.logo-text span{color:var(--accent)}
+.sidebar-user{padding:16px 20px;border-bottom:1px solid var(--border)}
+.user-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:20px;font-size:12px;font-weight:600;font-family:'JetBrains Mono',monospace;margin-bottom:8px}
+.user-badge.pro{background:var(--accent-light);color:var(--accent)}
+.user-badge.starter{background:var(--blue-light);color:var(--blue)}
+.user-name{font-size:14px;font-weight:700;color:var(--text)}
+.user-email{font-size:12px;color:var(--text-muted);margin-top:2px}
+.sidebar-nav{padding:12px;flex:1}
+.nav-section-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-light);padding:8px 8px 4px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;text-decoration:none;color:var(--text-muted);font-size:14px;font-weight:500;transition:all .15s;margin-bottom:2px}
+.nav-item:hover{background:var(--bg);color:var(--text)}
+.nav-item.active{background:var(--accent-light);color:var(--accent);font-weight:600}
+.nav-icon{font-size:16px;width:20px;text-align:center}
+.nav-badge{margin-left:auto;background:var(--accent);color:white;font-size:10px;font-weight:700;padding:2px 6px;border-radius:10px}
+.sidebar-bottom{padding:12px;border-top:1px solid var(--border)}
+.btn-logout{width:100%;padding:9px 12px;background:none;border:1px solid var(--border);border-radius:8px;color:var(--text-muted);font-size:13px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:8px;transition:all .15s;font-family:'DM Sans',sans-serif}
+.btn-logout:hover{background:#FEF2F2;color:var(--red);border-color:#FECACA}
+
+/* MAIN */
+.main{margin-left:var(--sidebar-w);min-height:100vh}
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:14px 28px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:50}
+.hamburger{display:none;background:none;border:none;cursor:pointer;padding:4px;font-size:22px;color:var(--text)}
+.topbar-title{font-size:18px;font-weight:700;color:var(--text);flex:1}
+.topbar-search{display:flex;align-items:center;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px 12px;gap:8px;width:240px}
+.topbar-search input{border:none;background:none;outline:none;font-size:13px;color:var(--text);font-family:'DM Sans',sans-serif;width:100%}
+.topbar-search input::placeholder{color:var(--text-light)}
+.content{padding:28px}
+
+/* STATS */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;display:flex;align-items:flex-start;gap:14px;box-shadow:var(--shadow)}
+.stat-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.stat-value{font-size:22px;font-weight:700;color:var(--text);line-height:1}
+.stat-label{font-size:12px;color:var(--text-muted);margin-top:4px}
+
+/* QUICK GUIDE */
+.quick-guide{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:28px;box-shadow:var(--shadow)}
+.guide-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:14px}
+.guide-step{display:flex;gap:12px;align-items:flex-start}
+.step-num{width:28px;height:28px;background:var(--accent);color:white;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0}
+.step-text strong{font-size:13px;display:block;margin-bottom:2px}
+.step-text span{font-size:12px;color:var(--text-muted)}
+
+/* UPGRADE BANNER */
+.upgrade-banner{background:linear-gradient(135deg,#1A1A1A 0%,#2D2D2D 100%);border-radius:var(--radius);padding:24px 28px;display:flex;align-items:center;gap:20px;margin-bottom:28px;position:relative;overflow:hidden}
+.upgrade-banner::after{content:'⚡';position:absolute;right:24px;font-size:80px;opacity:.08;top:-10px}
+.upgrade-text h3{font-size:16px;font-weight:700;color:white;margin-bottom:4px}
+.upgrade-text p{font-size:13px;color:rgba(255,255,255,.6)}
+.btn-upgrade{padding:10px 20px;background:var(--accent);color:white;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;font-family:'DM Sans',sans-serif;transition:background .15s;text-decoration:none;display:inline-flex;align-items:center;gap:6px;flex-shrink:0}
+.btn-upgrade:hover{background:var(--accent-hover)}
+
+/* SECTION HEADER */
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.section-title{font-size:16px;font-weight:700}
+.section-subtitle{font-size:13px;color:var(--text-muted);margin-top:2px}
+
+/* FILTER TABS */
+.filter-tabs{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
+.filter-tab{padding:6px 14px;border-radius:20px;font-size:13px;font-weight:500;cursor:pointer;border:1px solid var(--border);background:var(--surface);color:var(--text-muted);transition:all .15s}
+.filter-tab:hover{border-color:var(--accent);color:var(--accent)}
+.filter-tab.active{background:var(--accent);border-color:var(--accent);color:white}
+
+/* CATEGORY */
+.category-section{margin-bottom:32px}
+.category-header{display:flex;align-items:center;gap:10px;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+.category-icon-wrap{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.category-name{font-size:15px;font-weight:700}
+.category-count{font-size:12px;color:var(--text-muted);background:var(--bg);border:1px solid var(--border);padding:2px 8px;border-radius:10px;margin-left:auto}
+
+/* ENGINE CARDS */
+.engines-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+.engine-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;cursor:pointer;transition:all .2s;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:12px;position:relative;overflow:hidden}
+.engine-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--card-color,var(--accent));opacity:0;transition:opacity .2s}
+.engine-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg);border-color:var(--card-color,var(--accent))}
+.engine-card:hover::before{opacity:1}
+.engine-card.locked{opacity:.55;cursor:not-allowed}
+.engine-card.locked:hover{transform:none;box-shadow:var(--shadow);border-color:var(--border)}
+.engine-card.locked::before{display:none}
+.card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+.engine-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.card-badges{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.badge{font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;font-family:'JetBrains Mono',monospace;text-transform:uppercase}
+.badge-pro{background:var(--accent-light);color:var(--accent)}
+.badge-starter{background:var(--blue-light);color:var(--blue)}
+.badge-new{background:var(--green-light);color:var(--green)}
+.badge-hot{background:#FFF1F0;color:#FF4D4F}
+.badge-exclusive{background:#1A1A1A;color:var(--accent)}
+.badge-lock{background:var(--bg);color:var(--text-light);border:1px solid var(--border)}
+.engine-name{font-size:15px;font-weight:700;color:var(--text);line-height:1.3}
+.engine-tagline{font-size:12px;color:var(--text-muted);line-height:1.5}
+.use-cases{display:flex;flex-direction:column;gap:6px}
+.use-cases-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text-light);margin-bottom:2px}
+.use-case-item{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-muted)}
+.use-case-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
+.card-footer{display:flex;align-items:center;justify-content:space-between;padding-top:10px;border-top:1px solid var(--border);margin-top:auto}
+.card-action{font-size:12px;font-weight:600}
+.card-type-label{font-size:10px;color:var(--text-light);font-family:'JetBrains Mono',monospace}
+
+/* SKELETON */
+.skeleton{background:linear-gradient(90deg,#f0f0ee 25%,#e8e8e4 50%,#f0f0ee 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:8px}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.skeleton-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;height:220px}
+
+/* EMPTY STATE */
+.empty-state{text-align:center;padding:48px 20px;color:var(--text-muted)}
+.empty-state .empty-icon{font-size:40px;margin-bottom:12px}
+.empty-state p{font-size:14px}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:center;justify-content:center;padding:20px}
+.modal-overlay.open{display:flex}
+.modal{background:var(--surface);border-radius:16px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;box-shadow:0 25px 50px rgba(0,0,0,.15)}
+.modal-header{padding:24px 24px 16px;display:flex;align-items:flex-start;gap:16px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--surface);border-radius:16px 16px 0 0}
+.modal-close{margin-left:auto;background:var(--bg);border:none;width:32px;height:32px;border-radius:8px;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;color:var(--text-muted);flex-shrink:0;transition:all .15s}
+.modal-close:hover{background:var(--border);color:var(--text)}
+.modal-body{padding:20px 24px 24px}
+.modal-engine-name{font-size:20px;font-weight:700}
+.modal-tagline{font-size:13px;color:var(--text-muted);margin-top:4px}
+.modal-section{margin-bottom:20px}
+.modal-section-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-light);margin-bottom:10px}
+.use-case-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.use-case-chip{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px 10px;font-size:12px;color:var(--text);display:flex;align-items:center;gap:6px}
+.btn-open-engine{width:100%;padding:13px;background:var(--accent);color:white;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;display:flex;align-items:center;justify-content:center;gap:8px;transition:background .15s;text-decoration:none}
+.btn-open-engine:hover{background:var(--accent-hover)}
+.btn-copy-engine{width:100%;padding:11px;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:8px;transition:all .15s}
+.btn-copy-engine:hover{background:var(--border)}
+.copy-success{display:none;text-align:center;font-size:13px;color:var(--green);font-weight:600;padding:8px}
+
+/* SIDEBAR OVERLAY */
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:99}
+
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* RESPONSIVE */
+@media(max-width:1024px){.stats-grid{grid-template-columns:repeat(2,1fr)}.guide-steps{grid-template-columns:1fr}}
+@media(max-width:768px){
+  .sidebar{transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0);box-shadow:var(--shadow-lg)}
+  .sidebar-overlay.open{display:block}
+  .main{margin-left:0}
+  .hamburger{display:block}
+  .topbar{padding:14px 16px}
+  .topbar-search{display:none}
+  .content{padding:16px}
+  .stats-grid{grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:20px}
+  .stat-card{padding:14px}
+  .stat-value{font-size:18px}
+  .engines-grid{grid-template-columns:1fr}
+  .upgrade-banner{flex-direction:column;text-align:center;padding:20px}
+  .upgrade-banner::after{display:none}
+  .btn-upgrade{width:100%;justify-content:center}
+  .filter-tabs{gap:6px}
+  .filter-tab{padding:5px 10px;font-size:12px}
+  .quick-guide{display:none}
+  .use-case-grid{grid-template-columns:1fr}
+}
+@media(max-width:480px){.stats-grid{grid-template-columns:1fr 1fr;gap:8px}}
+</style>
+</head>
+<body>
+
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">⚡</div>
+    <span class="logo-text">Forge<span>AI</span></span>
+  </div>
+  <div class="sidebar-user">
+    <div class="user-badge pro" id="tierBadge">⚡ PRO</div>
+    <div class="user-name" id="userName">Loading...</div>
+    <div class="user-email" id="userEmail">...</div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section-title">Main</div>
+    <a href="dashboard.html" class="nav-item active"><span class="nav-icon">🏠</span> Dashboard</a>
+    <a href="engine-page.html" class="nav-item"><span class="nav-icon">⚡</span> All Engines <span class="nav-badge" id="totalBadge">—</span></a>
+    <a href="templates.html" class="nav-item"><span class="nav-icon">📋</span> Templates</a>
+    <div class="nav-section-title" style="margin-top:12px">Resources</div>
+    <a href="resources.html" class="nav-item"><span class="nav-icon">📚</span> Guides & Tutorials</a>
+    <a href="resources.html#videos" class="nav-item"><span class="nav-icon">🎬</span> Video Tutorials</a>
+    <div class="nav-section-title" style="margin-top:12px">Account</div>
+    <a href="profile.html" class="nav-item"><span class="nav-icon">👤</span> Profile & License</a>
+  </nav>
+  <div class="sidebar-bottom">
+    <button class="btn-logout" onclick="handleLogout()"><span>🚪</span> Logout</button>
+  </div>
+</aside>
+
+<main class="main">
+  <div class="topbar">
+    <button class="hamburger" onclick="openSidebar()">☰</button>
+    <div class="topbar-title">Dashboard</div>
+    <div class="topbar-search">
+      <span>🔍</span>
+      <input type="text" placeholder="Search engines..." id="searchInput" oninput="handleSearch(this.value)">
+    </div>
+  </div>
+
+  <div class="content">
+    <!-- STATS -->
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-icon" style="background:#FFF4ED">⚡</div><div><div class="stat-value" id="statTotal">—</div><div class="stat-label">Total Engines</div></div></div>
+      <div class="stat-card"><div class="stat-icon" style="background:var(--green-light)">✅</div><div><div class="stat-value" id="statUnlocked">—</div><div class="stat-label">Unlocked</div></div></div>
+      <div class="stat-card"><div class="stat-icon" style="background:var(--blue-light)">📋</div><div><div class="stat-value">15</div><div class="stat-label">Templates</div></div></div>
+      <div class="stat-card"><div class="stat-icon" style="background:#F5F3FF">🔄</div><div><div class="stat-value">∞</div><div class="stat-label">Updates</div></div></div>
+    </div>
+
+    <!-- QUICK GUIDE -->
+    <div class="quick-guide">
+      <div class="section-title">🚀 How to Use ForgeAI</div>
+      <div class="guide-steps" style="margin-top:14px">
+        <div class="guide-step"><div class="step-num">1</div><div class="step-text"><strong>Choose Engine</strong><span>Pick the right AI engine for your task</span></div></div>
+        <div class="guide-step"><div class="step-num">2</div><div class="step-text"><strong>Copy to Claude.ai</strong><span>Paste into Claude.ai Projects as system prompt</span></div></div>
+        <div class="guide-step"><div class="step-num">3</div><div class="step-text"><strong>Start Creating</strong><span>Claude becomes your specialized AI</span></div></div>
+      </div>
+    </div>
+
+    <!-- UPGRADE BANNER -->
+    <div class="upgrade-banner" id="upgradeBanner" style="display:none">
+      <div class="upgrade-text">
+        <h3>🔓 Unlock All Engines — Upgrade to Pro</h3>
+        <p>Get every engine + ConversionOS Pipeline + all future engines forever</p>
+      </div>
+      <a href="/#pricing" class="btn-upgrade">⚡ Upgrade for ₹1,000</a>
+    </div>
+
+    <!-- FILTERS -->
+    <div class="section-header">
+      <div><div class="section-title">All Engines</div><div class="section-subtitle" id="engineSubtitle">Loading...</div></div>
+    </div>
+    <div class="filter-tabs" id="filterTabs">
+      <div class="filter-tab active" onclick="filterCategory('all',this)" data-cat="all">All Engines</div>
+    </div>
+
+    <!-- DYNAMIC ENGINE SECTIONS -->
+    <div id="engineSections">
+      <!-- Skeleton loading -->
+      <div class="engines-grid" id="skeletonGrid">
+        <div class="skeleton-card"><div class="skeleton" style="height:20px;width:60%;margin-bottom:10px"></div><div class="skeleton" style="height:14px;width:90%;margin-bottom:6px"></div><div class="skeleton" style="height:14px;width:75%"></div></div>
+        <div class="skeleton-card"><div class="skeleton" style="height:20px;width:60%;margin-bottom:10px"></div><div class="skeleton" style="height:14px;width:90%;margin-bottom:6px"></div><div class="skeleton" style="height:14px;width:75%"></div></div>
+        <div class="skeleton-card"><div class="skeleton" style="height:20px;width:60%;margin-bottom:10px"></div><div class="skeleton" style="height:14px;width:90%;margin-bottom:6px"></div><div class="skeleton" style="height:14px;width:75%"></div></div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModalOverlay(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div id="modalIcon" style="width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;background:#FFF4ED;flex-shrink:0">⚡</div>
+      <div style="flex:1"><div class="modal-engine-name" id="modalName">—</div><div class="modal-tagline" id="modalTagline">—</div></div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-section"><div class="modal-section-title">Use Cases</div><div class="use-case-grid" id="modalUseCases"></div></div>
+      <div class="modal-section">
+        <div class="modal-section-title">How to Use</div>
+        <div style="font-size:13px;color:var(--text-muted);line-height:1.7">
+          1. Click <strong>"Open Engine"</strong> — engine page opens<br>
+          2. Click <strong>"Copy Engine"</strong> — copies full prompt<br>
+          3. Go to <strong>Claude.ai</strong> → Create a new Project<br>
+          4. Paste as <strong>System Prompt</strong> → Start chatting!
+        </div>
+      </div>
+      <a href="#" class="btn-open-engine" id="modalOpenBtn">⚡ Open Engine</a>
+      <button class="btn-copy-engine" id="modalCopyBtn" onclick="copyEngine()">📋 Copy Engine Text</button>
+      <div class="copy-success" id="copySuccess">✅ Copied! Paste into Claude.ai Projects</div>
+    </div>
+  </div>
+</div>
+
+<script src="../supabase.js"></script>
+<script src="../auth.js"></script>
+<script>
+const SUPABASE_URL='https://scunqqruwxajzcegmtcg.supabase.co';
+const ANON_KEY='sb_publishable_g7ua18iyflpu4wbY18NBZQ_7vkSX4w1';
+
+let allEngines=[], allCategories=[], userTier='starter', currentEngine=null;
+
+// ─── FETCH FROM SUPABASE ───
+async function fetchData() {
+  try {
+    const [catRes, engRes] = await Promise.all([
+      fetch(`${SUPABASE_URL}/rest/v1/categories?is_active=eq.true&order=sort_order`, {headers:{'apikey':ANON_KEY,'Authorization':'Bearer '+ANON_KEY}}),
+      fetch(`${SUPABASE_URL}/rest/v1/engines?is_active=eq.true&order=sort_order`, {headers:{'apikey':ANON_KEY,'Authorization':'Bearer '+ANON_KEY}})
+    ]);
+    allCategories = await catRes.json();
+    allEngines = await engRes.json();
+    return true;
+  } catch(e) { console.error('Fetch error',e); return false; }
+}
+
+// ─── RENDER FILTER TABS ───
+function renderFilterTabs() {
+  const tabsEl = document.getElementById('filterTabs');
+  const catIds = [...new Set(allEngines.map(e=>e.category_id))];
+  const usedCats = allCategories.filter(c=>catIds.includes(c.id));
+
+  usedCats.forEach(cat => {
+    const count = allEngines.filter(e=>e.category_id===cat.id).length;
+    const tab = document.createElement('div');
+    tab.className = 'filter-tab';
+    tab.dataset.cat = cat.id;
+    tab.textContent = cat.icon+' '+cat.name;
+    tab.onclick = () => filterCategory(cat.id, tab);
+    tabsEl.appendChild(tab);
+  });
+}
+
+// ─── RENDER ALL SECTIONS ───
+function renderSections(engines, categories) {
+  const container = document.getElementById('engineSections');
+  document.getElementById('skeletonGrid')?.remove();
+  container.innerHTML = '';
+
+  const catIds = [...new Set(engines.map(e=>e.category_id))];
+  const usedCats = categories.filter(c=>catIds.includes(c.id));
+
+  if(!usedCats.length) {
+    container.innerHTML = '<div class="empty-state"><div class="empty-icon">🔍</div><p>No engines found</p></div>';
+    return;
+  }
+
+  usedCats.forEach(cat => {
+    const catEngines = engines.filter(e=>e.category_id===cat.id);
+    if(!catEngines.length) return;
+
+    const section = document.createElement('div');
+    section.className = 'category-section';
+    section.dataset.catId = cat.id;
+
+    section.innerHTML = `
+      <div class="category-header">
+        <div class="category-icon-wrap" style="background:${cat.color_light}">${cat.icon}</div>
+        <span class="category-name">${cat.name}</span>
+        <span class="category-count">${catEngines.length} Engine${catEngines.length!==1?'s':''}</span>
+      </div>
+      <div class="engines-grid">
+        ${catEngines.map(e=>renderEngineCard(e, cat)).join('')}
+      </div>
+    `;
+    container.appendChild(section);
+  });
+
+  updateSubtitle(engines.length);
+}
+
+// ─── RENDER SINGLE CARD ───
+function renderEngineCard(e, cat) {
+  const isLocked = userTier==='starter' && e.tier==='pro';
+  const cardColor = cat.color || '#F97316';
+  const useCases = Array.isArray(e.use_cases) ? e.use_cases : JSON.parse(e.use_cases||'[]');
+
+  const tierBadge = e.tier==='starter'
+    ? '<span class="badge badge-starter">STARTER</span>'
+    : '<span class="badge badge-pro">PRO</span>';
+
+  const extraBadge = e.badge==='HOT' ? '<span class="badge badge-hot">🔥 HOT</span>'
+    : e.badge==='NEW' ? '<span class="badge badge-new">NEW</span>'
+    : e.badge==='EXCLUSIVE' ? '<span class="badge badge-exclusive">EXCLUSIVE</span>'
+    : '';
+
+  const lockBadge = isLocked ? '<span class="badge badge-lock">🔒</span>' : '';
+
+  const useCaseHtml = useCases.slice(0,3).map(uc=>
+    `<div class="use-case-item"><div class="use-case-dot" style="background:${cardColor}"></div>${uc}</div>`
+  ).join('');
+
+  const actionText = isLocked ? '🔒 Pro Only' : 'Open Engine →';
+
+  return `
+    <div class="engine-card${isLocked?' locked':''}" style="--card-color:${cardColor}" onclick="openModal('${e.id}')">
+      <div class="card-top">
+        <div class="engine-icon" style="background:${e.icon_bg||'#FFF4ED'}">${e.icon}</div>
+        <div class="card-badges">${tierBadge}${extraBadge}${lockBadge}</div>
+      </div>
+      <div>
+        <div class="engine-name">${e.name}</div>
+        <div class="engine-tagline">${e.tagline}</div>
+      </div>
+      <div class="use-cases">
+        <div class="use-cases-title">Use Cases</div>
+        ${useCaseHtml}
+      </div>
+      <div class="card-footer">
+        <span class="card-type-label">ENGINE</span>
+        <span class="card-action" style="color:${isLocked?'var(--text-light)':cardColor}">${actionText}</span>
+      </div>
+    </div>
+  `;
+}
+
+// ─── FILTER ───
+function filterCategory(catId, el) {
+  document.querySelectorAll('.filter-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+
+  const filtered = catId==='all' ? allEngines : allEngines.filter(e=>e.category_id===catId);
+  const filteredCats = catId==='all' ? allCategories : allCategories.filter(c=>c.id===catId);
+  renderSections(filtered, filteredCats);
+}
+
+// ─── SEARCH ───
+function handleSearch(q) {
+  const lq=q.toLowerCase();
+  if(!lq) { renderSections(allEngines, allCategories); return; }
+  const filtered=allEngines.filter(e=>{
+    const ucs=(Array.isArray(e.use_cases)?e.use_cases:JSON.parse(e.use_cases||'[]')).join(' ');
+    return (e.name+e.tagline+ucs).toLowerCase().includes(lq);
+  });
+  // Reset filter tabs
+  document.querySelectorAll('.filter-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelector('[data-cat="all"]').classList.add('active');
+  renderSections(filtered, allCategories);
+  updateSubtitle(filtered.length, q);
+}
+
+function updateSubtitle(count, query='') {
+  const el=document.getElementById('engineSubtitle');
+  el.textContent = query ? `Found ${count} engine${count!==1?'s':''} for "${query}"` : `Showing all ${count} engines`;
+}
+
+// ─── MODAL ───
+function openModal(id) {
+  const e=allEngines.find(x=>x.id===id); if(!e) return;
+  const cat=allCategories.find(c=>c.id===e.category_id);
+  const isLocked=userTier==='starter'&&e.tier==='pro';
+  currentEngine=e;
+
+  document.getElementById('modalIcon').textContent=e.icon;
+  document.getElementById('modalIcon').style.background=e.icon_bg||'#FFF4ED';
+  document.getElementById('modalName').textContent=e.name;
+  document.getElementById('modalTagline').textContent=e.tagline;
+
+  const ucs=Array.isArray(e.use_cases)?e.use_cases:JSON.parse(e.use_cases||'[]');
+  document.getElementById('modalUseCases').innerHTML=ucs.map(u=>`<div class="use-case-chip">✓ ${u}</div>`).join('');
+
+  const ob=document.getElementById('modalOpenBtn'), cb=document.getElementById('modalCopyBtn');
+  document.getElementById('copySuccess').style.display='none';
+
+  if(isLocked){ob.textContent='🔒 Upgrade to Pro to Unlock';ob.href='/#pricing';cb.style.display='none';}
+  else{ob.innerHTML='⚡ Open Engine';ob.href='engine-page.html?id='+e.id;cb.style.display='flex';}
+
+  document.getElementById('modalOverlay').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+
+function closeModal(){document.getElementById('modalOverlay').classList.remove('open');document.body.style.overflow='';}
+function closeModalOverlay(ev){if(ev.target===document.getElementById('modalOverlay'))closeModal();}
+
+async function copyEngine() {
+  if(!currentEngine) return;
+  try {
+    // Try to load actual content from content_items
+    const res=await fetch(`${SUPABASE_URL}/rest/v1/content_items?id=eq.${currentEngine.id}&select=content`,{headers:{'apikey':ANON_KEY,'Authorization':'Bearer '+ANON_KEY}});
+    const data=await res.json();
+    const content=data[0]?.content||`[${currentEngine.name} — Paste engine content from Admin Panel]`;
+    await navigator.clipboard.writeText(content);
+  } catch(e) {
+    await navigator.clipboard.writeText(`[${currentEngine.name} Engine]`);
+  }
+  document.getElementById('copySuccess').style.display='block';
+  document.getElementById('modalCopyBtn').innerHTML='✅ Copied!';
+  setTimeout(()=>{document.getElementById('copySuccess').style.display='none';document.getElementById('modalCopyBtn').innerHTML='📋 Copy Engine Text';},3000);
+}
+
+// ─── SIDEBAR ───
+function openSidebar(){document.getElementById('sidebar').classList.add('open');document.getElementById('sidebarOverlay').classList.add('open');document.body.style.overflow='hidden';}
+function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('sidebarOverlay').classList.remove('open');document.body.style.overflow='';}
+function handleLogout(){if(window._supabaseClient)window._supabaseClient.auth.signOut().then(()=>location.href='login.html');}
+
+// ─── INIT ───
+async function init() {
+  const ok=await fetchData();
+  if(!ok){document.getElementById('engineSections').innerHTML='<div class="empty-state"><div class="empty-icon">⚠️</div><p>Could not load engines. Please refresh.</p></div>';return;}
+
+  // Update stats
+  document.getElementById('statTotal').textContent=allEngines.length;
+  document.getElementById('totalBadge').textContent=allEngines.length;
+
+  // Auth
+  const authCheck=setInterval(()=>{
+    if(!window._supabaseClient)return; clearInterval(authCheck);
+    window._supabaseClient.auth.getUser().then(async({data})=>{
+      if(!data?.user)return;
+      document.getElementById('userEmail').textContent=data.user.email;
+      const name=data.user.email.split('@')[0];
+      document.getElementById('userName').textContent=name.charAt(0).toUpperCase()+name.slice(1);
+
+      const{data:purchase}=await window._supabaseClient.from('purchases').select('tier').eq('user_id',data.user.id).order('created_at',{ascending:false}).limit(1).single();
+      userTier=purchase?.tier==='pro'?'pro':'starter';
+
+      if(userTier==='pro'){
+        document.getElementById('tierBadge').textContent='⚡ PRO';
+        document.getElementById('tierBadge').className='user-badge pro';
+        document.getElementById('statUnlocked').textContent=allEngines.length;
+        document.getElementById('upgradeBanner').style.display='none';
+      } else {
+        document.getElementById('tierBadge').textContent='🌟 STARTER';
+        document.getElementById('tierBadge').className='user-badge starter';
+        document.getElementById('statUnlocked').textContent=allEngines.filter(e=>e.tier==='starter').length;
+        document.getElementById('upgradeBanner').style.display='flex';
+      }
+
+      // Render after we know tier
+      renderFilterTabs();
+      renderSections(allEngines, allCategories);
+    });
+  },200);
+}
+
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();closeSidebar();}});
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>

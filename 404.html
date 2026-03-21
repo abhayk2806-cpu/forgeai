@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Page Not Found — ConversionOS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: #F4F2EE;
+      min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      padding: 24px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .card {
+      background: #fff;
+      border: 1px solid #E2E0DA;
+      border-radius: 16px;
+      padding: 52px 40px;
+      max-width: 460px; width: 100%;
+      text-align: center;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+      animation: fadeUp 0.4s ease both;
+    }
+
+    @keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
+
+    /* Logo */
+    .logo {
+      display: flex; align-items: center; justify-content: center;
+      gap: 8px; margin-bottom: 32px;
+      text-decoration: none;
+    }
+
+    .logomark {
+      width: 32px; height: 32px;
+      background: #1A1A1A; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .logomark svg { width: 16px; height: 16px; fill: #fff; }
+
+    .brand {
+      font-family: 'Syne', sans-serif;
+      font-size: 15px; font-weight: 700;
+      color: #1A1A1A;
+    }
+
+    /* 404 */
+    .error-num {
+      font-family: 'Syne', sans-serif;
+      font-size: 72px; font-weight: 800;
+      color: #1A1A1A; letter-spacing: -4px;
+      line-height: 1; margin-bottom: 16px;
+    }
+
+    .error-num span { color: #E2E0DA; }
+
+    h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: 20px; font-weight: 700;
+      color: #1A1A1A; margin-bottom: 10px;
+    }
+
+    p {
+      font-size: 14px; color: #7A7A7A;
+      line-height: 1.65; margin-bottom: 32px;
+    }
+
+    .btn-primary {
+      display: block;
+      background: #1A1A1A; color: #fff;
+      font-family: 'Syne', sans-serif;
+      font-size: 14px; font-weight: 700;
+      padding: 13px 24px; border-radius: 8px;
+      text-decoration: none; margin-bottom: 10px;
+      transition: background 150ms, transform 150ms;
+    }
+
+    .btn-primary:hover { background: #000; transform: translateY(-1px); }
+
+    .btn-secondary {
+      display: block;
+      background: #F4F2EE; color: #1A1A1A;
+      font-size: 14px; font-weight: 500;
+      padding: 13px 24px; border-radius: 8px;
+      text-decoration: none;
+      border: 1px solid #E2E0DA;
+      transition: background 150ms;
+    }
+
+    .btn-secondary:hover { background: #E2E0DA; }
+
+    .divider {
+      border: none; border-top: 1px solid #E2E0DA;
+      margin: 24px 0;
+    }
+
+    .help-text {
+      font-size: 13px; color: #7A7A7A;
+    }
+
+    .help-text a {
+      color: #1A1A1A; font-weight: 500;
+      text-decoration: underline; text-underline-offset: 2px;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+
+    <a href="/dashboard.html" class="logo">
+      <div class="logomark">
+        <svg viewBox="0 0 24 24"><path d="M13 2L4.5 13.5H11L10 22L19.5 10.5H13Z"/></svg>
+      </div>
+      <span class="brand">ConversionOS</span>
+    </a>
+
+    <div class="error-num">4<span>0</span>4</div>
+
+    <h1>Page not found</h1>
+    <p>The page you're looking for doesn't exist or may have been moved. Let's get you back on track.</p>
+
+    <a href="/dashboard.html" class="btn-primary">Go to Dashboard</a>
+    <a href="/login.html" class="btn-secondary">Go to Login</a>
+
+    <hr class="divider">
+
+    <p class="help-text">
+      Need help? <a href="/contact.html">Contact Support</a>
+    </p>
+
+  </div>
+</body>
+</html>

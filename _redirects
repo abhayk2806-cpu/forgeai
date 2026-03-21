@@ -1,0 +1,83 @@
+# ═══════════════════════════════════════════════════════════════
+# ConversionOS — Netlify Redirects & Routing
+# File: _redirects
+# Location: ROOT of your GitHub repo (same level as index.html)
+#
+# This file tells Netlify how to handle all URLs.
+# WITHOUT this file: /engine/0 gives 404 error on refresh.
+# WITH this file: everything works perfectly.
+# ═══════════════════════════════════════════════════════════════
+
+
+# ── FORCE HTTPS ─────────────────────────────────────────────────
+# Redirect all HTTP to HTTPS
+http://aiconversionengine.io/*    https://aiconversionengine.io/:splat    301!
+http://www.aiconversionengine.io/*  https://aiconversionengine.io/:splat  301!
+
+# Redirect www to non-www
+https://www.aiconversionengine.io/*  https://aiconversionengine.io/:splat  301!
+
+
+# ── AUTH PAGES ──────────────────────────────────────────────────
+/login              /login.html             200
+/signup             /signup.html            200
+/forgot-password    /forgot-password.html   200
+/reset-password     /reset-password.html    200
+
+
+# ── MAIN PAGES ──────────────────────────────────────────────────
+/dashboard          /dashboard.html         200
+/welcome            /welcome.html           200
+/templates          /templates.html         200
+/resources          /resources.html         200
+/profile            /profile.html           200
+/contact            /contact.html           200
+
+
+# ── ENGINE PAGES ────────────────────────────────────────────────
+# All engines use the same engine-page.html
+# The page reads the number from the URL itself
+/engine/0           /engine-page.html       200
+/engine/1           /engine-page.html       200
+/engine/2           /engine-page.html       200
+/engine/3           /engine-page.html       200
+/engine/4           /engine-page.html       200
+/engine/5           /engine-page.html       200
+/engine/6           /engine-page.html       200
+/engine/7           /engine-page.html       200
+
+
+# ── TOOL PAGES ──────────────────────────────────────────────────
+# All tools use the same tool-page.html
+/tool/8             /tool-page.html         200
+/tool/9             /tool-page.html         200
+/tool/10            /tool-page.html         200
+/tool/12            /tool-page.html         200
+/tool/13            /tool-page.html         200
+/tool/14            /tool-page.html         200
+
+
+# ── LEGAL PAGES ─────────────────────────────────────────────────
+/privacy            /privacy.html           200
+/terms              /terms.html             200
+/refund             /refund-policy.html     200
+/disclaimer         /disclaimer.html        200
+/cookies            /cookie-policy.html     200
+/acceptable-use     /acceptable-use.html    200
+/dmca               /dmca.html              200
+
+
+# ── ADMIN PANEL (Phase 6) ────────────────────────────────────────
+# Password protected — Netlify Identity handles this
+/admin              /admin/index.html       200
+/admin/*            /admin/index.html       200
+
+
+# ── ROOT REDIRECT ────────────────────────────────────────────────
+# Someone visits aiconversionengine.io → send to login
+/                   /index.html             200
+
+
+# ── 404 FALLBACK ─────────────────────────────────────────────────
+# Any unknown URL → show our custom 404 page
+/*                  /404.html               404

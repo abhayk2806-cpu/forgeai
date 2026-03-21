@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payment Successful — ConversionOS</title>
+  <style>html{visibility:hidden}</style>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #F7F7F5; --card: #FFFFFF; --ink: #1A1A1A;
+      --muted: #6B6B6B; --border: #E4E2DC;
+      --green: #10B981; --gbg: #ECFDF5;
+    }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg); color: var(--ink);
+      min-height: 100vh; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 24px; -webkit-font-smoothing: antialiased;
+    }
+    @keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes scaleIn { from { opacity:0; transform:scale(.6); } to { opacity:1; transform:scale(1); } }
+    .nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      height: 56px; background: var(--card);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; padding: 0 5%;
+    }
+    .nav-brand { display:flex; align-items:center; gap:8px; text-decoration:none; }
+    .nav-mark  { width:28px; height:28px; background:var(--ink); border-radius:6px; display:flex; align-items:center; justify-content:center; }
+    .nav-mark svg { width:13px; height:13px; fill:#fff; }
+    .nav-name  { font-family:'Syne',sans-serif; font-size:14px; font-weight:800; color:var(--ink); }
+    .card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 20px; padding: 48px 40px;
+      max-width: 520px; width: 100%; text-align: center;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.08);
+      animation: fadeUp .5s ease both;
+    }
+    .success-icon {
+      width: 80px; height: 80px; border-radius: 50%;
+      background: var(--gbg); border: 2px solid rgba(16,185,129,.2);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 24px; animation: scaleIn .5s .1s ease both;
+    }
+    .success-icon svg { width: 40px; height: 40px; color: var(--green); }
+    h1 { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800; letter-spacing: -1px; color: var(--ink); margin-bottom: 12px; animation: fadeUp .5s .15s ease both; }
+    .subtitle { font-size: 16px; color: var(--muted); line-height: 1.7; margin-bottom: 32px; animation: fadeUp .5s .2s ease both; }
+    .subtitle strong { color: var(--ink); }
+    .steps { background: var(--bg); border: 1px solid var(--border); border-radius: 14px; padding: 24px 20px; margin-bottom: 28px; text-align: left; animation: fadeUp .5s .25s ease both; }
+    .steps-title { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px; }
+    .step-item { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 14px; }
+    .step-item:last-child { margin-bottom: 0; }
+    .step-num { width: 24px; height: 24px; border-radius: 50%; background: var(--ink); color: #fff; font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+    .step-text { font-size: 14px; color: var(--ink); line-height: 1.6; }
+    .step-text span { color: var(--muted); font-size: 13px; display: block; margin-top: 2px; }
+    .email-notice { background: var(--gbg); border: 1px solid rgba(16,185,129,.2); border-radius: 12px; padding: 16px 18px; display: flex; align-items: flex-start; gap: 12px; margin-bottom: 28px; text-align: left; animation: fadeUp .5s .3s ease both; }
+    .email-notice svg { width: 18px; height: 18px; color: var(--green); flex-shrink: 0; margin-top: 2px; }
+    .email-notice p { font-size: 14px; color: var(--ink); line-height: 1.6; }
+    .email-notice p strong { color: var(--green); }
+    .btn-signup { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; font-family: 'Syne', sans-serif; font-weight: 800; font-size: 16px; color: #fff; background: var(--ink); border: none; border-radius: 12px; padding: 18px 28px; min-height: 56px; cursor: pointer; text-decoration: none; transition: transform 150ms, box-shadow 150ms; animation: fadeUp .5s .35s ease both; }
+    .btn-signup:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(0,0,0,.2); }
+    .help-text { font-size: 13px; color: var(--muted); margin-top: 16px; animation: fadeUp .5s .4s ease both; }
+    .help-text a { color: var(--ink); }
+    .verifying { display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 14px; color: var(--muted); padding: 40px 0; }
+    .spinner { width: 20px; height: 20px; border: 2px solid var(--border); border-top-color: var(--ink); border-radius: 50%; animation: spin .7s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @media(max-width: 480px) { .card { padding: 36px 24px; } h1 { font-size: 24px; } }
+  </style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="/" class="nav-brand">
+    <div class="nav-mark"><svg viewBox="0 0 24 24"><path d="M13 2L4.5 13.5H11L10 22L19.5 10.5H13Z"/></svg></div>
+    <span class="nav-name">ConversionOS</span>
+  </a>
+</nav>
+
+<div class="card" style="margin-top:56px" id="main-card">
+  <!-- Verifying state -->
+  <div class="verifying" id="verifying-state">
+    <div class="spinner"></div>
+    <span>Verifying payment...</span>
+  </div>
+
+  <!-- Success state (hidden initially) -->
+  <div id="success-state" style="display:none">
+    <div class="success-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <polyline points="20 6 9 17 4 12"/>
+      </svg>
+    </div>
+    <h1>Payment Successful! 🎉</h1>
+    <p class="subtitle">Welcome to ConversionOS!<br><strong>Check your email</strong> — your license key has been sent.</p>
+
+    <div class="email-notice">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+        <polyline points="22,6 12,13 2,6"/>
+      </svg>
+      <p>License key sent to your email. <strong>Check spam folder</strong> if not in inbox. Usually arrives within 2 minutes.</p>
+    </div>
+
+    <div class="steps">
+      <div class="steps-title">Next Steps</div>
+      <div class="step-item">
+        <div class="step-num">1</div>
+        <div class="step-text">Check your email for license key<span>Subject: "Your ConversionOS License Key"</span></div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">2</div>
+        <div class="step-text">Click "Create Account" below<span>Use the license key from your email</span></div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">3</div>
+        <div class="step-text">Access your engines instantly<span>Start building your funnel in minutes</span></div>
+      </div>
+    </div>
+
+    <a href="/signup.html" class="btn-signup">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+      Create Your Account
+    </a>
+    <p class="help-text">Need help? <a href="mailto:thesaanvihub@gmail.com">thesaanvihub@gmail.com</a></p>
+  </div>
+</div>
+
+<script>
+  const params  = new URLSearchParams(window.location.search);
+  const orderId = params.get('order_id') || params.get('cf_order_id') || '';
+
+  // No order_id — redirect to sales page immediately
+  if (!orderId) {
+    window.location.replace('/#pricing');
+  } else {
+    verifyAndShow(orderId);
+  }
+
+  async function verifyAndShow(orderId) {
+    try {
+      const res  = await fetch('/.netlify/functions/verify-payment?order_id=' + orderId);
+      const data = await res.json();
+
+      if (data.status === 'SUCCESS') {
+        // Payment confirmed — show success page
+        try { sessionStorage.setItem('cos_order_id', orderId); } catch(e) {}
+        document.getElementById('verifying-state').style.display = 'none';
+        document.getElementById('success-state').style.display   = 'block';
+        document.documentElement.style.visibility = '';
+      } else {
+        // Not paid — redirect back to sales page
+        window.location.replace('/#pricing');
+      }
+    } catch(e) {
+      // On error — show page anyway (webhook handles processing)
+      document.getElementById('verifying-state').style.display = 'none';
+      document.getElementById('success-state').style.display   = 'block';
+      document.documentElement.style.visibility = '';
+    }
+  }
+</script>
+
+</body>
+</html>

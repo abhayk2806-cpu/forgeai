@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome to ConversionOS 🎉</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/supabase.js"></script>
+  <script src="/auth.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #F4F2EE;
+      --card: #FFFFFF;
+      --text: #1A1A1A;
+      --muted: #7A7A7A;
+      --border: #E2E0DA;
+      --accent: #1A1A1A;
+      --accent-hover: #000;
+      --success: #2D6A4F;
+      --success-bg: #EDFBF3;
+      --success-border: #B7E8CC;
+      --shadow: 0 2px 16px rgba(0,0,0,0.08), 0 1px 4px rgba(0,0,0,0.04);
+      --shadow-lg: 0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    html, body {
+      min-height: 100%;
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        radial-gradient(circle at 15% 15%, rgba(44,44,44,0.05) 0%, transparent 45%),
+        radial-gradient(circle at 85% 85%, rgba(44,44,44,0.04) 0%, transparent 45%),
+        radial-gradient(circle at 50% 0%, rgba(44,44,44,0.03) 0%, transparent 40%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .page-wrapper {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 48px 20px 60px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ─── Confetti burst (CSS only) ─── */
+    .confetti-wrap {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 0;
+      overflow: visible;
+      pointer-events: none;
+      z-index: 999;
+    }
+
+    .confetti-piece {
+      position: absolute;
+      top: -10px;
+      width: 8px;
+      height: 8px;
+      border-radius: 2px;
+      opacity: 0;
+      animation: confettiFall 3s ease-in forwards;
+    }
+
+    @keyframes confettiFall {
+      0%   { opacity: 1; transform: translateY(0) rotate(0deg); }
+      100% { opacity: 0; transform: translateY(100vh) rotate(720deg); }
+    }
+
+    /* ─── Logo ─── */
+    .logo-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 40px;
+      animation: fadeDown 0.5s ease both;
+    }
+
+    .logo-mark {
+      width: 40px; height: 40px;
+      background: var(--accent);
+      border-radius: 9px;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.18);
+    }
+
+    .logo-mark svg { width: 22px; height: 22px; fill: #fff; }
+
+    .logo-name {
+      font-family: 'Syne', sans-serif;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.2px;
+    }
+
+    /* ─── Hero section ─── */
+    .hero {
+      text-align: center;
+      max-width: 520px;
+      margin-bottom: 40px;
+      animation: fadeUp 0.55s ease 0.1s both;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--success-bg);
+      border: 1px solid var(--success-border);
+      color: var(--success);
+      font-size: 13px;
+      font-weight: 500;
+      padding: 6px 14px;
+      border-radius: 100px;
+      margin-bottom: 20px;
+    }
+
+    .badge svg { width: 14px; height: 14px; }
+
+    .hero-title {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(28px, 6vw, 40px);
+      font-weight: 800;
+      color: var(--text);
+      letter-spacing: -1px;
+      line-height: 1.15;
+      margin-bottom: 14px;
+    }
+
+    .hero-title span {
+      position: relative;
+      display: inline-block;
+    }
+
+    /* Underline accent on highlighted word */
+    .hero-title span::after {
+      content: '';
+      position: absolute;
+      bottom: 2px;
+      left: 0; right: 0;
+      height: 3px;
+      background: var(--accent);
+      border-radius: 2px;
+      transform: scaleX(0);
+      transform-origin: left;
+      animation: underlineReveal 0.5s ease 0.8s forwards;
+    }
+
+    @keyframes underlineReveal {
+      to { transform: scaleX(1); }
+    }
+
+    .hero-desc {
+      font-size: 16px;
+      color: var(--muted);
+      line-height: 1.65;
+      max-width: 420px;
+      margin: 0 auto;
+    }
+
+    /* ─── What you got card ─── */
+    .card {
+      background: var(--card);
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      width: 100%;
+      max-width: 560px;
+      overflow: hidden;
+      margin-bottom: 20px;
+      animation: fadeUp 0.55s ease 0.2s both;
+    }
+
+    .card-header {
+      padding: 20px 24px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .card-header-icon {
+      width: 36px; height: 36px;
+      background: #F4F2EE;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .card-header-icon svg { width: 18px; height: 18px; }
+
+    .card-header-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .card-header-sub {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 1px;
+    }
+
+    /* Tier badge on card header */
+    .tier-badge {
+      margin-left: auto;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 100px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .tier-core     { background: #F0EDE8; color: #6B5E4E; }
+    .tier-complete { background: #1A1A1A; color: #fff; }
+
+    /* Engine / tool list */
+    .item-list { padding: 8px 0; }
+
+    .item-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 24px;
+      border-bottom: 1px solid #F7F5F2;
+      transition: background 150ms ease;
+    }
+
+    .item-row:last-child { border-bottom: none; }
+    .item-row:hover { background: #FAFAF8; }
+
+    .item-num {
+      width: 28px; height: 28px;
+      min-width: 28px;
+      background: #F4F2EE;
+      border-radius: 6px;
+      font-family: 'Syne', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--muted);
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .item-info { flex: 1; min-width: 0; }
+
+    .item-name {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    .item-desc {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 1px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .item-check {
+      width: 20px; height: 20px;
+      background: var(--success-bg);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .item-check svg { width: 11px; height: 11px; color: var(--success); }
+
+    .item-lock {
+      width: 20px; height: 20px;
+      background: #F4F2EE;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .item-lock svg { width: 11px; height: 11px; color: #ABABAB; }
+
+    /* Locked row styling */
+    .item-row.locked .item-name { color: #ABABAB; }
+    .item-row.locked .item-num  { opacity: 0.5; }
+
+    /* Upgrade strip */
+    .upgrade-strip {
+      background: #1A1A1A;
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .upgrade-strip-text {
+      font-size: 13px;
+      color: rgba(255,255,255,0.75);
+    }
+
+    .upgrade-strip-text strong { color: #fff; font-weight: 600; }
+
+    .btn-upgrade {
+      background: #fff;
+      color: #1A1A1A;
+      font-family: 'Syne', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 8px 18px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      white-space: nowrap;
+      transition: opacity 150ms ease, transform 150ms ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-upgrade:hover { opacity: 0.88; transform: translateY(-1px); }
+
+    /* ─── Steps card ─── */
+    .steps-card {
+      background: var(--card);
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      width: 100%;
+      max-width: 560px;
+      padding: 24px;
+      margin-bottom: 20px;
+      animation: fadeUp 0.55s ease 0.3s both;
+    }
+
+    .steps-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .steps-title svg { width: 18px; height: 18px; }
+
+    .step-item {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 20px;
+      position: relative;
+    }
+
+    .step-item:last-child { margin-bottom: 0; }
+
+    /* Vertical connector line */
+    .step-item:not(:last-child)::before {
+      content: '';
+      position: absolute;
+      left: 15px;
+      top: 32px;
+      bottom: -12px;
+      width: 1px;
+      background: var(--border);
+    }
+
+    .step-dot {
+      width: 32px; height: 32px;
+      min-width: 32px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: #fff;
+      font-family: 'Syne', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      position: relative;
+      z-index: 1;
+    }
+
+    .step-body { padding-top: 4px; }
+
+    .step-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 3px;
+    }
+
+    .step-detail {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    /* ─── CTA button ─── */
+    .cta-wrap {
+      width: 100%;
+      max-width: 560px;
+      animation: fadeUp 0.55s ease 0.4s both;
+    }
+
+    .btn-dashboard {
+      width: 100%;
+      height: 54px;
+      background: var(--accent);
+      color: #fff;
+      font-family: 'Syne', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 0.1px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: background 180ms ease, transform 150ms ease, box-shadow 150ms ease;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+    }
+
+    .btn-dashboard:hover {
+      background: var(--accent-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    }
+
+    .btn-dashboard:active { transform: translateY(0); }
+
+    .btn-dashboard svg { width: 18px; height: 18px; }
+
+    /* Support note */
+    .support-note {
+      text-align: center;
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 16px;
+      animation: fadeIn 0.5s ease 0.5s both;
+    }
+
+    .support-note a {
+      color: var(--text);
+      font-weight: 500;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
+    /* ─── Animations ─── */
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    /* ─── Responsive ─── */
+    @media (max-width: 480px) {
+      .page-wrapper { padding: 32px 16px 48px; }
+      .card-header  { padding: 16px 18px 14px; }
+      .item-row     { padding: 11px 18px; }
+      .upgrade-strip { padding: 14px 18px; }
+      .steps-card   { padding: 20px 18px; }
+      .upgrade-strip-text { font-size: 12px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Confetti container (filled by JS) -->
+<div class="confetti-wrap" id="confetti-wrap"></div>
+
+<div class="page-wrapper">
+
+  <!-- Logo -->
+  <div class="logo-row">
+    <div class="logo-mark">
+      <svg viewBox="0 0 24 24"><path d="M13 2L4.5 13.5H11L10 22L19.5 10.5H13L13 2Z"/></svg>
+    </div>
+    <span class="logo-name">ConversionOS</span>
+  </div>
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="badge">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="20 6 9 17 4 12"/>
+      </svg>
+      Purchase Confirmed
+    </div>
+
+    <h1 class="hero-title">
+      You're in.<br>
+      Let's build <span>funnels</span><br>that convert.
+    </h1>
+
+    <p class="hero-desc">
+      Your ConversionOS engines are ready. Follow the steps below to get started in the next 5 minutes.
+    </p>
+  </div>
+
+  <!-- What You Got -->
+  <div class="card" id="access-card">
+
+    <div class="card-header">
+      <div class="card-header-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#6B5E4E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/>
+        </svg>
+      </div>
+      <div>
+        <div class="card-header-title">Your Access</div>
+        <div class="card-header-sub">Everything included in your plan</div>
+      </div>
+      <!-- Tier badge — updated by JS -->
+      <div class="tier-badge tier-core" id="tier-badge">Core</div>
+    </div>
+
+    <div class="item-list">
+      <!-- Engine 0 -->
+      <div class="item-row">
+        <div class="item-num">E0</div>
+        <div class="item-info">
+          <div class="item-name">Intelligent Router</div>
+          <div class="item-desc">Auto-detects your goal & routes to the right engine</div>
+        </div>
+        <div class="item-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+      </div>
+      <!-- Engine 1 -->
+      <div class="item-row">
+        <div class="item-num">E1</div>
+        <div class="item-info">
+          <div class="item-name">Offer Positioning</div>
+          <div class="item-desc">Craft irresistible offers that sell themselves</div>
+        </div>
+        <div class="item-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+      </div>
+      <!-- Engine 2 -->
+      <div class="item-row">
+        <div class="item-num">E2</div>
+        <div class="item-info">
+          <div class="item-name">Audience Psychology</div>
+          <div class="item-desc">Deep buyer psychology & targeting profiles</div>
+        </div>
+        <div class="item-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+      </div>
+      <!-- Engine 3 -->
+      <div class="item-row">
+        <div class="item-num">E3</div>
+        <div class="item-info">
+          <div class="item-name">Hook & Angle</div>
+          <div class="item-desc">Scroll-stopping hooks for ads & content</div>
+        </div>
+        <div class="item-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+      </div>
+      <!-- Engine 4 -->
+      <div class="item-row">
+        <div class="item-num">E4</div>
+        <div class="item-info">
+          <div class="item-name">Meta Ads</div>
+          <div class="item-desc">High-converting Facebook & Instagram ad copy</div>
+        </div>
+        <div class="item-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+      </div>
+      <!-- Engine 5 -->
+      <div class="item-row">
+        <div class="item-num">E5</div>
+        <div class="item-info">
+          <div class="item-name">Conversion Page</div>
+          <div class="item-desc">Full sales & landing page copy system</div>
+        </div>
+        <div class="item-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+      </div>
+      <!-- Engine 6 -->
+      <div class="item-row">
+        <div class="item-num">E6</div>
+        <div class="item-info">
+          <div class="item-name">Email Follow-up</div>
+          <div class="item-desc">Complete email sequence builder</div>
+        </div>
+        <div class="item-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+      </div>
+      <!-- Engine 7 -->
+      <div class="item-row">
+        <div class="item-num">E7</div>
+        <div class="item-info">
+          <div class="item-name">Performance Diagnosis</div>
+          <div class="item-desc">Find & fix funnel leaks fast</div>
+        </div>
+        <div class="item-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+      </div>
+      <!-- Templates -->
+      <div class="item-row">
+        <div class="item-num">📋</div>
+        <div class="item-info">
+          <div class="item-name">15 Execution Templates</div>
+          <div class="item-desc">Ready-to-use templates for every scenario</div>
+        </div>
+        <div class="item-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+      </div>
+
+      <!-- Advanced Tools (locked for Core, unlocked for Complete) -->
+      <div class="item-row locked" id="tool-row-8">
+        <div class="item-num">T8</div>
+        <div class="item-info">
+          <div class="item-name">Competitive Intelligence</div>
+          <div class="item-desc">Advanced — Complete plan only</div>
+        </div>
+        <div class="item-lock" id="lock-8"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+      </div>
+      <div class="item-row locked" id="tool-row-9">
+        <div class="item-num">T9</div>
+        <div class="item-info">
+          <div class="item-name">Visual Asset Generator</div>
+          <div class="item-desc">Advanced — Complete plan only</div>
+        </div>
+        <div class="item-lock" id="lock-9"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+      </div>
+      <div class="item-row locked" id="tool-row-10">
+        <div class="item-num">T10</div>
+        <div class="item-info">
+          <div class="item-name">Funnel Clone</div>
+          <div class="item-desc">Advanced — Complete plan only</div>
+        </div>
+        <div class="item-lock" id="lock-10"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+      </div>
+      <div class="item-row locked" id="tool-row-12">
+        <div class="item-num">T12</div>
+        <div class="item-info">
+          <div class="item-name">Content Repurpose</div>
+          <div class="item-desc">Advanced — Complete plan only</div>
+        </div>
+        <div class="item-lock" id="lock-12"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+      </div>
+      <div class="item-row locked" id="tool-row-13">
+        <div class="item-num">T13</div>
+        <div class="item-info">
+          <div class="item-name">Legal Compliance</div>
+          <div class="item-desc">Advanced — Complete plan only</div>
+        </div>
+        <div class="item-lock" id="lock-13"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+      </div>
+      <div class="item-row locked" id="tool-row-14">
+        <div class="item-num">T14</div>
+        <div class="item-info">
+          <div class="item-name">Psychology Explainer</div>
+          <div class="item-desc">Advanced — Complete plan only</div>
+        </div>
+        <div class="item-lock" id="lock-14"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+      </div>
+    </div>
+
+    <!-- Upgrade strip (hidden for Complete users) -->
+    <div class="upgrade-strip" id="upgrade-strip">
+      <div class="upgrade-strip-text">
+        <strong>Unlock 6 Advanced Tools</strong> —
+        <!-- Price shown based on IP, default hidden until detected -->
+        <span id="upgrade-price-text">Upgrade to Complete plan</span>
+      </div>
+      <a href="#" class="btn-upgrade" id="upgrade-btn">
+        Upgrade ↗
+      </a>
+    </div>
+
+  </div><!-- /card -->
+
+  <!-- Get Started Steps -->
+  <div class="steps-card">
+    <div class="steps-title">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+      </svg>
+      Get started in 5 minutes
+    </div>
+
+    <div class="step-item">
+      <div class="step-dot">1</div>
+      <div class="step-body">
+        <div class="step-name">Open Claude.ai</div>
+        <div class="step-detail">Go to claude.ai and open a new Project (or start a new chat).</div>
+      </div>
+    </div>
+
+    <div class="step-item">
+      <div class="step-dot">2</div>
+      <div class="step-body">
+        <div class="step-name">Go to your Dashboard</div>
+        <div class="step-detail">Click any engine below. Use the one-click Copy button to copy the full engine text.</div>
+      </div>
+    </div>
+
+    <div class="step-item">
+      <div class="step-dot">3</div>
+      <div class="step-body">
+        <div class="step-name">Paste into Claude</div>
+        <div class="step-detail">Paste the engine as your Claude Project instructions (or as the first message in your chat).</div>
+      </div>
+    </div>
+
+    <div class="step-item">
+      <div class="step-dot">4</div>
+      <div class="step-body">
+        <div class="step-name">Start building 🚀</div>
+        <div class="step-detail">Tell Claude what you want to build. The engine will guide you step-by-step.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-wrap">
+    <a href="/dashboard.html" class="btn-dashboard">
+      Go to Dashboard
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="5" y1="12" x2="19" y2="12"/>
+        <polyline points="12 5 19 12 12 19"/>
+      </svg>
+    </a>
+
+    <p class="support-note">
+      Need help? Email us at <a href="/cdn-cgi/l/email-protection#9eeaf6fbedfffff0e8f7f6ebfcdef9f3fff7f2b0fdf1f3"><span class="__cf_email__" data-cfemail="75011d100614141b031c1d0017351218141c195b161a18">[email&#160;protected]</span></a> — we reply within 24 hrs.
+    </p>
+  </div>
+
+</div><!-- /page-wrapper -->
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  // ─── Confetti burst ───────────────────────────────────────────────
+  (function spawnConfetti() {
+    const wrap   = document.getElementById('confetti-wrap');
+    const colors = ['#1A1A1A','#4A90E2','#27AE60','#F39C12','#E74C3C','#8E44AD','#F4F2EE'];
+    const count  = 60;
+    for (let i = 0; i < count; i++) {
+      const el = document.createElement('div');
+      el.className = 'confetti-piece';
+      el.style.cssText = `
+        left: ${Math.random() * 100}%;
+        background: ${colors[Math.floor(Math.random() * colors.length)]};
+        width: ${6 + Math.random() * 6}px;
+        height: ${6 + Math.random() * 6}px;
+        border-radius: ${Math.random() > 0.5 ? '50%' : '2px'};
+        animation-delay: ${Math.random() * 1.2}s;
+        animation-duration: ${2.5 + Math.random() * 1.5}s;
+      `;
+      wrap.appendChild(el);
+    }
+    setTimeout(() => wrap.remove(), 5000);
+  })();
+
+  // ─── Pricing config ───────────────────────────────────────────────
+  const PRICING = {
+    IN: {
+      currency: 'INR',
+      symbol: '₹',
+      core:     999,
+      complete: 1999,
+      upgrade:  1000,
+      // Gumroad/Cashfree India upgrade link — replace with real link
+      upgradeUrl: 'https://app.cashfree.com/payment-link/UPGRADE_INR',
+      stripText: (p) => `Upgrade to Complete for just <strong>₹${p.upgrade.toLocaleString('en-IN')} more</strong>`
+    },
+    DEFAULT: {
+      currency: 'USD',
+      symbol: '$',
+      core:     37,
+      complete: 67,
+      upgrade:  30,
+      // Gumroad global upgrade link — replace with real link
+      upgradeUrl: 'https://habitforge24.gumroad.com/l/conversionos-upgrade',
+      stripText: (p) => `Upgrade to Complete for just <strong>$${p.upgrade} more</strong>`
+    }
+  };
+
+  // ─── IP-based country detection ──────────────────────────────────
+  // Uses free ipapi.co API (no key needed, 1000 req/day free)
+  async function detectCountry() {
+    try {
+      const res  = await fetch('https://ipapi.co/json/', { signal: AbortSignal.timeout(4000) });
+      const data = await res.json();
+      return data.country_code || 'DEFAULT';
+    } catch (e) {
+      // If API fails (network issue, ad blocker), fallback to DEFAULT (USD)
+      console.warn('IP detection failed, defaulting to USD:', e.message);
+      return 'DEFAULT';
+    }
+  }
+
+  // ─── Apply pricing to upgrade strip ──────────────────────────────
+  function applyPricing(countryCode) {
+    const p = countryCode === 'IN' ? PRICING.IN : PRICING.DEFAULT;
+
+    // Update upgrade strip text
+    const textEl = document.getElementById('upgrade-price-text');
+    textEl.innerHTML = p.stripText(p);
+
+    // Update upgrade button — use checkout modal for INR, Gumroad for USD
+    const upgradeBtn = document.getElementById('upgrade-btn');
+    upgradeBtn.onclick = function(e) {
+      e.preventDefault();
+      if (countryCode === 'IN') {
+        openCheckoutModal('upgrade');
+      } else {
+        window.location.href = 'https://habitforge24.gumroad.com/l/conversionos-upgrade';
+      }
+    };
+  }
+
+  // ─── Tier-based display ───────────────────────────────────────────
+  // TODO: Phase 5 — Read tier from Supabase session user metadata
+  // const { data: { user } } = await supabase.auth.getUser();
+  // const tier = user?.user_metadata?.tier || 'core';
+  const tier = 'core'; // Placeholder — replaced in Phase 5
+
+  function applyTier(t) {
+    if (t === 'complete') {
+      // Update badge
+      const badge = document.getElementById('tier-badge');
+      badge.textContent = 'Complete';
+      badge.className   = 'tier-badge tier-complete';
+
+      // Unlock all tools
+      [8, 9, 10, 12, 13, 14].forEach(id => {
+        const row  = document.getElementById(`tool-row-${id}`);
+        const lock = document.getElementById(`lock-${id}`);
+        row.classList.remove('locked');
+        row.querySelector('.item-name').style.color = '';
+        lock.className = 'item-check';
+        lock.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>`;
+        row.querySelector('.item-desc').textContent = 'Included in your Complete plan';
+      });
+
+      // Hide upgrade strip entirely for Complete users
+      document.getElementById('upgrade-strip').style.display = 'none';
+    }
+  }
+
+  // ─── Init ────────────────────────────────────────────────────────�
+  // ─── Init ────────────────────────────────────────────────────────
+  async function init() {
+    // Get tier from COSU
+    const t = window.COSU?.tier ?? 'core';
+    applyTier(t);
+
+    // Detect country for pricing
+    try {
+      const r = await fetch('https://ipapi.co/json/');
+      const d = await r.json();
+      applyPricing(d.country_code || 'IN');
+    } catch(e) {
+      applyPricing('IN');
+    }
+  }
+
+  // ─── Checkout Modal ───────────────────────────────────────────────
+  function openCheckoutModal(plan) {
+    const modal = document.getElementById('cos-checkout-modal');
+    if(!modal) return;
+    modal.dataset.plan = plan;
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+    document.getElementById('cos-modal-name').value = window.COSU?.name || '';
+    document.getElementById('cos-modal-email').value = window.COSU?.email || '';
+    document.getElementById('cos-modal-error').textContent = '';
+  }
+
+  function closeCheckoutModal() {
+    const modal = document.getElementById('cos-checkout-modal');
+    if(!modal) return;
+    modal.style.display = 'none';
+    document.body.style.overflow = '';
+  }
+
+  async function submitCheckout() {
+    const modal = document.getElementById('cos-checkout-modal');
+    const plan  = modal.dataset.plan;
+    const name  = document.getElementById('cos-modal-name').value.trim();
+    const email = document.getElementById('cos-modal-email').value.trim();
+    const errEl = document.getElementById('cos-modal-error');
+    const btn   = document.getElementById('cos-modal-btn');
+
+    errEl.textContent = '';
+    if(!name) { errEl.textContent = 'Please enter your name.'; return; }
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { errEl.textContent = 'Please enter a valid email.'; return; }
+
+    btn.disabled = true;
+    btn.textContent = 'Creating order...';
+
+    try {
+      const res  = await fetch('/.netlify/functions/create-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, plan })
+      });
+      const data = await res.json();
+
+      if(!res.ok || !data.paymentSessionId) {
+        errEl.textContent = data.error || 'Something went wrong. Please try again.';
+        btn.disabled = false;
+        btn.textContent = 'Proceed to Payment →';
+        return;
+      }
+
+      if(!window.Cashfree) {
+        await new Promise((res, rej) => {
+          const s = document.createElement('script');
+          s.src = 'https://sdk.cashfree.com/js/v3/cashfree.js';
+          s.onload = res; s.onerror = rej;
+          document.head.appendChild(s);
+        });
+      }
+      const cashfree = window.Cashfree({ mode: data.cfEnv === 'PROD' ? 'production' : 'sandbox' });
+      closeCheckoutModal();
+      cashfree.checkout({ paymentSessionId: data.paymentSessionId, redirectTarget: '_self' });
+
+    } catch(err) {
+      errEl.textContent = 'Connection error. Please try again.';
+      btn.disabled = false;
+      btn.textContent = 'Proceed to Payment →';
+    }
+  }
+
+  // Wait for COSU then init
+  function waitForCOSU(cb, tries=0) {
+    if(window.COSU) cb();
+    else if(tries < 20) setTimeout(() => waitForCOSU(cb, tries+1), 100);
+    else window.location.replace('/login.html');
+  }
+  waitForCOSU(init);
+
+</script>
+
+<!-- CHECKOUT MODAL -->
+<div id="cos-checkout-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:9999;align-items:center;justify-content:center;padding:16px;">
+  <div style="background:#fff;border-radius:20px;padding:36px 32px;max-width:420px;width:100%;position:relative;box-shadow:0 20px 60px rgba(0,0,0,0.2);">
+    <button onclick="closeCheckoutModal()" style="position:absolute;top:16px;right:16px;background:none;border:none;cursor:pointer;font-size:20px;color:#6B6B6B;">✕</button>
+    <div style="font-size:24px;margin-bottom:8px;">⚡</div>
+    <h3 style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:#1A1A1A;margin:0 0 6px;">Upgrade to Complete!</h3>
+    <p style="font-size:14px;color:#6B6B6B;margin:0 0 24px;line-height:1.6;">Confirm your details to proceed to secure checkout.</p>
+    <div style="margin-bottom:14px;">
+      <label style="font-size:13px;font-weight:600;color:#1A1A1A;display:block;margin-bottom:6px;">Full Name</label>
+      <input id="cos-modal-name" type="text" style="width:100%;padding:12px 14px;border:1.5px solid #E4E2DC;border-radius:10px;font-size:15px;outline:none;font-family:'DM Sans',sans-serif;">
+    </div>
+    <div style="margin-bottom:16px;">
+      <label style="font-size:13px;font-weight:600;color:#1A1A1A;display:block;margin-bottom:6px;">Email Address</label>
+      <input id="cos-modal-email" type="email" style="width:100%;padding:12px 14px;border:1.5px solid #E4E2DC;border-radius:10px;font-size:15px;outline:none;font-family:'DM Sans',sans-serif;">
+    </div>
+    <div id="cos-modal-error" style="color:#DC2626;font-size:13px;margin-bottom:12px;min-height:18px;"></div>
+    <button id="cos-modal-btn" onclick="submitCheckout()" style="width:100%;background:#1A1A1A;color:#fff;border:none;border-radius:12px;padding:16px;font-family:'Syne',sans-serif;font-size:16px;font-weight:800;cursor:pointer;">Proceed to Payment →</button>
+    <p style="font-size:12px;color:#ABABAB;text-align:center;margin-top:14px;">🔒 Secured by Cashfree · No card stored</p>
+  </div>
+</div>
+
+</body>
+</html>
