@@ -72,11 +72,14 @@ async function sendEvent({
   }
 
   // Build user_data — hash all PII
+  // Phone: strip non-digits before hashing (Meta requirement)
+  const rawPhone = userData.phone ? userData.phone.toString().replace(/\D/g, '') : null;
   const user_data = removeUndefined({
     em:                userData.email     ? hash(userData.email)     : undefined,
-    ph:                userData.phone     ? hash(userData.phone)     : undefined,
+    ph:                rawPhone           ? hash(rawPhone)           : undefined,
     fn:                userData.firstName ? hash(userData.firstName) : undefined,
     ln:                userData.lastName  ? hash(userData.lastName)  : undefined,
+    country:           userData.country   ? hash(userData.country.toLowerCase()) : undefined,
     client_ip_address: userData.ip        || undefined,
     client_user_agent: userData.userAgent || undefined,
     fbc:               userData.fbc       || undefined,

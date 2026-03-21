@@ -272,6 +272,32 @@
   };
 
   // ══════════════════════════════════════════════
+  // AUTO-ATTACH: ViewContent on #pricing scroll
+  // Fires ONCE when pricing section enters viewport
+  // Sent to both Pixel + CAPI with same eventId for deduplication
+  // ══════════════════════════════════════════════
+  function autoAttachViewContent() {
+    const pricingSection = document.getElementById('pricing');
+    if (!pricingSection || typeof IntersectionObserver === 'undefined') return;
+
+    let fired = false;
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting && !fired) {
+          fired = true;
+          observer.unobserve(pricingSection);
+          window.ForgeAI.trackViewContent({
+            contentName:     'Pricing',
+            contentCategory: 'landing_page',
+          });
+        }
+      });
+    }, { threshold: 0.2 });
+
+    observer.observe(pricingSection);
+  }
+
+  // ══════════════════════════════════════════════
   // AUTO-ATTACH: Checkout buttons
   // Finds all elements with data-track="checkout"
   // and attaches InitiateCheckout tracking
@@ -329,6 +355,7 @@
   // INIT — Run after DOM ready
   // ══════════════════════════════════════════════
   function init() {
+    autoAttachViewContent();
     autoAttachCheckoutButtons();
     autoAttachLeadForms();
     console.log('[ForgeAI Pixel] ✅ Tracking initialized');

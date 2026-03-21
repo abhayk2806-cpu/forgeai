@@ -68,6 +68,7 @@ exports.handler = async (event) => {
     const orderTags = order.order_tags ?? {};
     const fbc       = orderTags.fbc     || undefined;
     const fbp       = orderTags.fbp     || undefined;
+    const phone     = orderTags.phone   || undefined;
     // eventId from frontend — for deduplication with Pixel
     const fbEventId = orderTags.fb_event_id || `purchase_cf_${orderId}`;
 
@@ -99,7 +100,7 @@ exports.handler = async (event) => {
 
     // ── Handle Upgrade ─────────────────────────────────────
     if (tier === 'upgrade') {
-      await handleUpgrade(email, fbc, fbp, fbEventId, orderId, amount);
+      await handleUpgrade(email, fbc, fbp, fbEventId, orderId, amount, phone);
       return { statusCode: 200, body: 'UPGRADED' };
     }
 
@@ -134,8 +135,10 @@ exports.handler = async (event) => {
       eventSourceUrl: SITE_URL,
       userData: {
         email,
+        phone,
         firstName: nameParts[0]                || undefined,
         lastName:  nameParts.slice(1).join(' ')|| undefined,
+        country:   'in',
         fbc,
         fbp,
       },
@@ -158,7 +161,7 @@ exports.handler = async (event) => {
 };
 
 // ══════════════════════════════════════════════════════════
-async function handleUpgrade(email, fbc, fbp, fbEventId, orderId, amount) {
+async function handleUpgrade(email, fbc, fbp, fbEventId, orderId, amount, phone) {
   // Update purchases table
   await supabase.from('purchases').update({ tier: 'pro' }).eq('email', email);
 
@@ -183,7 +186,7 @@ async function handleUpgrade(email, fbc, fbp, fbEventId, orderId, amount) {
     eventName:      'Purchase',
     eventId:        fbEventId || `upgrade_cf_${orderId}`,
     eventSourceUrl: SITE_URL,
-    userData:       { email, fbc, fbp },
+    userData:       { email, phone, country: 'in', fbc, fbp },
     customData: {
       currency:     'INR',
       value:        amount,

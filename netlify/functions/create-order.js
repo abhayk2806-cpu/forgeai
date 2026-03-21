@@ -26,9 +26,9 @@ exports.handler = async (event) => {
     return { statusCode: 405, headers, body: JSON.stringify({ error: 'Method Not Allowed' }) };
   }
 
-  let name, email, plan, fbc, fbp, fb_event_id;
+  let name, email, phone, plan, fbc, fbp, fb_event_id;
   try {
-    ({ name, email, plan, fbc, fbp, fb_event_id } = JSON.parse(event.body || '{}'));
+    ({ name, email, phone, plan, fbc, fbp, fb_event_id } = JSON.parse(event.body || '{}'));
   } catch {
     return { statusCode: 400, headers, body: JSON.stringify({ error: 'Invalid JSON' }) };
   }
@@ -92,6 +92,7 @@ exports.handler = async (event) => {
     order_note: selectedPlan.label,
     order_tags: {
       plan,
+      phone:        phone        || '',
       fbc:          fbc          || '',
       fbp:          fbp          || '',
       // Pass frontend-generated eventId for CAPI deduplication

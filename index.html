@@ -2145,9 +2145,13 @@ body.region-international .inr-only { display: none !important; }
       <label style="font-size:13px;font-weight:600;color:#FAFAFA;display:block;margin-bottom:6px;">Full Name</label>
       <input id="cos-modal-name" type="text" placeholder="Your name" autocomplete="name" style="width:100%;padding:12px 14px;background:#111114;border:1px solid rgba(255,255,255,0.12);border-radius:10px;font-size:16px;color:#FAFAFA;outline:none;-webkit-appearance:none;">
     </div>
-    <div style="margin-bottom:16px;">
+    <div style="margin-bottom:14px;">
       <label style="font-size:13px;font-weight:600;color:#FAFAFA;display:block;margin-bottom:6px;">Email Address</label>
       <input id="cos-modal-email" type="email" data-track="lead" placeholder="your@email.com" autocomplete="email" inputmode="email" style="width:100%;padding:12px 14px;background:#111114;border:1px solid rgba(255,255,255,0.12);border-radius:10px;font-size:16px;color:#FAFAFA;outline:none;-webkit-appearance:none;">
+    </div>
+    <div style="margin-bottom:16px;">
+      <label style="font-size:13px;font-weight:600;color:#FAFAFA;display:block;margin-bottom:6px;">WhatsApp Number <span style="font-weight:400;color:#71717A;">(Optional — for order updates)</span></label>
+      <input id="cos-modal-phone" type="tel" placeholder="+91 98765 43210" autocomplete="tel" inputmode="tel" style="width:100%;padding:12px 14px;background:#111114;border:1px solid rgba(255,255,255,0.12);border-radius:10px;font-size:16px;color:#FAFAFA;outline:none;-webkit-appearance:none;">
     </div>
     <div id="cos-modal-error" style="color:#EF4444;font-size:13px;margin-bottom:12px;min-height:18px;"></div>
     <button id="cos-modal-btn" onclick="submitCheckout()" style="width:100%;background:#F97316;color:#fff;border:none;border-radius:12px;padding:16px;font-size:16px;font-weight:700;cursor:pointer;min-height:52px;">Proceed to Payment →</button>
@@ -2237,6 +2241,7 @@ function openCheckoutModal(plan) {
   document.body.style.overflow = 'hidden';
   document.getElementById('cos-modal-name').value = '';
   document.getElementById('cos-modal-email').value = '';
+  document.getElementById('cos-modal-phone').value = '';
   document.getElementById('cos-modal-error').textContent = '';
   const btn = document.getElementById('cos-modal-btn');
   btn.disabled = false;
@@ -2263,6 +2268,7 @@ async function submitCheckout() {
   const plan  = _checkoutPlan;
   const name  = document.getElementById('cos-modal-name').value.trim();
   const email = document.getElementById('cos-modal-email').value.trim();
+  const phone = document.getElementById('cos-modal-phone').value.trim();
   const errEl = document.getElementById('cos-modal-error');
   const btn   = document.getElementById('cos-modal-btn');
 
@@ -2282,6 +2288,7 @@ async function submitCheckout() {
       body: JSON.stringify({
         name,
         email,
+        phone: phone || '',
         plan,
         fbc: getCookie('_fbc') || sessionStorage.getItem('_fbc') || '',
         fbp: getCookie('_fbp') || '',
