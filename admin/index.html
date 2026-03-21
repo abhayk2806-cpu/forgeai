@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Panel — ForgeAI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F7F7F5;--surface:#FFFFFF;--border:#E8E8E4;--text:#1A1A1A;--text-muted:#6B6B6B;
+  --text-light:#9B9B9B;--accent:#F97316;--accent-light:#FFF4ED;--accent-hover:#EA6C0A;
+  --green:#10B981;--green-light:#ECFDF5;--blue:#3B82F6;--blue-light:#EFF6FF;
+  --red:#EF4444;--red-light:#FEF2F2;--purple:#8B5CF6;
+  --radius:12px;
+  --shadow:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.04);
+  --shadow-lg:0 10px 15px rgba(0,0,0,.08),0 4px 6px rgba(0,0,0,.04);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+
+/* TOPBAR */
+.topbar{background:#1A1A1A;padding:0 24px;height:56px;display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:100}
+.logo{display:flex;align-items:center;gap:8px;text-decoration:none}
+.logo-icon{width:30px;height:30px;background:var(--accent);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:15px}
+.logo-text{font-size:15px;font-weight:700;color:white}
+.logo-text span{color:var(--accent)}
+.admin-badge{background:rgba(249,115,22,.2);color:var(--accent);font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;font-family:'JetBrains Mono',monospace}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:12px}
+.save-indicator{font-size:12px;font-family:'JetBrains Mono',monospace;color:rgba(255,255,255,.4)}
+.save-indicator.saving{color:var(--accent)}
+.save-indicator.saved{color:var(--green)}
+.btn-portal{padding:6px 12px;background:rgba(255,255,255,.1);color:white;border:1px solid rgba(255,255,255,.15);border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;text-decoration:none;font-family:'DM Sans',sans-serif;transition:all .15s}
+.btn-portal:hover{background:rgba(255,255,255,.2)}
+
+/* LAYOUT */
+.layout{display:grid;grid-template-columns:220px 1fr;min-height:calc(100vh - 56px)}
+
+/* SIDEBAR */
+.sidebar{background:var(--surface);border-right:1px solid var(--border);padding:12px 0;position:sticky;top:56px;height:calc(100vh - 56px);overflow-y:auto}
+.nav-group-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-light);padding:10px 14px 4px}
+.nav-item{display:flex;align-items:center;gap:8px;padding:8px 14px;font-size:13px;font-weight:500;color:var(--text-muted);cursor:pointer;transition:all .15s;border-left:2px solid transparent}
+.nav-item:hover{background:var(--bg);color:var(--text)}
+.nav-item.active{background:var(--accent-light);color:var(--accent);border-left-color:var(--accent);font-weight:600}
+.nav-item .ni{font-size:14px;width:16px;text-align:center}
+.nav-item .nb{margin-left:auto;background:var(--accent);color:white;font-size:9px;font-weight:700;padding:2px 5px;border-radius:8px}
+.nav-divider{height:1px;background:var(--border);margin:8px 0}
+.nav-item.red{color:var(--red)}
+.nav-item.red:hover{background:var(--red-light)}
+
+/* MAIN */
+.panel{padding:24px;overflow-y:auto}
+
+/* PAGE HEADER */
+.page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;gap:12px;flex-wrap:wrap}
+.page-title{font-size:20px;font-weight:700}
+.page-sub{font-size:13px;color:var(--text-muted);margin-top:3px}
+.header-btns{display:flex;gap:8px}
+
+/* BTN */
+.btn{padding:8px 14px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;border:none;transition:all .15s;display:inline-flex;align-items:center;gap:5px}
+.btn-primary{background:var(--accent);color:white}.btn-primary:hover{background:var(--accent-hover)}
+.btn-secondary{background:var(--bg);color:var(--text);border:1px solid var(--border)}.btn-secondary:hover{background:var(--border)}
+.btn-danger{background:var(--red-light);color:var(--red);border:1px solid #FECACA}.btn-danger:hover{background:#FECACA}
+.btn-success{background:var(--green-light);color:var(--green);border:1px solid #A7F3D0}
+.btn-sm{padding:5px 10px;font-size:12px}
+.btn-xs{padding:4px 8px;font-size:11px}
+
+/* ALERT */
+.alert{padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:14px;display:flex;align-items:flex-start;gap:8px;line-height:1.5}
+.alert-info{background:var(--blue-light);border:1px solid #BFDBFE;color:#1E40AF}
+.alert-warn{background:var(--accent-light);border:1px solid #FED7AA;color:#9A3412}
+.alert-success{background:var(--green-light);border:1px solid #A7F3D0;color:#065F46}
+
+/* STATS ROW */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px}
+.stat-mini{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px}
+.stat-mini-val{font-size:22px;font-weight:700}
+.stat-mini-lbl{font-size:12px;color:var(--text-muted);margin-top:2px}
+
+/* SECTION */
+.section{display:none}
+.section.active{display:block}
+
+/* ENGINE LIST */
+.engine-list{display:flex;flex-direction:column;gap:10px}
+.engine-row{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)}
+.engine-row-header{padding:12px 16px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:background .15s}
+.engine-row-header:hover{background:var(--bg)}
+.engine-row-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.engine-row-name{font-size:14px;font-weight:700;flex:1}
+.engine-row-meta{font-size:11px;font-family:'JetBrains Mono',monospace}
+.engine-row-body{padding:16px;border-top:1px solid var(--border);display:none}
+.engine-row-body.open{display:block}
+.field-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text-light);margin-bottom:6px;display:flex;justify-content:space-between}
+.field-label .cc{font-weight:400;text-transform:none;letter-spacing:0;color:var(--text-light)}
+textarea.fi{width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--border);border-radius:8px;font-size:13px;color:var(--text);font-family:'JetBrains Mono',monospace;resize:vertical;outline:none;transition:border-color .15s;line-height:1.6}
+textarea.fi:focus{border-color:var(--accent);background:white}
+input.fi{width:100%;padding:8px 12px;background:var(--bg);border:1px solid var(--border);border-radius:8px;font-size:13px;color:var(--text);font-family:'DM Sans',sans-serif;outline:none;transition:border-color .15s}
+input.fi:focus{border-color:var(--accent);background:white}
+select.fi{width:100%;padding:8px 12px;background:var(--bg);border:1px solid var(--border);border-radius:8px;font-size:13px;color:var(--text);font-family:'DM Sans',sans-serif;outline:none;cursor:pointer;transition:border-color .15s}
+select.fi:focus{border-color:var(--accent)}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.field-group{margin-bottom:12px}
+.row-footer{display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding-top:12px;border-top:1px solid var(--border)}
+
+/* TABLE */
+.table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)}
+.table{width:100%;border-collapse:collapse}
+.table th{padding:10px 14px;text-align:left;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text-light);background:var(--bg);border-bottom:1px solid var(--border)}
+.table td{padding:10px 14px;font-size:13px;border-bottom:1px solid var(--border);vertical-align:middle}
+.table tr:last-child td{border-bottom:none}
+.table tr:hover td{background:#FAFAF8}
+.badge-tier{padding:2px 7px;border-radius:5px;font-size:10px;font-weight:700;font-family:'JetBrains Mono',monospace}
+.t-pro{background:var(--accent-light);color:var(--accent)}
+.t-starter{background:var(--blue-light);color:var(--blue)}
+.lk{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-muted)}
+
+/* ADD FORM */
+.add-form{background:var(--surface);border:2px dashed var(--border);border-radius:var(--radius);padding:20px;margin-bottom:20px;display:none}
+.add-form.open{display:block}
+.add-form-title{font-size:15px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+
+/* CATEGORY CARDS */
+.cat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:20px}
+.cat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px;display:flex;align-items:center;gap:10px;box-shadow:var(--shadow)}
+.cat-icon-wrap{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.cat-name{font-size:13px;font-weight:700;flex:1}
+.cat-count{font-size:11px;color:var(--text-muted)}
+.cat-actions{display:flex;gap:4px}
+
+/* TOAST */
+.toast{position:fixed;bottom:20px;right:20px;background:#1A1A1A;color:white;padding:10px 16px;border-radius:10px;font-size:13px;font-weight:500;z-index:999;box-shadow:var(--shadow-lg);transform:translateY(80px);opacity:0;transition:all .3s;display:flex;align-items:center;gap:8px}
+.toast.show{transform:translateY(0);opacity:1}
+
+/* MODAL */
+.moverlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:center;justify-content:center;padding:20px}
+.moverlay.open{display:flex}
+.mbox{background:var(--surface);border-radius:14px;width:100%;max-width:480px;max-height:85vh;overflow-y:auto;box-shadow:0 25px 50px rgba(0,0,0,.15)}
+.mbox-header{padding:20px 20px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--surface);border-radius:14px 14px 0 0}
+.mbox-title{font-size:16px;font-weight:700}
+.mbox-close{background:var(--bg);border:none;width:28px;height:28px;border-radius:7px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;color:var(--text-muted);transition:all .15s}
+.mbox-close:hover{background:var(--border)}
+.mbox-body{padding:18px 20px 20px}
+
+/* SEARCH */
+.search-wrap{display:flex;align-items:center;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:7px 12px;gap:8px;margin-bottom:14px}
+.search-wrap input{border:none;background:none;outline:none;font-size:13px;color:var(--text);font-family:'DM Sans',sans-serif;width:100%}
+
+/* RESPONSIVE */
+@media(max-width:800px){
+  .layout{grid-template-columns:1fr}
+  .sidebar{display:none}
+  .stats-row{grid-template-columns:repeat(2,1fr)}
+  .field-row{grid-template-columns:1fr}
+}
+@media(max-width:500px){
+  .topbar{padding:0 14px}
+  .panel{padding:14px}
+  .stats-row{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a class="logo" href="../dashboard.html"><div class="logo-icon">⚡</div><span class="logo-text">Forge<span>AI</span></span></a>
+  <span class="admin-badge">ADMIN</span>
+  <div class="topbar-right">
+    <span class="save-indicator" id="saveInd">—</span>
+    <a href="../dashboard.html" class="btn-portal">👁️ Portal</a>
+  </div>
+</div>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="nav-group-title">Overview</div>
+    <div class="nav-item active" onclick="show('overview',this)"><span class="ni">🏠</span> Dashboard</div>
+    <div class="nav-item" onclick="show('users',this)"><span class="ni">👥</span> Users <span class="nb" id="userBadge">0</span></div>
+    <div class="nav-divider"></div>
+    <div class="nav-group-title">Content</div>
+    <div class="nav-item" onclick="show('categories',this)"><span class="ni">📁</span> Categories</div>
+    <div class="nav-item" onclick="show('engines',this)"><span class="ni">⚡</span> Engines <span class="nb" id="engBadge">0</span></div>
+    <div class="nav-item" onclick="show('content',this)"><span class="ni">📝</span> Engine Content</div>
+    <div class="nav-divider"></div>
+    <div class="nav-group-title">Config</div>
+    <div class="nav-item" onclick="show('pricing',this)"><span class="ni">💰</span> Pricing</div>
+    <div class="nav-divider"></div>
+    <div class="nav-item red" onclick="doLogout()"><span class="ni">🚪</span> Logout</div>
+  </aside>
+
+  <main class="panel">
+
+    <!-- ── OVERVIEW ── -->
+    <div class="section active" id="s-overview">
+      <div class="page-header"><div><div class="page-title">Admin Dashboard</div><div class="page-sub">ForgeAI Control Center</div></div></div>
+      <div class="stats-row">
+        <div class="stat-mini"><div class="stat-mini-val" id="ov-total">—</div><div class="stat-mini-lbl">Total Engines</div></div>
+        <div class="stat-mini"><div class="stat-mini-val" id="ov-cats">—</div><div class="stat-mini-lbl">Categories</div></div>
+        <div class="stat-mini"><div class="stat-mini-val" id="ov-users">—</div><div class="stat-mini-lbl">Total Users</div></div>
+        <div class="stat-mini"><div class="stat-mini-val" id="ov-content">—</div><div class="stat-mini-lbl">Engines With Content</div></div>
+      </div>
+      <div class="alert alert-warn"><span>⚠️</span><div>Engine <strong>content</strong> (prompt text) add karo "Engine Content" section mein — users wohi copy karte hain Claude.ai mein.</div></div>
+      <div class="alert alert-info"><span>ℹ️</span><div>Nayi engine ya category add karna ho → "Categories" ya "Engines" section mein jao. Dashboard automatically update ho jaayega.</div></div>
+    </div>
+
+    <!-- ── CATEGORIES ── -->
+    <div class="section" id="s-categories">
+      <div class="page-header">
+        <div><div class="page-title">📁 Categories</div><div class="page-sub">Dashboard mein sections — jo category hai wahi section ban jaata hai</div></div>
+        <div class="header-btns"><button class="btn btn-primary" onclick="toggleAddCat()">➕ Add Category</button></div>
+      </div>
+
+      <!-- ADD CATEGORY FORM -->
+      <div class="add-form" id="addCatForm">
+        <div class="add-form-title">➕ New Category</div>
+        <div class="field-row">
+          <div class="field-group"><div class="field-label">Category ID (no spaces)</div><input class="fi" id="nc-id" placeholder="e.g. finance" /></div>
+          <div class="field-group"><div class="field-label">Name</div><input class="fi" id="nc-name" placeholder="e.g. Finance & Tax" /></div>
+        </div>
+        <div class="field-row">
+          <div class="field-group"><div class="field-label">Icon (emoji)</div><input class="fi" id="nc-icon" placeholder="💰" style="font-size:20px" /></div>
+          <div class="field-group"><div class="field-label">Accent Color (hex)</div><input class="fi" id="nc-color" placeholder="#10B981" /></div>
+        </div>
+        <div class="field-row">
+          <div class="field-group"><div class="field-label">Light BG Color (hex)</div><input class="fi" id="nc-light" placeholder="#ECFDF5" /></div>
+          <div class="field-group"><div class="field-label">Sort Order (number)</div><input class="fi" id="nc-order" type="number" placeholder="10" /></div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:4px">
+          <button class="btn btn-primary" onclick="saveNewCategory()">💾 Save Category</button>
+          <button class="btn btn-secondary" onclick="toggleAddCat()">Cancel</button>
+        </div>
+      </div>
+
+      <div class="cat-grid" id="catGrid"><div style="color:var(--text-muted);font-size:13px">Loading...</div></div>
+    </div>
+
+    <!-- ── ENGINES ── -->
+    <div class="section" id="s-engines">
+      <div class="page-header">
+        <div><div class="page-title">⚡ Engines</div><div class="page-sub">Engines manage karo — add, edit, hide, delete</div></div>
+        <div class="header-btns"><button class="btn btn-primary" onclick="toggleAddEng()">➕ Add Engine</button></div>
+      </div>
+
+      <!-- ADD ENGINE FORM -->
+      <div class="add-form" id="addEngForm">
+        <div class="add-form-title">➕ New Engine</div>
+        <div class="field-row">
+          <div class="field-group"><div class="field-label">Engine ID (no spaces)</div><input class="fi" id="ne-id" placeholder="e.g. finance-forge" /></div>
+          <div class="field-group"><div class="field-label">Name</div><input class="fi" id="ne-name" placeholder="e.g. Finance Forge" /></div>
+        </div>
+        <div class="field-row">
+          <div class="field-group"><div class="field-label">Icon (emoji)</div><input class="fi" id="ne-icon" placeholder="💰" style="font-size:20px" /></div>
+          <div class="field-group"><div class="field-label">Icon Background</div><input class="fi" id="ne-iconbg" placeholder="#ECFDF5" /></div>
+        </div>
+        <div class="field-row">
+          <div class="field-group">
+            <div class="field-label">Category</div>
+            <select class="fi" id="ne-cat"><option value="">Select category...</option></select>
+          </div>
+          <div class="field-group">
+            <div class="field-label">Tier</div>
+            <select class="fi" id="ne-tier"><option value="starter">Starter</option><option value="pro" selected>Pro</option></select>
+          </div>
+        </div>
+        <div class="field-group"><div class="field-label">Tagline (1-2 lines)</div><input class="fi" id="ne-tagline" placeholder="What this engine does..." /></div>
+        <div class="field-group">
+          <div class="field-label">Use Cases (4 lines, ek per line)</div>
+          <textarea class="fi" id="ne-usecases" rows="4" placeholder="Sales pages&#10;Ad copy&#10;Landing page headlines&#10;Email subject lines"></textarea>
+        </div>
+        <div class="field-row">
+          <div class="field-group">
+            <div class="field-label">Badge</div>
+            <select class="fi" id="ne-badge"><option value="">None</option><option value="HOT">🔥 HOT</option><option value="NEW">NEW</option><option value="EXCLUSIVE">EXCLUSIVE</option></select>
+          </div>
+          <div class="field-group"><div class="field-label">Sort Order</div><input class="fi" id="ne-order" type="number" placeholder="99" /></div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:4px">
+          <button class="btn btn-primary" onclick="saveNewEngine()">💾 Save Engine</button>
+          <button class="btn btn-secondary" onclick="toggleAddEng()">Cancel</button>
+        </div>
+      </div>
+
+      <div class="search-wrap"><span>🔍</span><input type="text" placeholder="Search engines..." oninput="filterEngList(this.value)" /></div>
+      <div class="engine-list" id="engList"><div style="color:var(--text-muted);font-size:13px;padding:12px">Loading...</div></div>
+    </div>
+
+    <!-- ── ENGINE CONTENT ── -->
+    <div class="section" id="s-content">
+      <div class="page-header">
+        <div><div class="page-title">📝 Engine Content</div><div class="page-sub">Engine prompts — users yahi copy karte hain Claude.ai mein</div></div>
+        <div class="header-btns"><button class="btn btn-primary" onclick="saveAllContent()">💾 Save All</button></div>
+      </div>
+      <div class="alert alert-info"><span>💡</span><div>Har engine ka poora prompt text yahan paste karo. Jab user "Copy Engine" kare toh wohi text milta hai.</div></div>
+      <div class="engine-list" id="contentList"><div style="color:var(--text-muted);font-size:13px;padding:12px">Loading...</div></div>
+    </div>
+
+    <!-- ── USERS ── -->
+    <div class="section" id="s-users">
+      <div class="page-header">
+        <div><div class="page-title">👥 Users & Purchases</div><div class="page-sub">All purchases and license keys</div></div>
+        <div class="header-btns"><button class="btn btn-secondary" onclick="loadUsers()">🔄 Refresh</button></div>
+      </div>
+      <div class="search-wrap"><span>🔍</span><input type="text" placeholder="Search by email or license key..." oninput="searchUsers(this.value)" /></div>
+      <div class="table-wrap">
+        <table class="table">
+          <thead><tr><th>Email</th><th>Tier</th><th>License Key</th><th>Gateway</th><th>Amount</th><th>Date</th><th>Action</th></tr></thead>
+          <tbody id="usersTbody"><tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:20px">Loading...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ── PRICING ── -->
+    <div class="section" id="s-pricing">
+      <div class="page-header"><div><div class="page-title">💰 Pricing</div><div class="page-sub">Current pricing reference</div></div></div>
+      <div class="alert alert-warn"><span>⚠️</span><div>Prices change karne ke liye <strong>create-order.js</strong> Netlify function update karo aur Gumroad product price change karo directly.</div></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px">
+          <div style="font-weight:700;margin-bottom:12px">🌟 Starter</div>
+          <div style="font-size:13px;display:flex;flex-direction:column;gap:7px">
+            <div style="display:flex;justify-content:space-between"><span style="color:var(--text-muted)">INR</span><strong>₹999</strong></div>
+            <div style="display:flex;justify-content:space-between"><span style="color:var(--text-muted)">USD</span><strong>$37</strong></div>
+            <div style="display:flex;justify-content:space-between"><span style="color:var(--text-muted)">License</span><code style="background:var(--bg);padding:2px 6px;border-radius:4px;font-size:11px">FRG-STR</code></div>
+            <div style="display:flex;justify-content:space-between"><span style="color:var(--text-muted)">Engines</span><strong>4</strong></div>
+          </div>
+        </div>
+        <div style="background:var(--surface);border:2px solid var(--accent);border-radius:var(--radius);padding:18px">
+          <div style="font-weight:700;margin-bottom:12px">⚡ Pro</div>
+          <div style="font-size:13px;display:flex;flex-direction:column;gap:7px">
+            <div style="display:flex;justify-content:space-between"><span style="color:var(--text-muted)">INR</span><strong>₹1,999</strong></div>
+            <div style="display:flex;justify-content:space-between"><span style="color:var(--text-muted)">USD</span><strong>$67</strong></div>
+            <div style="display:flex;justify-content:space-between"><span style="color:var(--text-muted)">Upgrade</span><strong>₹1,000 / $30</strong></div>
+            <div style="display:flex;justify-content:space-between"><span style="color:var(--text-muted)">License</span><code style="background:var(--bg);padding:2px 6px;border-radius:4px;font-size:11px">FRG-PRO</code></div>
+            <div style="display:flex;justify-content:space-between"><span style="color:var(--text-muted)">Engines</span><strong>All + Future</strong></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"><span id="tIcon">✅</span><span id="tMsg">Saved!</span></div>
+
+<!-- EDIT ENGINE MODAL -->
+<div class="moverlay" id="editModal" onclick="closeEditModal(event)">
+  <div class="mbox">
+    <div class="mbox-header"><div class="mbox-title">✏️ Edit Engine</div><button class="mbox-close" onclick="closeModal('editModal')">✕</button></div>
+    <div class="mbox-body">
+      <input type="hidden" id="edit-id">
+      <div class="field-row">
+        <div class="field-group"><div class="field-label">Name</div><input class="fi" id="edit-name" /></div>
+        <div class="field-group"><div class="field-label">Icon</div><input class="fi" id="edit-icon" style="font-size:20px" /></div>
+      </div>
+      <div class="field-row">
+        <div class="field-group"><div class="field-label">Category</div><select class="fi" id="edit-cat"></select></div>
+        <div class="field-group"><div class="field-label">Tier</div><select class="fi" id="edit-tier"><option value="starter">Starter</option><option value="pro">Pro</option></select></div>
+      </div>
+      <div class="field-group"><div class="field-label">Tagline</div><input class="fi" id="edit-tagline" /></div>
+      <div class="field-group">
+        <div class="field-label">Use Cases (one per line)</div>
+        <textarea class="fi" id="edit-usecases" rows="4"></textarea>
+      </div>
+      <div class="field-row">
+        <div class="field-group"><div class="field-label">Badge</div><select class="fi" id="edit-badge"><option value="">None</option><option value="HOT">🔥 HOT</option><option value="NEW">NEW</option><option value="EXCLUSIVE">EXCLUSIVE</option></select></div>
+        <div class="field-group"><div class="field-label">Sort Order</div><input class="fi" id="edit-order" type="number" /></div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:14px">
+        <button class="btn btn-primary" style="flex:1" onclick="saveEditEngine()">💾 Save Changes</button>
+        <button class="btn btn-secondary" onclick="closeModal('editModal')">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const SB_URL='https://scunqqruwxajzcegmtcg.supabase.co';
+const ANON='sb_publishable_g7ua18iyflpu4wbY18NBZQ_7vkSX4w1';
+
+let cats=[], engs=[], allPurchases=[], contentCache={};
+
+// ─── HELPERS ───
+function toast(msg,type='ok'){
+  document.getElementById('tIcon').textContent=type==='ok'?'✅':type==='err'?'❌':'ℹ️';
+  document.getElementById('tMsg').textContent=msg;
+  const t=document.getElementById('toast');t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+function saveInd(s){const el=document.getElementById('saveInd');el.textContent=s==='saving'?'Saving...':s==='saved'?'Saved ✓':'Error';el.className='save-indicator '+(s==='saving'?'saving':s==='saved'?'saved':'');}
+function show(name,el){
+  document.querySelectorAll('.nav-item').forEach(i=>i.classList.remove('active'));el.classList.add('active');
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.getElementById('s-'+name).classList.add('active');
+  if(name==='categories')renderCats();
+  if(name==='engines'){renderEngList();populateCatSelects();}
+  if(name==='content')renderContentList();
+  if(name==='users')loadUsers();
+  if(name==='overview')loadOverview();
+}
+function getAdminPwd(){return sessionStorage.getItem('adminPwd')||'';}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+function closeEditModal(ev){if(ev.target===document.getElementById('editModal'))closeModal('editModal');}
+
+// ─── API ───
+async function sbGet(table,params=''){
+  const r=await fetch(`${SB_URL}/rest/v1/${table}?${params}`,{headers:{'apikey':ANON,'Authorization':'Bearer '+ANON}});
+  return r.json();
+}
+async function sbPost(table,body){
+  const r=await fetch(`${SB_URL}/rest/v1/${table}`,{method:'POST',headers:{'apikey':ANON,'Authorization':'Bearer '+ANON,'Content-Type':'application/json','Prefer':'return=minimal'},body:JSON.stringify(body)});
+  return r;
+}
+async function sbPatch(table,id,body){
+  const r=await fetch(`${SB_URL}/rest/v1/${table}?id=eq.${id}`,{method:'PATCH',headers:{'apikey':ANON,'Authorization':'Bearer '+ANON,'Content-Type':'application/json'},body:JSON.stringify(body)});
+  return r;
+}
+async function sbDelete(table,id){
+  const r=await fetch(`${SB_URL}/rest/v1/${table}?id=eq.${id}`,{method:'DELETE',headers:{'apikey':ANON,'Authorization':'Bearer '+ANON}});
+  return r;
+}
+async function saveContent(id,content){
+  saveInd('saving');
+  try{
+    const r=await fetch('/.netlify/functions/admin-save',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id,content,adminPassword:getAdminPwd()})});
+    const d=await r.json();
+    if(d.success){contentCache[id]=content;saveInd('saved');return true;}
+    else{saveInd('error');toast('Error: '+d.error,'err');return false;}
+  }catch(e){saveInd('error');toast('Network error','err');return false;}
+}
+
+// ─── LOAD ───
+async function loadAll(){
+  const[c,e]=await Promise.all([sbGet('categories','order=sort_order'),sbGet('engines','is_active=eq.true&order=sort_order')]);
+  cats=Array.isArray(c)?c:[];engs=Array.isArray(e)?e:[];
+  document.getElementById('engBadge').textContent=engs.length;
+}
+
+// ─── OVERVIEW ───
+async function loadOverview(){
+  await loadAll();
+  document.getElementById('ov-total').textContent=engs.length;
+  document.getElementById('ov-cats').textContent=cats.length;
+  // count content
+  let filled=0;
+  for(const e of engs){
+    if(contentCache[e.id]===undefined){
+      try{const r=await sbGet('content_items','id=eq.'+e.id+'&select=content');contentCache[e.id]=r[0]?.content||'';}catch(err){contentCache[e.id]='';}
+    }
+    if(contentCache[e.id])filled++;
+  }
+  document.getElementById('ov-content').textContent=filled+'/'+engs.length;
+}
+
+// ─── CATEGORIES ───
+function renderCats(){
+  const g=document.getElementById('catGrid');
+  if(!cats.length){g.innerHTML='<div style="color:var(--text-muted);font-size:13px">No categories yet</div>';return;}
+  g.innerHTML=cats.map(c=>{
+    const count=engs.filter(e=>e.category_id===c.id).length;
+    return `<div class="cat-card">
+      <div class="cat-icon-wrap" style="background:${c.color_light}">${c.icon}</div>
+      <div style="flex:1"><div class="cat-name">${c.name}</div><div class="cat-count">${count} engines · order:${c.sort_order}</div></div>
+      <div class="cat-actions">
+        <button class="btn btn-danger btn-xs" onclick="deleteCat('${c.id}','${c.name}')">🗑️</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleAddCat(){document.getElementById('addCatForm').classList.toggle('open');}
+
+async function saveNewCategory(){
+  const id=document.getElementById('nc-id').value.trim();
+  const name=document.getElementById('nc-name').value.trim();
+  const icon=document.getElementById('nc-icon').value.trim()||'📁';
+  const color=document.getElementById('nc-color').value.trim()||'#F97316';
+  const light=document.getElementById('nc-light').value.trim()||'#FFF4ED';
+  const order=parseInt(document.getElementById('nc-order').value)||99;
+  if(!id||!name){toast('ID aur Name required hai','err');return;}
+  if(cats.find(c=>c.id===id)){toast('Yeh ID already exist karta hai','err');return;}
+  const r=await sbPost('categories',{id,name,icon,color,color_light:light,sort_order:order,is_active:true});
+  if(r.ok||r.status===201){
+    toast('Category saved!');
+    cats.push({id,name,icon,color,color_light:light,sort_order:order,is_active:true});
+    renderCats();populateCatSelects();toggleAddCat();
+    ['nc-id','nc-name','nc-icon','nc-color','nc-light','nc-order'].forEach(i=>document.getElementById(i).value='');
+  } else {toast('Error saving category','err');}
+}
+
+async function deleteCat(id,name){
+  const count=engs.filter(e=>e.category_id===id).length;
+  if(count>0){toast(`Pehle is category ke ${count} engines hatao`,'err');return;}
+  if(!confirm(`"${name}" delete karo?`))return;
+  const r=await sbDelete('categories',id);
+  if(r.ok){cats=cats.filter(c=>c.id!==id);renderCats();toast('Category deleted!');}
+  else toast('Error deleting','err');
+}
+
+// ─── ENGINES ───
+function populateCatSelects(){
+  ['ne-cat','edit-cat'].forEach(sid=>{
+    const sel=document.getElementById(sid);if(!sel)return;
+    const curr=sel.value;
+    sel.innerHTML='<option value="">Select category...</option>'+cats.map(c=>`<option value="${c.id}">${c.icon} ${c.name}</option>`).join('');
+    sel.value=curr;
+  });
+}
+
+function toggleAddEng(){document.getElementById('addEngForm').classList.toggle('open');}
+
+async function saveNewEngine(){
+  const id=document.getElementById('ne-id').value.trim();
+  const name=document.getElementById('ne-name').value.trim();
+  const icon=document.getElementById('ne-icon').value.trim()||'⚡';
+  const iconbg=document.getElementById('ne-iconbg').value.trim()||'#FFF4ED';
+  const cat=document.getElementById('ne-cat').value;
+  const tier=document.getElementById('ne-tier').value;
+  const tagline=document.getElementById('ne-tagline').value.trim();
+  const ucsRaw=document.getElementById('ne-usecases').value.trim();
+  const use_cases=ucsRaw.split('\n').map(s=>s.trim()).filter(Boolean);
+  const badge=document.getElementById('ne-badge').value;
+  const order=parseInt(document.getElementById('ne-order').value)||99;
+  if(!id||!name||!cat){toast('ID, Name, Category required','err');return;}
+  if(engs.find(e=>e.id===id)){toast('Yeh engine ID already exist karti hai','err');return;}
+  const body={id,name,icon,icon_bg:iconbg,category_id:cat,tier,tagline,use_cases:JSON.stringify(use_cases),badge,sort_order:order,is_active:true};
+  const r=await sbPost('engines',body);
+  if(r.ok||r.status===201){
+    toast('Engine saved! Dashboard mein aa jayegi ✅');
+    engs.push({...body,use_cases});
+    document.getElementById('engBadge').textContent=engs.length;
+    renderEngList();toggleAddEng();
+    ['ne-id','ne-name','ne-icon','ne-iconbg','ne-tagline','ne-usecases','ne-order'].forEach(i=>document.getElementById(i).value='');
+  } else {
+    const err=await r.text();toast('Error: '+err,'err');
+  }
+}
+
+let filteredEngs=[];
+function renderEngList(list){
+  filteredEngs=list||engs;
+  const el=document.getElementById('engList');
+  if(!filteredEngs.length){el.innerHTML='<div style="color:var(--text-muted);font-size:13px;padding:12px">No engines</div>';return;}
+  el.innerHTML=filteredEngs.map(e=>{
+    const cat=cats.find(c=>c.id===e.category_id);
+    const ucs=Array.isArray(e.use_cases)?e.use_cases:(typeof e.use_cases==='string'?JSON.parse(e.use_cases||'[]'):[]);
+    return `<div class="engine-row">
+      <div class="engine-row-header" onclick="toggleRow('row-${e.id}')">
+        <div class="engine-row-icon" style="background:${e.icon_bg||'#FFF4ED'}">${e.icon}</div>
+        <div style="flex:1">
+          <div class="engine-row-name">${e.name}</div>
+          <div class="engine-row-meta" style="color:var(--text-muted);font-size:11px">${cat?.icon||''} ${cat?.name||'—'} · <span style="color:${e.tier==='pro'?'var(--accent)':'var(--blue)'}">${e.tier}</span> · order:${e.sort_order}</div>
+        </div>
+        <div style="display:flex;gap:6px;align-items:center">
+          <span style="font-size:11px;color:${e.is_active?'var(--green)':'var(--text-light)'}">● ${e.is_active?'Active':'Hidden'}</span>
+          <button class="btn btn-secondary btn-xs" onclick="event.stopPropagation();openEditModal('${e.id}')">✏️</button>
+          <button class="btn ${e.is_active?'btn-secondary':'btn-success'} btn-xs" onclick="event.stopPropagation();toggleActive('${e.id}',${e.is_active})">${e.is_active?'Hide':'Show'}</button>
+          <button class="btn btn-danger btn-xs" onclick="event.stopPropagation();deleteEng('${e.id}','${e.name}')">🗑️</button>
+        </div>
+      </div>
+      <div class="engine-row-body" id="row-${e.id}">
+        <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px">${e.tagline}</div>
+        <div style="font-size:12px;color:var(--text-muted)">${ucs.slice(0,3).map(u=>'• '+u).join('<br>')}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleRow(id){const el=document.getElementById(id);el.classList.toggle('open');}
+function filterEngList(q){const lq=q.toLowerCase();renderEngList(engs.filter(e=>(e.name+e.tagline).toLowerCase().includes(lq)));}
+
+function openEditModal(id){
+  const e=engs.find(x=>x.id===id);if(!e)return;
+  populateCatSelects();
+  document.getElementById('edit-id').value=e.id;
+  document.getElementById('edit-name').value=e.name;
+  document.getElementById('edit-icon').value=e.icon;
+  document.getElementById('edit-cat').value=e.category_id||'';
+  document.getElementById('edit-tier').value=e.tier;
+  document.getElementById('edit-tagline').value=e.tagline;
+  const ucs=Array.isArray(e.use_cases)?e.use_cases:(typeof e.use_cases==='string'?JSON.parse(e.use_cases||'[]'):[]);
+  document.getElementById('edit-usecases').value=ucs.join('\n');
+  document.getElementById('edit-badge').value=e.badge||'';
+  document.getElementById('edit-order').value=e.sort_order;
+  document.getElementById('editModal').classList.add('open');
+}
+
+async function saveEditEngine(){
+  const id=document.getElementById('edit-id').value;
+  const ucsRaw=document.getElementById('edit-usecases').value.trim();
+  const use_cases=ucsRaw.split('\n').map(s=>s.trim()).filter(Boolean);
+  const body={
+    name:document.getElementById('edit-name').value.trim(),
+    icon:document.getElementById('edit-icon').value.trim(),
+    category_id:document.getElementById('edit-cat').value,
+    tier:document.getElementById('edit-tier').value,
+    tagline:document.getElementById('edit-tagline').value.trim(),
+    use_cases:JSON.stringify(use_cases),
+    badge:document.getElementById('edit-badge').value,
+    sort_order:parseInt(document.getElementById('edit-order').value)||99
+  };
+  const r=await sbPatch('engines',id,body);
+  if(r.ok){
+    const idx=engs.findIndex(e=>e.id===id);
+    if(idx>-1)engs[idx]={...engs[idx],...body,use_cases};
+    renderEngList();closeModal('editModal');toast('Engine updated!');
+  } else toast('Error updating','err');
+}
+
+async function toggleActive(id,current){
+  const r=await sbPatch('engines',id,{is_active:!current});
+  if(r.ok){const idx=engs.findIndex(e=>e.id===id);if(idx>-1)engs[idx].is_active=!current;renderEngList();toast(current?'Engine hidden':'Engine visible!');}
+  else toast('Error','err');
+}
+
+async function deleteEng(id,name){
+  if(!confirm(`"${name}" permanently delete karo?`))return;
+  const r=await sbDelete('engines',id);
+  if(r.ok){engs=engs.filter(e=>e.id!==id);document.getElementById('engBadge').textContent=engs.length;renderEngList();toast('Engine deleted!');}
+  else toast('Error deleting','err');
+}
+
+// ─── CONTENT ───
+async function renderContentList(){
+  const el=document.getElementById('contentList');
+  el.innerHTML='<div style="color:var(--text-muted);font-size:13px;padding:12px">Loading content...</div>';
+  const items=await Promise.all(engs.map(async e=>{
+    if(contentCache[e.id]===undefined){
+      try{const r=await sbGet('content_items','id=eq.'+e.id+'&select=content');contentCache[e.id]=r[0]?.content||'';}catch(err){contentCache[e.id]='';}
+    }
+    return{...e,content:contentCache[e.id]};
+  }));
+  el.innerHTML=items.map(e=>`
+    <div class="engine-row">
+      <div class="engine-row-header" onclick="toggleRow('cr-${e.id}')">
+        <div class="engine-row-icon" style="background:${e.icon_bg||'#FFF4ED'}">${e.icon}</div>
+        <div class="engine-row-name" style="flex:1">${e.name}</div>
+        <span style="font-size:11px;font-family:'JetBrains Mono',monospace;color:${e.content?'var(--green)':'var(--text-light)'}">
+          ${e.content?'✅ '+e.content.length+' chars':'⚠️ Empty'}
+        </span>
+      </div>
+      <div class="engine-row-body" id="cr-${e.id}">
+        <div class="field-group">
+          <div class="field-label">Engine Prompt <span class="cc" id="cc-${e.id}">(${e.content.length} chars)</span></div>
+          <textarea class="fi" id="ct-${e.id}" rows="10" placeholder="Paste full engine prompt here..." oninput="updateCC('${e.id}')">${e.content}</textarea>
+        </div>
+        <div style="display:flex;gap:8px;justify-content:flex-end">
+          <button class="btn btn-secondary btn-sm" onclick="previewContent('${e.id}')">👁️ Preview</button>
+          <button class="btn btn-primary btn-sm" onclick="saveSingleContent('${e.id}','${e.name}')">💾 Save</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function updateCC(id){const t=document.getElementById('ct-'+id),c=document.getElementById('cc-'+id);if(t&&c)c.textContent='('+t.value.length+' chars)';}
+
+async function saveSingleContent(id,name){
+  const t=document.getElementById('ct-'+id);if(!t)return;
+  const ok=await saveContent(id,t.value);
+  if(ok){toast(name+' content saved!');contentCache[id]=t.value;
+    // Update header
+    const span=document.querySelector(`#cr-${id}`).previousElementSibling.querySelector('span:last-child');
+    if(span)span.innerHTML=t.value?`✅ ${t.value.length} chars`:'⚠️ Empty';
+    span&&(span.style.color=t.value?'var(--green)':'var(--text-light)');
+  }
+}
+
+async function saveAllContent(){
+  let saved=0;
+  for(const e of engs){
+    const t=document.getElementById('ct-'+e.id);
+    if(t){await saveContent(e.id,t.value);saved++;}
+  }
+  toast(saved+' engines saved!');
+}
+
+function previewContent(id){
+  const t=document.getElementById('ct-'+id)?.value;
+  if(!t){toast('No content yet','info');return;}
+  const w=window.open('','_blank');
+  w.document.write(`<pre style="font-family:monospace;padding:20px;white-space:pre-wrap;max-width:800px;margin:auto;font-size:13px">${t.replace(/</g,'&lt;')}</pre>`);
+  w.document.close();
+}
+
+// ─── USERS ───
+async function loadUsers(){
+  document.getElementById('usersTbody').innerHTML='<tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:20px">Loading...</td></tr>';
+  try{
+    const data=await sbGet('purchases','order=created_at.desc');
+    if(Array.isArray(data)&&data.length){
+      allPurchases=data;
+      document.getElementById('ov-users').textContent=data.length;
+      document.getElementById('userBadge').textContent=data.length;
+      renderUsersTable(data);
+    } else {
+      document.getElementById('usersTbody').innerHTML=`<tr><td colspan="7" style="text-align:center;padding:24px"><div style="font-size:13px;color:var(--text-muted)">⚠️ RLS blocks anon access. <a href="https://supabase.com/dashboard/project/scunqqruwxajzcegmtcg/editor" target="_blank" style="color:var(--accent)">View in Supabase →</a></div></td></tr>`;
+    }
+  }catch(e){document.getElementById('usersTbody').innerHTML='<tr><td colspan="7" style="text-align:center;color:var(--red);padding:20px;font-size:13px">Error loading</td></tr>';}
+}
+
+function renderUsersTable(data){
+  if(!data.length){document.getElementById('usersTbody').innerHTML='<tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:20px">No purchases yet</td></tr>';return;}
+  document.getElementById('usersTbody').innerHTML=data.map(p=>`
+    <tr>
+      <td>${p.email}</td>
+      <td><span class="badge-tier ${p.tier==='pro'?'t-pro':'t-starter'}">${(p.tier||'').toUpperCase()}</span></td>
+      <td><span class="lk">${p.license_key}</span></td>
+      <td style="font-size:12px">${p.payment_gateway}</td>
+      <td style="font-size:12px;font-weight:600">${p.currency==='INR'?'₹':'$'}${p.amount_paid}</td>
+      <td style="font-size:11px;color:var(--text-muted)">${new Date(p.created_at).toLocaleDateString('en-IN')}</td>
+      <td><button class="btn btn-danger btn-xs" onclick="revokeAccess('${p.id}','${p.email}')">Revoke</button></td>
+    </tr>
+  `).join('');
+}
+
+function searchUsers(q){const lq=q.toLowerCase();renderUsersTable(allPurchases.filter(p=>(p.email+p.license_key).toLowerCase().includes(lq)));}
+
+async function revokeAccess(id,email){
+  if(!confirm(`Revoke access for ${email}?`))return;
+  const r=await sbDelete('purchases',id);
+  if(r.ok){allPurchases=allPurchases.filter(p=>p.id!==id);renderUsersTable(allPurchases);toast('Access revoked');}
+  else toast('Error revoking','err');
+}
+
+// ─── AUTH ───
+async function checkAuth(){
+  const pwd=sessionStorage.getItem('adminPwd');
+  if(pwd){await verifyPwd(pwd);return;}
+  const input=prompt('Admin password:');
+  if(!input){location.href='../login.html';return;}
+  sessionStorage.setItem('adminPwd',input);
+  await verifyPwd(input);
+}
+async function verifyPwd(pwd){
+  try{
+    const r=await fetch('/.netlify/functions/admin-save',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:'__test__',content:'',adminPassword:pwd})});
+    const d=await r.json();
+    if(!d.success&&d.error==='Unauthorized'){sessionStorage.removeItem('adminPwd');alert('Wrong password!');location.href='../login.html';}
+  }catch(e){}
+}
+function doLogout(){if(confirm('Logout?')){sessionStorage.removeItem('adminPwd');location.href='../login.html';}}
+
+// ─── INIT ───
+window.addEventListener('DOMContentLoaded',async()=>{
+  await checkAuth();
+  await loadAll();
+  loadOverview();
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.moverlay').forEach(m=>m.classList.remove('open'));});
+});
+</script>
+</body>
+</html>
