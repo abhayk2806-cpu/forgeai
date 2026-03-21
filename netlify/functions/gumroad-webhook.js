@@ -16,6 +16,7 @@ const SITE_URL         = (process.env.SITE_URL || 'https://ai-conversion-engines
 const PRODUCT_PLAN_MAP = {
   'forgeai-starter':       'starter',
   'forgeai-pro':           'pro',
+  'forgeai-upgrade':       'upgrade',
   // Legacy slugs
   'conversionos-core':     'starter',
   'conversionos-complete': 'pro',
@@ -57,6 +58,12 @@ exports.handler = async (event) => {
       // Fallback: Gumroad sends price in cents
       const price = parseFloat(payload.price ?? '0');
       tier = price >= 6000 ? 'pro' : 'starter'; // $60+ = Pro
+    }
+
+    // ── Handle Upgrade ─────────────────────────────────────
+    if (tier === 'upgrade') {
+      await handleUpgrade(payload.email, payload.sale_id);
+      return { statusCode: 200, body: 'UPGRADED' };
     }
 
     // ── Duplicate check ────────────────────────────────────
@@ -130,6 +137,62 @@ exports.handler = async (event) => {
     return { statusCode: 500, body: 'Internal Error: ' + err.message };
   }
 };
+
+// ══════════════════════════════════════════════════════════
+async function handleUpgrade(email, saleId) {
+  // Update all purchases for this email to pro
+  await supabase.from('purchases').update({ tier: 'pro' }).eq('email', email);
+
+  // Update Supabase Auth user metadata
+  const { data: purchase } = await supabase
+    .from('purchases')
+    .select('user_id')
+    .eq('email', email)
+    .not('user_id', 'is', null)
+    .single();
+
+  if (purchase?.user_id) {
+    await supabase.auth.admin.updateUserById(purchase.user_id, {
+      user_metadata: { tier: 'pro' }
+    });
+  }
+
+  // Insert upgrade purchase record for dedup
+  await supabase.from('purchases').insert({
+    email,
+    license_key:     `FRG-UPG-${saleId.substring(0,6).toUpperCase()}`,
+    tier:            'pro',
+    currency:        'USD',
+    amount_paid:     0,
+    payment_gateway: 'gumroad',
+    order_id:        `UPG_GUM_${saleId}`,
+    used:            true,
+  });
+
+  await sendUpgradeEmail(email);
+  console.log('✅ Gumroad upgrade to Pro:', email);
+}
+
+// ══════════════════════════════════════════════════════════
+async function sendUpgradeEmail(email) {
+  if (!RESEND_API_KEY) return;
+  await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: { 'Authorization': `Bearer ${RESEND_API_KEY}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      from:    'ForgeAI <onboarding@resend.dev>',
+      to:      [email],
+      subject: '🚀 You\'ve been upgraded to ForgeAI Pro!',
+      html: `<div style="font-family:sans-serif;padding:40px;max-width:500px;margin:0 auto">
+        <h2 style="color:#F97316">⚡ ForgeAI</h2>
+        <h1 style="color:#1A1A1A">You\'re now Pro! 🚀</h1>
+        <p style="color:#4A4A4A">Your account has been upgraded to Pro — all engines are now unlocked, including all future engines forever.</p>
+        <a href="${SITE_URL}/dashboard.html" style="display:block;background:#F97316;color:#fff;text-decoration:none;text-align:center;padding:14px;border-radius:10px;font-weight:700;margin:24px 0">Open Dashboard →</a>
+        <p style="font-size:12px;color:#999">© ForgeAI · The AI Engine for Everything</p>
+      </div>`,
+    }),
+  });
+}
 
 // ══════════════════════════════════════════════════════════
 function generateLicenseKey(tier) {

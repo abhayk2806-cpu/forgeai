@@ -347,7 +347,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
         <h3>🔓 Unlock All Engines — Upgrade to Pro</h3>
         <p>Get every engine + ForgeAI Pipeline + all future engines forever</p>
       </div>
-      <a href="/#pricing" class="btn-upgrade">⚡ Upgrade for ₹1,000</a>
+      <button class="btn-upgrade" onclick="handleUpgradeClick()">⚡ Upgrade for ₹1,000</button>
     </div>
 
     <!-- RECENT ENGINES (first 6 shown on dashboard home) -->
@@ -1542,7 +1542,7 @@ function openModal(id) {
 
   if(isLocked){
     ob.textContent='🔒 Upgrade to Pro to Unlock';
-    ob.onclick=()=>window.location.href='/#pricing';
+    ob.onclick=()=>handleUpgradeClick();
     cb.style.display='none';
   } else {
     ob.innerHTML='⚡ Open Engine';
@@ -1593,7 +1593,7 @@ function openEnginePanel() {
 
   const toolbar = document.getElementById('epToolbar');
   if(isLocked) {
-    toolbar.innerHTML = `<a href="/#pricing" class="ep-btn primary">🔓 Upgrade to Unlock</a><button class="ep-btn secondary" onclick="closeEnginePanel()">← Back</button>`;
+    toolbar.innerHTML = `<button class="ep-btn primary" onclick="handleUpgradeClick()">🔓 Upgrade to Unlock</button><button class="ep-btn secondary" onclick="closeEnginePanel()">← Back</button>`;
   } else {
     toolbar.innerHTML = `<button class="ep-btn primary" id="epCopyBtn" onclick="copyEngineFromPanel()">📋 Copy Engine Prompt</button><button class="ep-btn secondary" onclick="closeEnginePanel()">← Back to Engines</button>`;
   }
@@ -1607,7 +1607,7 @@ function openEnginePanel() {
         <div class="lock-icon">🔒</div>
         <h3>Pro Engine</h3>
         <p>Upgrade to ForgeAI Pro to unlock this engine and all other Pro engines.</p>
-        <a href="/#pricing" class="ep-btn primary" style="display:inline-flex;text-decoration:none">⚡ Upgrade for ₹1,000</a>
+        <button class="ep-btn primary" onclick="handleUpgradeClick()">⚡ Upgrade for ₹1,000</button>
       </div>`;
   } else {
     body.innerHTML = `
@@ -1779,6 +1779,146 @@ document.addEventListener('keydown', e => {
   }
 });
 document.addEventListener('DOMContentLoaded', init);
+</script>
+
+<!-- ── UPGRADE MODAL (Cashfree for India, Gumroad for International) ── -->
+<div id="upgradeModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:400;align-items:center;justify-content:center;padding:20px">
+  <div style="background:var(--surface);border-radius:16px;width:100%;max-width:440px;box-shadow:0 25px 50px rgba(0,0,0,.2);overflow:hidden">
+    <div style="padding:24px 24px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
+      <div>
+        <div style="font-size:18px;font-weight:700;color:var(--text)">⚡ Upgrade to Pro</div>
+        <div style="font-size:13px;color:var(--text-muted);margin-top:3px">All engines + all future engines — forever</div>
+      </div>
+      <button onclick="closeUpgradeModal()" style="background:var(--bg);border:none;width:32px;height:32px;border-radius:8px;cursor:pointer;font-size:18px;color:var(--text-muted);display:flex;align-items:center;justify-content:center">✕</button>
+    </div>
+    <div style="padding:20px 24px">
+      <div style="background:var(--accent-light);border:1px solid #FDBA74;border-radius:8px;padding:12px 16px;margin-bottom:20px">
+        <div style="font-size:13px;color:#92400E;font-weight:600">₹1,000 one-time · Lifetime access to all Pro engines</div>
+      </div>
+      <div style="margin-bottom:14px">
+        <label style="display:block;font-size:13px;font-weight:600;color:var(--text);margin-bottom:6px">Full Name</label>
+        <input id="upgNameInput" type="text" placeholder="Your name" style="width:100%;padding:10px 14px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);background:var(--bg);border:1px solid var(--border);border-radius:8px;outline:none;min-height:44px" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
+      </div>
+      <div style="margin-bottom:20px">
+        <label style="display:block;font-size:13px;font-weight:600;color:var(--text);margin-bottom:6px">Email Address</label>
+        <input id="upgEmailInput" type="email" placeholder="your@email.com" style="width:100%;padding:10px 14px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);background:var(--bg);border:1px solid var(--border);border-radius:8px;outline:none;min-height:44px" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
+      </div>
+      <div id="upgErrorMsg" style="display:none;background:#FEF2F2;border:1px solid #FECACA;border-radius:8px;padding:10px 14px;font-size:13px;color:var(--red);margin-bottom:14px"></div>
+      <button id="upgPayBtn" onclick="submitUpgrade()" style="width:100%;padding:13px;background:var(--accent);color:white;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;display:flex;align-items:center;justify-content:center;gap:8px;transition:background .15s">⚡ Pay ₹1,000 — Upgrade Now</button>
+      <div style="text-align:center;font-size:12px;color:var(--text-light);margin-top:10px">🔒 Secure payment via Cashfree · UPI, Cards, NetBanking</div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── UPGRADE FLOW ───
+const GUMROAD_UPGRADE_URL = 'https://forgeaidigital.gumroad.com/l/forgeai-upgrade-gjh75iid';
+let _userRegion = null; // cached after first detection
+
+async function detectRegion() {
+  if (_userRegion) return _userRegion;
+  try {
+    const res = await fetch('https://ipapi.co/json/', { signal: AbortSignal.timeout(4000) });
+    const data = await res.json();
+    _userRegion = data.country_code === 'IN' ? 'india' : 'international';
+  } catch(e) {
+    _userRegion = 'international'; // safe default
+  }
+  return _userRegion;
+}
+
+async function handleUpgradeClick() {
+  const region = await detectRegion();
+  if (region === 'india') {
+    // Pre-fill email from logged in user
+    const emailInput = document.getElementById('upgEmailInput');
+    if (window.COSU?.email && emailInput) emailInput.value = window.COSU.email;
+    // Pre-fill name
+    const nameInput = document.getElementById('upgNameInput');
+    if (window.COSU?.email && nameInput && !nameInput.value) {
+      nameInput.value = window.COSU.email.split('@')[0];
+    }
+    openUpgradeModal();
+  } else {
+    window.open(GUMROAD_UPGRADE_URL, '_blank');
+  }
+}
+
+function openUpgradeModal() {
+  const m = document.getElementById('upgradeModal');
+  m.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+  document.getElementById('upgErrorMsg').style.display = 'none';
+  const btn = document.getElementById('upgPayBtn');
+  btn.disabled = false;
+  btn.textContent = '⚡ Pay ₹1,000 — Upgrade Now';
+}
+
+function closeUpgradeModal() {
+  document.getElementById('upgradeModal').style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+document.getElementById('upgradeModal').addEventListener('click', function(e) {
+  if (e.target === this) closeUpgradeModal();
+});
+
+async function submitUpgrade() {
+  const name  = document.getElementById('upgNameInput').value.trim();
+  const email = document.getElementById('upgEmailInput').value.trim();
+  const errEl = document.getElementById('upgErrorMsg');
+  const btn   = document.getElementById('upgPayBtn');
+
+  if (!name || name.length < 2) {
+    errEl.textContent = 'Please enter your full name.';
+    errEl.style.display = 'block'; return;
+  }
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    errEl.textContent = 'Please enter a valid email address.';
+    errEl.style.display = 'block'; return;
+  }
+
+  errEl.style.display = 'none';
+  btn.disabled = true;
+  btn.textContent = '⏳ Creating order...';
+
+  try {
+    const fb_event_id = `upgrade_cf_${Date.now()}_${Math.random().toString(36).substr(2,5)}`;
+    const res = await fetch('/.netlify/functions/create-order', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, email, plan: 'upgrade', fb_event_id }),
+    });
+    const data = await res.json();
+
+    if (!res.ok || !data.paymentSessionId) {
+      throw new Error(data.error || 'Order creation failed');
+    }
+
+    btn.textContent = '🔄 Opening payment...';
+
+    // Load Cashfree SDK
+    await new Promise((resolve, reject) => {
+      if (window.Cashfree) { resolve(); return; }
+      const s = document.createElement('script');
+      s.src = 'https://sdk.cashfree.com/js/v3/cashfree.js';
+      s.onload = resolve; s.onerror = reject;
+      document.head.appendChild(s);
+    });
+
+    const cashfree = window.Cashfree({ mode: data.cfEnv === 'PROD' ? 'production' : 'sandbox' });
+    cashfree.checkout({
+      paymentSessionId: data.paymentSessionId,
+      redirectTarget:   '_self',
+    });
+
+  } catch(err) {
+    errEl.textContent = err.message || 'Something went wrong. Please try again.';
+    errEl.style.display = 'block';
+    btn.disabled = false;
+    btn.textContent = '⚡ Pay ₹1,000 — Upgrade Now';
+  }
+}
 </script>
 </body>
 </html>
