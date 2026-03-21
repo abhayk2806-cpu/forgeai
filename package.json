@@ -1,7 +1,7 @@
 {
-  "name": "conversionos-portal",
+  "name": "forgeai-portal",
   "version": "1.0.0",
-  "description": "ConversionOS Portal",
+  "description": "ForgeAI Portal",
   "dependencies": {
     "@supabase/supabase-js": "^2.39.0"
   }

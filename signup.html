@@ -3,10 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sign Up — ConversionOS</title>
+  <title>Sign Up — ForgeAI</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="/supabase.js"></script>
-  <script src="/auth.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
   <style>
@@ -452,7 +451,7 @@
         <path d="M13 2L4.5 13.5H11L10 22L19.5 10.5H13L13 2Z"/>
       </svg>
     </div>
-    <div class="brand-name">ConversionOS</div>
+    <div class="brand-name">ForgeAI</div>
     <div class="brand-tagline">Build Funnels That Convert. Powered by AI.</div>
   </div>
 
@@ -515,7 +514,7 @@
             type="text"
             id="license"
             name="license"
-            placeholder="ACE-CORE-XXXXX or ACE-COMP-XXXXX"
+            placeholder="Your license key from purchase email"
             required
             autocomplete="off"
             autocapitalize="characters"
@@ -785,10 +784,10 @@
       clearFieldError('email', 'email-error');
     }
 
-    // License Key
-    const licenseRegex = /^ACE-(CORE|COMP)-[A-Z0-9]{5,}$/;
+    // License Key — accepts any uppercase alphanumeric key with hyphens (min 8 chars)
+    const licenseRegex = /^[A-Z0-9][A-Z0-9-]{6,}[A-Z0-9]$/;
     if (!license || !licenseRegex.test(license)) {
-      showFieldError('license', 'license-error', 'Invalid license key format. Example: ACE-CORE-XYZ12');
+      showFieldError('license', 'license-error', 'Invalid license key. Check your purchase confirmation email.');
       document.getElementById('license-status').classList.add('visible');
       document.getElementById('license-invalid-icon').style.display = 'block';
       document.getElementById('license-valid-icon').style.display   = 'none';
