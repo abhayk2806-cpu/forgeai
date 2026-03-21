@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dashboard — ForgeAI</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/supabase.js"></script>
+<script src="/auth.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -32,7 +35,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .user-email{font-size:12px;color:var(--text-muted);margin-top:2px}
 .sidebar-nav{padding:12px;flex:1}
 .nav-section-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-light);padding:8px 8px 4px}
-.nav-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;text-decoration:none;color:var(--text-muted);font-size:14px;font-weight:500;transition:all .15s;margin-bottom:2px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;text-decoration:none;color:var(--text-muted);font-size:14px;font-weight:500;transition:all .15s;margin-bottom:2px;cursor:pointer;background:none;border:none;width:100%;text-align:left;font-family:'DM Sans',sans-serif}
 .nav-item:hover{background:var(--bg);color:var(--text)}
 .nav-item.active{background:var(--accent-light);color:var(--accent);font-weight:600}
 .nav-icon{font-size:16px;width:20px;text-align:center}
@@ -131,7 +134,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .empty-state .empty-icon{font-size:40px;margin-bottom:12px}
 .empty-state p{font-size:14px}
 
-/* MODAL */
+/* ── MODAL (engine preview) ── */
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:center;justify-content:center;padding:20px}
 .modal-overlay.open{display:flex}
 .modal{background:var(--surface);border-radius:16px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;box-shadow:0 25px 50px rgba(0,0,0,.15)}
@@ -145,14 +148,57 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .modal-section-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-light);margin-bottom:10px}
 .use-case-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .use-case-chip{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px 10px;font-size:12px;color:var(--text);display:flex;align-items:center;gap:6px}
-.btn-open-engine{width:100%;padding:13px;background:var(--accent);color:white;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;display:flex;align-items:center;justify-content:center;gap:8px;transition:background .15s;text-decoration:none}
+.btn-open-engine{width:100%;padding:13px;background:var(--accent);color:white;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;display:flex;align-items:center;justify-content:center;gap:8px;transition:background .15s}
 .btn-open-engine:hover{background:var(--accent-hover)}
 .btn-copy-engine{width:100%;padding:11px;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:8px;transition:all .15s}
 .btn-copy-engine:hover{background:var(--border)}
 .copy-success{display:none;text-align:center;font-size:13px;color:var(--green);font-weight:600;padding:8px}
 
+/* ── ENGINE PANEL (full engine content inside dashboard) ── */
+.engine-panel-overlay{display:none;position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.55)}
+.engine-panel-overlay.open{display:block}
+.engine-panel{position:fixed;top:0;right:0;bottom:0;width:min(720px,100%);background:var(--surface);box-shadow:-10px 0 40px rgba(0,0,0,.12);display:flex;flex-direction:column;z-index:301;transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1)}
+.engine-panel.open{transform:translateX(0)}
+.ep-header{display:flex;align-items:flex-start;gap:16px;padding:24px 28px 20px;border-bottom:1px solid var(--border);flex-shrink:0}
+.ep-icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0}
+.ep-info{flex:1;min-width:0}
+.ep-name{font-size:22px;font-weight:700;color:var(--text)}
+.ep-tagline{font-size:13px;color:var(--text-muted);margin-top:4px}
+.ep-badges{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.ep-close{background:var(--bg);border:none;width:36px;height:36px;border-radius:9px;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;color:var(--text-muted);transition:all .15s;flex-shrink:0}
+.ep-close:hover{background:var(--border);color:var(--text)}
+.ep-toolbar{display:flex;gap:10px;padding:14px 28px;border-bottom:1px solid var(--border);background:var(--bg);flex-shrink:0;flex-wrap:wrap}
+.ep-btn{display:inline-flex;align-items:center;gap:7px;padding:9px 18px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;border:none}
+.ep-btn.primary{background:var(--accent);color:white}
+.ep-btn.primary:hover{background:var(--accent-hover)}
+.ep-btn.secondary{background:var(--surface);color:var(--text);border:1px solid var(--border)}
+.ep-btn.secondary:hover{background:var(--border)}
+.ep-body{flex:1;overflow-y:auto;padding:28px}
+.ep-section{margin-bottom:28px}
+.ep-section-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-light);margin-bottom:12px}
+.ep-use-cases{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px;margin-bottom:0}
+.ep-use-case{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px 12px;font-size:12px;color:var(--text);display:flex;align-items:center;gap:8px}
+.ep-use-case::before{content:'✓';color:var(--accent);font-weight:700;flex-shrink:0}
+.ep-how-to{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:18px}
+.ep-how-to ol{padding-left:18px;display:flex;flex-direction:column;gap:10px}
+.ep-how-to li{font-size:14px;color:var(--text-muted);line-height:1.6}
+.ep-how-to li strong{color:var(--text)}
+.ep-content-box{background:#1A1A1A;border-radius:10px;padding:20px;position:relative}
+.ep-content-text{font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.7;color:#D4D4D4;white-space:pre-wrap;word-break:break-word;max-height:400px;overflow-y:auto;margin:0}
+.ep-content-loading{display:flex;align-items:center;gap:10px;color:#D4D4D4;font-size:13px;padding:8px 0}
+.ep-copy-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.ep-copy-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-light)}
+.ep-copy-btn-inline{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);color:#fff;padding:5px 12px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s}
+.ep-copy-btn-inline:hover{background:rgba(255,255,255,.2)}
+.ep-lock-msg{text-align:center;padding:40px 20px;color:var(--text-muted)}
+.ep-lock-msg .lock-icon{font-size:40px;margin-bottom:12px}
+.ep-lock-msg h3{font-size:18px;font-weight:700;color:var(--text);margin-bottom:8px}
+.ep-lock-msg p{font-size:14px;margin-bottom:20px}
+.ep-copy-success{display:none;font-size:12px;color:var(--green);font-weight:600;padding:6px 0}
+
 /* SIDEBAR OVERLAY */
 .sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:99}
+.sidebar-overlay.open{display:block}
 
 @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 
@@ -161,7 +207,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 @media(max-width:768px){
   .sidebar{transform:translateX(-100%)}
   .sidebar.open{transform:translateX(0);box-shadow:var(--shadow-lg)}
-  .sidebar-overlay.open{display:block}
   .main{margin-left:0}
   .hamburger{display:block}
   .topbar{padding:14px 16px}
@@ -178,6 +223,9 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
   .filter-tab{padding:5px 10px;font-size:12px}
   .quick-guide{display:none}
   .use-case-grid{grid-template-columns:1fr}
+  .engine-panel{width:100%}
+  .ep-body{padding:16px}
+  .ep-header,.ep-toolbar{padding-left:16px;padding-right:16px}
 }
 @media(max-width:480px){.stats-grid{grid-template-columns:1fr 1fr;gap:8px}}
 </style>
@@ -192,20 +240,17 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
     <span class="logo-text">Forge<span>AI</span></span>
   </div>
   <div class="sidebar-user">
-    <div class="user-badge pro" id="tierBadge">⚡ PRO</div>
+    <div class="user-badge starter" id="tierBadge">🌟 STARTER</div>
     <div class="user-name" id="userName">Loading...</div>
     <div class="user-email" id="userEmail">...</div>
   </div>
   <nav class="sidebar-nav">
     <div class="nav-section-title">Main</div>
-    <a href="dashboard.html" class="nav-item active"><span class="nav-icon">🏠</span> Dashboard</a>
-    <a href="engine-page.html" class="nav-item"><span class="nav-icon">⚡</span> All Engines <span class="nav-badge" id="totalBadge">—</span></a>
-    <a href="templates.html" class="nav-item"><span class="nav-icon">📋</span> Templates</a>
-    <div class="nav-section-title" style="margin-top:12px">Resources</div>
-    <a href="resources.html" class="nav-item"><span class="nav-icon">📚</span> Guides & Tutorials</a>
-    <a href="resources.html#videos" class="nav-item"><span class="nav-icon">🎬</span> Video Tutorials</a>
+    <button class="nav-item active" id="navDashboard" onclick="showView('dashboard')"><span class="nav-icon">🏠</span> Dashboard</button>
+    <button class="nav-item" id="navEngines" onclick="showView('engines')"><span class="nav-icon">⚡</span> All Engines <span class="nav-badge" id="totalBadge">—</span></button>
+    <button class="nav-item" onclick="window.location.href='templates.html'"><span class="nav-icon">📋</span> Templates</button>
     <div class="nav-section-title" style="margin-top:12px">Account</div>
-    <a href="profile.html" class="nav-item"><span class="nav-icon">👤</span> Profile & License</a>
+    <button class="nav-item" onclick="window.location.href='profile.html'"><span class="nav-icon">👤</span> Profile & Settings</button>
   </nav>
   <div class="sidebar-bottom">
     <button class="btn-logout" onclick="handleLogout()"><span>🚪</span> Logout</button>
@@ -215,14 +260,15 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 <main class="main">
   <div class="topbar">
     <button class="hamburger" onclick="openSidebar()">☰</button>
-    <div class="topbar-title">Dashboard</div>
+    <div class="topbar-title" id="topbarTitle">Dashboard</div>
     <div class="topbar-search">
       <span>🔍</span>
       <input type="text" placeholder="Search engines..." id="searchInput" oninput="handleSearch(this.value)">
     </div>
   </div>
 
-  <div class="content">
+  <!-- DASHBOARD VIEW -->
+  <div class="content" id="viewDashboard">
     <!-- STATS -->
     <div class="stats-grid">
       <div class="stat-card"><div class="stat-icon" style="background:#FFF4ED">⚡</div><div><div class="stat-value" id="statTotal">—</div><div class="stat-label">Total Engines</div></div></div>
@@ -250,17 +296,15 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
       <a href="/#pricing" class="btn-upgrade">⚡ Upgrade for ₹1,000</a>
     </div>
 
-    <!-- FILTERS -->
+    <!-- RECENT ENGINES (first 6 shown on dashboard home) -->
     <div class="section-header">
-      <div><div class="section-title">All Engines</div><div class="section-subtitle" id="engineSubtitle">Loading...</div></div>
+      <div>
+        <div class="section-title">Recent Engines</div>
+        <div class="section-subtitle" id="dashSubtitle">Loading...</div>
+      </div>
+      <button class="filter-tab" onclick="showView('engines')" style="font-size:13px;padding:7px 16px">View All →</button>
     </div>
-    <div class="filter-tabs" id="filterTabs">
-      <div class="filter-tab active" onclick="filterCategory('all',this)" data-cat="all">All Engines</div>
-    </div>
-
-    <!-- DYNAMIC ENGINE SECTIONS -->
-    <div id="engineSections">
-      <!-- Skeleton loading -->
+    <div id="dashRecentEngines">
       <div class="engines-grid" id="skeletonGrid">
         <div class="skeleton-card"><div class="skeleton" style="height:20px;width:60%;margin-bottom:10px"></div><div class="skeleton" style="height:14px;width:90%;margin-bottom:6px"></div><div class="skeleton" style="height:14px;width:75%"></div></div>
         <div class="skeleton-card"><div class="skeleton" style="height:20px;width:60%;margin-bottom:10px"></div><div class="skeleton" style="height:14px;width:90%;margin-bottom:6px"></div><div class="skeleton" style="height:14px;width:75%"></div></div>
@@ -268,9 +312,24 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
       </div>
     </div>
   </div>
+
+  <!-- ALL ENGINES VIEW -->
+  <div class="content" id="viewEngines" style="display:none">
+    <div class="section-header">
+      <div>
+        <div class="section-title">All Engines</div>
+        <div class="section-subtitle" id="engineSubtitle">Loading...</div>
+      </div>
+    </div>
+    <div class="filter-tabs" id="filterTabs">
+      <div class="filter-tab active" onclick="filterCategory('all',this)" data-cat="all">All Engines</div>
+    </div>
+    <!-- DYNAMIC ENGINE SECTIONS -->
+    <div id="engineSections"></div>
+  </div>
 </main>
 
-<!-- MODAL -->
+<!-- ENGINE PREVIEW MODAL -->
 <div class="modal-overlay" id="modalOverlay" onclick="closeModalOverlay(event)">
   <div class="modal">
     <div class="modal-header">
@@ -283,29 +342,45 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
       <div class="modal-section">
         <div class="modal-section-title">How to Use</div>
         <div style="font-size:13px;color:var(--text-muted);line-height:1.7">
-          1. Click <strong>"Open Engine"</strong> — engine page opens<br>
-          2. Click <strong>"Copy Engine"</strong> — copies full prompt<br>
+          1. Click <strong>"Open Engine"</strong> — full engine opens here<br>
+          2. Click <strong>"Copy Engine"</strong> — copies the prompt<br>
           3. Go to <strong>Claude.ai</strong> → Create a new Project<br>
           4. Paste as <strong>System Prompt</strong> → Start chatting!
         </div>
       </div>
-      <a href="#" class="btn-open-engine" id="modalOpenBtn">⚡ Open Engine</a>
-      <button class="btn-copy-engine" id="modalCopyBtn" onclick="copyEngine()">📋 Copy Engine Text</button>
+      <button class="btn-open-engine" id="modalOpenBtn" onclick="openEnginePanel()">⚡ Open Engine</button>
+      <button class="btn-copy-engine" id="modalCopyBtn" onclick="copyEngineFromModal()">📋 Copy Engine Text</button>
       <div class="copy-success" id="copySuccess">✅ Copied! Paste into Claude.ai Projects</div>
     </div>
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="/supabase.js"></script>
-  <script src="/auth.js"></script>
+<!-- ENGINE PANEL (full content slide-in) -->
+<div class="engine-panel-overlay" id="enginePanelOverlay" onclick="closeEnginePanel()"></div>
+<div class="engine-panel" id="enginePanel">
+  <div class="ep-header">
+    <div class="ep-icon" id="epIcon">⚡</div>
+    <div class="ep-info">
+      <div class="ep-name" id="epName">—</div>
+      <div class="ep-tagline" id="epTagline">—</div>
+      <div class="ep-badges" id="epBadges"></div>
+    </div>
+    <button class="ep-close" onclick="closeEnginePanel()">✕</button>
+  </div>
+  <div class="ep-toolbar" id="epToolbar">
+    <button class="ep-btn primary" id="epCopyBtn" onclick="copyEngineFromPanel()">📋 Copy Engine Prompt</button>
+    <button class="ep-btn secondary" onclick="closeEnginePanel()">← Back to Engines</button>
+  </div>
+  <div class="ep-body" id="epBody">
+    <!-- populated dynamically -->
+  </div>
+</div>
+
 <script>
-// SUPABASE_URL already declared in supabase.js
-const ANON_KEY = SUPABASE_ANON; // use value from supabase.js
+const ANON_KEY = SUPABASE_ANON;
+let allEngines=[], allCategories=[], userTier='starter', currentEngine=null, panelContentCache={};
 
-let allEngines=[], allCategories=[], userTier='starter', currentEngine=null;
-
-// ─── FETCH FROM SUPABASE ───
+// ─── FETCH ───
 async function fetchData() {
   try {
     const [catRes, engRes] = await Promise.all([
@@ -314,8 +389,38 @@ async function fetchData() {
     ]);
     allCategories = await catRes.json();
     allEngines = await engRes.json();
-    return true;
+    return Array.isArray(allEngines) && allEngines.length > 0;
   } catch(e) { console.error('Fetch error',e); return false; }
+}
+
+// ─── VIEWS ───
+function showView(view) {
+  document.getElementById('viewDashboard').style.display = view==='dashboard' ? 'block' : 'none';
+  document.getElementById('viewEngines').style.display   = view==='engines'   ? 'block' : 'none';
+  document.getElementById('navDashboard').classList.toggle('active', view==='dashboard');
+  document.getElementById('navEngines').classList.toggle('active',   view==='engines');
+  document.getElementById('topbarTitle').textContent = view==='dashboard' ? 'Dashboard' : 'All Engines';
+  if(view==='engines' && document.getElementById('engineSections').children.length===0) {
+    renderSections(allEngines, allCategories);
+  }
+  closeSidebar();
+}
+
+// ─── RENDER DASHBOARD RECENT ───
+function renderDashboardRecent() {
+  document.getElementById('skeletonGrid')?.remove();
+  const recent = allEngines.slice(0,6);
+  const container = document.getElementById('dashRecentEngines');
+  if(!recent.length) { container.innerHTML='<div class="empty-state"><div class="empty-icon">⚡</div><p>No engines found.</p></div>'; return; }
+  const grid = document.createElement('div');
+  grid.className = 'engines-grid';
+  recent.forEach(e => {
+    const cat = allCategories.find(c=>c.id===e.category_id)||{color:'#F97316'};
+    grid.innerHTML += renderEngineCard(e, cat);
+  });
+  container.innerHTML = '';
+  container.appendChild(grid);
+  document.getElementById('dashSubtitle').textContent = `${allEngines.length} engines available`;
 }
 
 // ─── RENDER FILTER TABS ───
@@ -323,9 +428,9 @@ function renderFilterTabs() {
   const tabsEl = document.getElementById('filterTabs');
   const catIds = [...new Set(allEngines.map(e=>e.category_id))];
   const usedCats = allCategories.filter(c=>catIds.includes(c.id));
-
+  // Remove old tabs except "All"
+  Array.from(tabsEl.querySelectorAll('[data-cat]:not([data-cat="all"])')).forEach(t=>t.remove());
   usedCats.forEach(cat => {
-    const count = allEngines.filter(e=>e.category_id===cat.id).length;
     const tab = document.createElement('div');
     tab.className = 'filter-tab';
     tab.dataset.cat = cat.id;
@@ -338,28 +443,22 @@ function renderFilterTabs() {
 // ─── RENDER ALL SECTIONS ───
 function renderSections(engines, categories) {
   const container = document.getElementById('engineSections');
-  document.getElementById('skeletonGrid')?.remove();
   container.innerHTML = '';
-
   const catIds = [...new Set(engines.map(e=>e.category_id))];
   const usedCats = categories.filter(c=>catIds.includes(c.id));
-
   if(!usedCats.length) {
     container.innerHTML = '<div class="empty-state"><div class="empty-icon">🔍</div><p>No engines found</p></div>';
     return;
   }
-
   usedCats.forEach(cat => {
     const catEngines = engines.filter(e=>e.category_id===cat.id);
     if(!catEngines.length) return;
-
     const section = document.createElement('div');
     section.className = 'category-section';
     section.dataset.catId = cat.id;
-
     section.innerHTML = `
       <div class="category-header">
-        <div class="category-icon-wrap" style="background:${cat.color_light}">${cat.icon}</div>
+        <div class="category-icon-wrap" style="background:${cat.color_light||'#FFF4ED'}">${cat.icon}</div>
         <span class="category-name">${cat.name}</span>
         <span class="category-count">${catEngines.length} Engine${catEngines.length!==1?'s':''}</span>
       </div>
@@ -369,33 +468,26 @@ function renderSections(engines, categories) {
     `;
     container.appendChild(section);
   });
-
-  updateSubtitle(engines.length);
+  document.getElementById('engineSubtitle').textContent = `Showing all ${engines.length} engines`;
 }
 
-// ─── RENDER SINGLE CARD ───
+// ─── RENDER ENGINE CARD ───
 function renderEngineCard(e, cat) {
   const isLocked = userTier==='starter' && e.tier==='pro';
   const cardColor = cat.color || '#F97316';
   const useCases = Array.isArray(e.use_cases) ? e.use_cases : JSON.parse(e.use_cases||'[]');
-
   const tierBadge = e.tier==='starter'
     ? '<span class="badge badge-starter">STARTER</span>'
     : '<span class="badge badge-pro">PRO</span>';
-
   const extraBadge = e.badge==='HOT' ? '<span class="badge badge-hot">🔥 HOT</span>'
     : e.badge==='NEW' ? '<span class="badge badge-new">NEW</span>'
     : e.badge==='EXCLUSIVE' ? '<span class="badge badge-exclusive">EXCLUSIVE</span>'
     : '';
-
   const lockBadge = isLocked ? '<span class="badge badge-lock">🔒</span>' : '';
-
   const useCaseHtml = useCases.slice(0,3).map(uc=>
     `<div class="use-case-item"><div class="use-case-dot" style="background:${cardColor}"></div>${uc}</div>`
   ).join('');
-
   const actionText = isLocked ? '🔒 Pro Only' : 'Open Engine →';
-
   return `
     <div class="engine-card${isLocked?' locked':''}" style="--card-color:${cardColor}" onclick="openModal('${e.id}')">
       <div class="card-top">
@@ -422,7 +514,6 @@ function renderEngineCard(e, cat) {
 function filterCategory(catId, el) {
   document.querySelectorAll('.filter-tab').forEach(t=>t.classList.remove('active'));
   el.classList.add('active');
-
   const filtered = catId==='all' ? allEngines : allEngines.filter(e=>e.category_id===catId);
   const filteredCats = catId==='all' ? allCategories : allCategories.filter(c=>c.id===catId);
   renderSections(filtered, filteredCats);
@@ -431,27 +522,26 @@ function filterCategory(catId, el) {
 // ─── SEARCH ───
 function handleSearch(q) {
   const lq=q.toLowerCase();
-  if(!lq) { renderSections(allEngines, allCategories); return; }
+  if(!lq) {
+    const activeView = document.getElementById('viewEngines').style.display!=='none' ? 'engines' : 'dashboard';
+    if(activeView==='engines') renderSections(allEngines, allCategories);
+    return;
+  }
+  // Switch to engines view for search
+  showView('engines');
   const filtered=allEngines.filter(e=>{
     const ucs=(Array.isArray(e.use_cases)?e.use_cases:JSON.parse(e.use_cases||'[]')).join(' ');
     return (e.name+e.tagline+ucs).toLowerCase().includes(lq);
   });
-  // Reset filter tabs
   document.querySelectorAll('.filter-tab').forEach(t=>t.classList.remove('active'));
   document.querySelector('[data-cat="all"]').classList.add('active');
   renderSections(filtered, allCategories);
-  updateSubtitle(filtered.length, q);
+  document.getElementById('engineSubtitle').textContent = `Found ${filtered.length} engine${filtered.length!==1?'s':''} for "${q}"`;
 }
 
-function updateSubtitle(count, query='') {
-  const el=document.getElementById('engineSubtitle');
-  el.textContent = query ? `Found ${count} engine${count!==1?'s':''} for "${query}"` : `Showing all ${count} engines`;
-}
-
-// ─── MODAL ───
+// ─── PREVIEW MODAL ───
 function openModal(id) {
   const e=allEngines.find(x=>x.id===id); if(!e) return;
-  const cat=allCategories.find(c=>c.id===e.category_id);
   const isLocked=userTier==='starter'&&e.tier==='pro';
   currentEngine=e;
 
@@ -465,79 +555,246 @@ function openModal(id) {
 
   const ob=document.getElementById('modalOpenBtn'), cb=document.getElementById('modalCopyBtn');
   document.getElementById('copySuccess').style.display='none';
+  document.getElementById('modalCopyBtn').innerHTML='📋 Copy Engine Text';
 
-  if(isLocked){ob.textContent='🔒 Upgrade to Pro to Unlock';ob.href='/#pricing';cb.style.display='none';}
-  else{ob.innerHTML='⚡ Open Engine';ob.href='engine-page.html?id='+e.id;cb.style.display='flex';}
-
+  if(isLocked){
+    ob.textContent='🔒 Upgrade to Pro to Unlock';
+    ob.onclick=()=>window.location.href='/#pricing';
+    cb.style.display='none';
+  } else {
+    ob.innerHTML='⚡ Open Engine';
+    ob.onclick=openEnginePanel;
+    cb.style.display='flex';
+  }
   document.getElementById('modalOverlay').classList.add('open');
   document.body.style.overflow='hidden';
 }
 
-function closeModal(){document.getElementById('modalOverlay').classList.remove('open');document.body.style.overflow='';}
+function closeModal(){
+  document.getElementById('modalOverlay').classList.remove('open');
+  document.body.style.overflow='';
+}
 function closeModalOverlay(ev){if(ev.target===document.getElementById('modalOverlay'))closeModal();}
 
-async function copyEngine() {
+async function copyEngineFromModal() {
   if(!currentEngine) return;
-  try {
-    // Try to load actual content from content_items
-    const res=await fetch(`${SUPABASE_URL}/rest/v1/content_items?id=eq.${currentEngine.id}&select=content`,{headers:{'apikey':ANON_KEY,'Authorization':'Bearer '+ANON_KEY}});
-    const data=await res.json();
-    const content=data[0]?.content||`[${currentEngine.name} — Paste engine content from Admin Panel]`;
-    await navigator.clipboard.writeText(content);
-  } catch(e) {
-    await navigator.clipboard.writeText(`[${currentEngine.name} Engine]`);
-  }
+  const btn = document.getElementById('modalCopyBtn');
+  btn.innerHTML = '⏳ Loading...';
+  const content = await fetchEngineContent(currentEngine.id, currentEngine.name);
+  await navigator.clipboard.writeText(content);
   document.getElementById('copySuccess').style.display='block';
-  document.getElementById('modalCopyBtn').innerHTML='✅ Copied!';
-  setTimeout(()=>{document.getElementById('copySuccess').style.display='none';document.getElementById('modalCopyBtn').innerHTML='📋 Copy Engine Text';},3000);
+  btn.innerHTML='✅ Copied!';
+  setTimeout(()=>{document.getElementById('copySuccess').style.display='none';btn.innerHTML='📋 Copy Engine Text';},3000);
+}
+
+// ─── ENGINE PANEL ───
+function openEnginePanel() {
+  if(!currentEngine) return;
+  closeModal();
+  const e = currentEngine;
+  const isLocked = userTier==='starter' && e.tier==='pro';
+
+  document.getElementById('epIcon').textContent = e.icon;
+  document.getElementById('epIcon').style.background = e.icon_bg||'#FFF4ED';
+  document.getElementById('epName').textContent = e.name;
+  document.getElementById('epTagline').textContent = e.tagline;
+
+  const tierBadge = e.tier==='starter'
+    ? '<span class="badge badge-starter">STARTER</span>'
+    : '<span class="badge badge-pro">PRO</span>';
+  const extraBadge = e.badge==='HOT' ? '<span class="badge badge-hot">🔥 HOT</span>'
+    : e.badge==='NEW' ? '<span class="badge badge-new">NEW</span>'
+    : e.badge==='EXCLUSIVE' ? '<span class="badge badge-exclusive">EXCLUSIVE</span>'
+    : '';
+  document.getElementById('epBadges').innerHTML = tierBadge + extraBadge;
+
+  const toolbar = document.getElementById('epToolbar');
+  if(isLocked) {
+    toolbar.innerHTML = `<a href="/#pricing" class="ep-btn primary">🔓 Upgrade to Unlock</a><button class="ep-btn secondary" onclick="closeEnginePanel()">← Back</button>`;
+  } else {
+    toolbar.innerHTML = `<button class="ep-btn primary" id="epCopyBtn" onclick="copyEngineFromPanel()">📋 Copy Engine Prompt</button><button class="ep-btn secondary" onclick="closeEnginePanel()">← Back to Engines</button>`;
+  }
+
+  const body = document.getElementById('epBody');
+  const ucs = Array.isArray(e.use_cases)?e.use_cases:JSON.parse(e.use_cases||'[]');
+
+  if(isLocked) {
+    body.innerHTML = `
+      <div class="ep-lock-msg">
+        <div class="lock-icon">🔒</div>
+        <h3>Pro Engine</h3>
+        <p>Upgrade to ForgeAI Pro to unlock this engine and all other Pro engines.</p>
+        <a href="/#pricing" class="ep-btn primary" style="display:inline-flex;text-decoration:none">⚡ Upgrade for ₹1,000</a>
+      </div>`;
+  } else {
+    body.innerHTML = `
+      <div class="ep-section">
+        <div class="ep-section-label">Use Cases</div>
+        <div class="ep-use-cases">${ucs.map(u=>`<div class="ep-use-case">${u}</div>`).join('')}</div>
+      </div>
+      <div class="ep-section">
+        <div class="ep-section-label">How to Use</div>
+        <div class="ep-how-to">
+          <ol>
+            <li>Click <strong>"Copy Engine Prompt"</strong> above to copy the full prompt</li>
+            <li>Go to <strong>Claude.ai</strong> and create a new Project</li>
+            <li>Paste the prompt as the <strong>Project System Prompt</strong></li>
+            <li>Start a new conversation — Claude is now your specialized AI</li>
+          </ol>
+        </div>
+      </div>
+      <div class="ep-section">
+        <div class="ep-copy-bar">
+          <div class="ep-copy-label">Engine Prompt</div>
+          <button class="ep-copy-btn-inline" onclick="copyEngineFromPanel()">Copy</button>
+        </div>
+        <div class="ep-content-box">
+          <div class="ep-content-loading" id="epContentLoading"><span>⏳</span> Loading engine content...</div>
+          <pre class="ep-content-text" id="epContentText" style="display:none"></pre>
+        </div>
+        <div class="ep-copy-success" id="epCopySuccess">✅ Copied to clipboard!</div>
+      </div>`;
+    loadEngineContent(e.id, e.name);
+  }
+
+  document.getElementById('enginePanelOverlay').classList.add('open');
+  document.getElementById('enginePanel').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+
+async function loadEngineContent(id, name) {
+  if(panelContentCache[id]) {
+    showPanelContent(panelContentCache[id]);
+    return;
+  }
+  const content = await fetchEngineContent(id, name);
+  panelContentCache[id] = content;
+  showPanelContent(content);
+}
+
+function showPanelContent(content) {
+  const loading = document.getElementById('epContentLoading');
+  const text = document.getElementById('epContentText');
+  if(!loading || !text) return;
+  loading.style.display='none';
+  text.style.display='block';
+  text.textContent = content;
+}
+
+async function fetchEngineContent(id, name) {
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/content_items?id=eq.${id}&select=content`, {
+      headers:{'apikey':ANON_KEY,'Authorization':'Bearer '+ANON_KEY}
+    });
+    const data = await res.json();
+    return data[0]?.content || `[${name} — Engine content coming soon. Contact support if this persists.]`;
+  } catch(e) {
+    return `[${name} — Could not load engine content. Please try again.]`;
+  }
+}
+
+async function copyEngineFromPanel() {
+  if(!currentEngine) return;
+  const btn = document.getElementById('epCopyBtn');
+  if(btn) btn.innerHTML = '⏳ Copying...';
+  let content;
+  if(panelContentCache[currentEngine.id]) {
+    content = panelContentCache[currentEngine.id];
+  } else {
+    content = await fetchEngineContent(currentEngine.id, currentEngine.name);
+    panelContentCache[currentEngine.id] = content;
+  }
+  await navigator.clipboard.writeText(content);
+  if(btn) { btn.innerHTML='✅ Copied!'; setTimeout(()=>{btn.innerHTML='📋 Copy Engine Prompt';},3000); }
+  const s = document.getElementById('epCopySuccess');
+  if(s) { s.style.display='block'; setTimeout(()=>{s.style.display='none';},3000); }
+}
+
+function closeEnginePanel() {
+  document.getElementById('enginePanelOverlay').classList.remove('open');
+  document.getElementById('enginePanel').classList.remove('open');
+  document.body.style.overflow='';
 }
 
 // ─── SIDEBAR ───
 function openSidebar(){document.getElementById('sidebar').classList.add('open');document.getElementById('sidebarOverlay').classList.add('open');document.body.style.overflow='hidden';}
 function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('sidebarOverlay').classList.remove('open');document.body.style.overflow='';}
-function handleLogout(){if(window._supabaseClient)window._supabaseClient.auth.signOut().then(()=>location.href='login.html');}
+function handleLogout(){
+  const sb = window.supabase || window._supabaseClient;
+  if(sb?.auth) sb.auth.signOut().then(()=>location.href='/login.html');
+  else location.href='/login.html';
+}
+
+// ─── UPDATE UI FOR TIER ───
+function applyTier(tier) {
+  userTier = tier;
+  if(tier==='pro'){
+    document.getElementById('tierBadge').textContent='⚡ PRO';
+    document.getElementById('tierBadge').className='user-badge pro';
+    document.getElementById('statUnlocked').textContent=allEngines.length;
+    document.getElementById('upgradeBanner').style.display='none';
+  } else {
+    document.getElementById('tierBadge').textContent='🌟 STARTER';
+    document.getElementById('tierBadge').className='user-badge starter';
+    document.getElementById('statUnlocked').textContent=allEngines.filter(e=>e.tier==='starter').length;
+    document.getElementById('upgradeBanner').style.display='flex';
+  }
+  // Re-render with correct lock state
+  renderDashboardRecent();
+  if(document.getElementById('viewEngines').style.display!=='none'){
+    renderSections(allEngines, allCategories);
+  }
+}
 
 // ─── INIT ───
 async function init() {
-  const ok=await fetchData();
-  if(!ok){document.getElementById('engineSections').innerHTML='<div class="empty-state"><div class="empty-icon">⚠️</div><p>Could not load engines. Please refresh.</p></div>';return;}
+  const ok = await fetchData();
+  if(!ok){
+    document.getElementById('dashRecentEngines').innerHTML='<div class="empty-state"><div class="empty-icon">⚠️</div><p>Could not load engines. Please refresh.</p></div>';
+    return;
+  }
 
-  // Update stats
-  document.getElementById('statTotal').textContent=allEngines.length;
-  document.getElementById('totalBadge').textContent=allEngines.length;
+  document.getElementById('statTotal').textContent = allEngines.length;
+  document.getElementById('totalBadge').textContent = allEngines.length;
 
-  // Auth
-  const authCheck=setInterval(()=>{
-    if(!window._supabaseClient)return; clearInterval(authCheck);
-    window._supabaseClient.auth.getUser().then(async({data})=>{
-      if(!data?.user)return;
-      document.getElementById('userEmail').textContent=data.user.email;
-      const name=data.user.email.split('@')[0];
-      document.getElementById('userName').textContent=name.charAt(0).toUpperCase()+name.slice(1);
+  // Render immediately with default starter tier (no flicker/wait)
+  renderDashboardRecent();
+  renderFilterTabs();
 
-      const{data:purchase}=await window._supabaseClient.from('purchases').select('tier').eq('user_id',data.user.id).order('created_at',{ascending:false}).limit(1).single();
-      userTier=purchase?.tier==='pro'?'pro':'starter';
-
-      if(userTier==='pro'){
-        document.getElementById('tierBadge').textContent='⚡ PRO';
-        document.getElementById('tierBadge').className='user-badge pro';
-        document.getElementById('statUnlocked').textContent=allEngines.length;
-        document.getElementById('upgradeBanner').style.display='none';
-      } else {
-        document.getElementById('tierBadge').textContent='🌟 STARTER';
-        document.getElementById('tierBadge').className='user-badge starter';
-        document.getElementById('statUnlocked').textContent=allEngines.filter(e=>e.tier==='starter').length;
-        document.getElementById('upgradeBanner').style.display='flex';
+  // Then pick up auth info from window.COSU (set by auth.js)
+  // auth.js runs before this script, so COSU should be set when page shows
+  if(window.COSU) {
+    const u = window.COSU;
+    document.getElementById('userEmail').textContent = u.email || '';
+    const name = (u.email||'').split('@')[0];
+    document.getElementById('userName').textContent = name.charAt(0).toUpperCase()+name.slice(1);
+    applyTier(u.tier || 'starter');
+  } else {
+    // Fallback: wait for auth.js to finish hydrating (max 2s)
+    let waited = 0;
+    const poll = setInterval(() => {
+      waited += 100;
+      if(window.COSU || waited >= 2000) {
+        clearInterval(poll);
+        if(window.COSU) {
+          const u = window.COSU;
+          document.getElementById('userEmail').textContent = u.email || '';
+          const name = (u.email||'').split('@')[0];
+          document.getElementById('userName').textContent = name.charAt(0).toUpperCase()+name.slice(1);
+          applyTier(u.tier || 'starter');
+        }
       }
-
-      // Render after we know tier
-      renderFilterTabs();
-      renderSections(allEngines, allCategories);
-    });
-  },200);
+    }, 100);
+  }
 }
 
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();closeSidebar();}});
+document.addEventListener('keydown', e => {
+  if(e.key==='Escape'){
+    if(document.getElementById('enginePanel').classList.contains('open')) closeEnginePanel();
+    else closeModal();
+    closeSidebar();
+  }
+});
 document.addEventListener('DOMContentLoaded', init);
 </script>
 </body>

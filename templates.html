@@ -1,727 +1,158 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Templates — ForgeAI</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="/supabase.js"></script>
-  <script src="/auth.js"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Templates — ForgeAI</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/supabase.js"></script>
+<script src="/auth.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F7F7F5;--surface:#FFFFFF;--border:#E8E8E4;--text:#1A1A1A;--text-muted:#6B6B6B;
+  --text-light:#9B9B9B;--accent:#F97316;--accent-light:#FFF4ED;--accent-hover:#EA6C0A;
+  --green:#10B981;--green-light:#ECFDF5;--blue:#3B82F6;--blue-light:#EFF6FF;
+  --red:#EF4444;--sidebar-w:260px;--radius:12px;
+  --shadow:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.04);
+  --shadow-lg:0 10px 15px rgba(0,0,0,.08),0 4px 6px rgba(0,0,0,.04);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
 
-    :root {
-      --bg:       #F4F2EE;
-      --sidebar:  #1A1A1A;
-      --card:     #FFFFFF;
-      --text:     #1A1A1A;
-      --muted:    #7A7A7A;
-      --border:   #E2E0DA;
-      --accent:   #1A1A1A;
-      --success:  #2D6A4F;
-      --success-bg: #EDFBF3;
-      --shadow:   0 2px 12px rgba(0,0,0,0.07);
-      --shadow-lg:0 8px 32px rgba(0,0,0,0.12);
-      --sidebar-w:240px;
-      --mono: 'DM Mono', monospace;
-    }
+/* SIDEBAR */
+.sidebar{position:fixed;top:0;left:0;width:var(--sidebar-w);height:100vh;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:100;transition:transform .3s cubic-bezier(.4,0,.2,1);overflow-y:auto}
+.sidebar-logo{padding:20px 20px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;text-decoration:none}
+.logo-icon{width:36px;height:36px;background:var(--accent);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.logo-text{font-size:17px;font-weight:700;color:var(--text);letter-spacing:-.3px}
+.logo-text span{color:var(--accent)}
+.sidebar-user{padding:16px 20px;border-bottom:1px solid var(--border)}
+.user-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:20px;font-size:12px;font-weight:600;font-family:'JetBrains Mono',monospace;margin-bottom:8px}
+.user-badge.pro{background:var(--accent-light);color:var(--accent)}
+.user-badge.starter{background:var(--blue-light);color:var(--blue)}
+.user-name{font-size:14px;font-weight:700;color:var(--text)}
+.user-email{font-size:12px;color:var(--text-muted);margin-top:2px}
+.sidebar-nav{padding:12px;flex:1}
+.nav-section-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-light);padding:8px 8px 4px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;text-decoration:none;color:var(--text-muted);font-size:14px;font-weight:500;transition:all .15s;margin-bottom:2px}
+.nav-item:hover{background:var(--bg);color:var(--text)}
+.nav-item.active{background:var(--accent-light);color:var(--accent);font-weight:600}
+.nav-icon{font-size:16px;width:20px;text-align:center}
+.sidebar-bottom{padding:12px;border-top:1px solid var(--border)}
+.btn-logout{width:100%;padding:9px 12px;background:none;border:1px solid var(--border);border-radius:8px;color:var(--text-muted);font-size:13px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:8px;transition:all .15s;font-family:'DM Sans',sans-serif}
+.btn-logout:hover{background:#FEF2F2;color:var(--red);border-color:#FECACA}
 
-    html, body { height: 100%; font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); -webkit-font-smoothing: antialiased; }
+/* MAIN */
+.main{margin-left:var(--sidebar-w);min-height:100vh}
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:14px 28px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:50}
+.hamburger{display:none;background:none;border:none;cursor:pointer;padding:4px;font-size:22px;color:var(--text)}
+.topbar-title{font-size:18px;font-weight:700;color:var(--text);flex:1}
+.content{padding:28px}
 
-    .layout { display: flex; min-height: 100vh; }
+/* PAGE HEADER */
+.page-header{margin-bottom:28px}
+.page-title{font-size:26px;font-weight:700;color:var(--text);letter-spacing:-.4px;margin-bottom:6px}
+.page-sub{font-size:14px;color:var(--text-muted)}
 
-    /* ══ SIDEBAR ══ */
-    .sidebar { width: var(--sidebar-w); min-width: var(--sidebar-w); background: var(--sidebar); display: flex; flex-direction: column; position: fixed; top: 0; left: 0; bottom: 0; z-index: 100; transition: transform 300ms cubic-bezier(0.4,0,0.2,1); overflow-y: auto; overflow-x: hidden; }
-    .sidebar-header { padding: 20px 20px 16px; border-bottom: 1px solid rgba(255,255,255,0.08); }
-    .sidebar-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; margin-bottom: 16px; }
-    .sidebar-logomark { width: 34px; height: 34px; background: #fff; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
-    .sidebar-logomark svg { width: 18px; height: 18px; fill: #1A1A1A; }
-    .sidebar-brand { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; color: #fff; }
-    .user-pill { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 10px 12px; display: flex; align-items: center; gap: 10px; }
-    .user-avatar { width: 30px; height: 30px; background: rgba(255,255,255,0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; color: #fff; flex-shrink: 0; }
-    .user-info { min-width: 0; flex: 1; }
-    .user-name { font-size: 13px; font-weight: 500; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .user-tier { font-size: 11px; color: rgba(255,255,255,0.5); margin-top: 1px; }
-    .tier-dot { width: 6px; height: 6px; border-radius: 50%; background: #22C55E; display: inline-block; margin-right: 4px; }
-    .sidebar-nav { flex: 1; padding: 16px 12px; }
-    .nav-section { margin-bottom: 20px; }
-    .nav-section-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: rgba(255,255,255,0.3); padding: 0 8px; margin-bottom: 6px; }
-    .nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 7px; text-decoration: none; color: rgba(255,255,255,0.6); font-size: 13.5px; transition: background 150ms, color 150ms; margin-bottom: 2px; }
-    .nav-item:hover { background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.9); }
-    .nav-item.active { background: rgba(255,255,255,0.12); color: #fff; font-weight: 500; }
-    .nav-item svg { width: 15px; height: 15px; flex-shrink: 0; opacity: 0.7; }
-    .nav-item.active svg { opacity: 1; }
-    .nav-badge { margin-left: auto; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 100px; background: rgba(255,255,255,0.12); color: rgba(255,255,255,0.7); }
-    .sidebar-footer { padding: 12px; border-top: 1px solid rgba(255,255,255,0.08); }
+/* EMPTY STATE */
+.coming-soon{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:64px 40px;text-align:center;box-shadow:var(--shadow)}
+.coming-soon .icon{font-size:56px;margin-bottom:20px;display:block}
+.coming-soon h2{font-size:22px;font-weight:700;color:var(--text);margin-bottom:10px}
+.coming-soon p{font-size:15px;color:var(--text-muted);max-width:440px;margin:0 auto 24px;line-height:1.7}
+.coming-soon .note{background:var(--accent-light);border:1px solid var(--accent);border-radius:8px;padding:12px 20px;font-size:13px;color:var(--accent);font-weight:600;display:inline-block}
 
-    /* ══ MAIN ══ */
-    .main { flex: 1; margin-left: var(--sidebar-w); min-height: 100vh; display: flex; flex-direction: column; }
-    .topbar { height: 60px; background: var(--card); border-bottom: 1px solid var(--border); padding: 0 28px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50; }
-    .topbar-left { display: flex; align-items: center; gap: 12px; }
-    .menu-btn { display: none; background: none; border: none; cursor: pointer; padding: 6px; color: var(--text); border-radius: 6px; }
-    .menu-btn svg { width: 20px; height: 20px; display: block; }
-    .topbar-title { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700; color: var(--text); letter-spacing: -0.3px; }
-    .topbar-right { display: flex; align-items: center; gap: 10px; }
-    .topbar-avatar { width: 34px; height: 34px; background: var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; color: #fff; }
+/* SIDEBAR OVERLAY */
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:99}
+.sidebar-overlay.open{display:block}
 
-    /* ══ CONTENT ══ */
-    .content { padding: 32px 28px 80px; }
-
-    /* Page header */
-    .page-header {
-      margin-bottom: 28px;
-      animation: fadeUp 0.4s ease both;
-    }
-
-    .page-title {
-      font-family: 'Syne', sans-serif;
-      font-size: 28px; font-weight: 800;
-      color: var(--text); letter-spacing: -0.4px;
-      margin-bottom: 6px;
-    }
-
-    .page-sub {
-      font-size: 15px; color: var(--muted);
-    }
-
-    /* ══ FILTER TABS ══ */
-    .filter-bar {
-      display: flex; align-items: center; gap: 8px;
-      margin-bottom: 28px; flex-wrap: wrap;
-      animation: fadeUp 0.4s ease 0.05s both;
-    }
-
-    .filter-btn {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 8px 16px;
-      font-size: 13px; font-weight: 500;
-      color: var(--muted);
-      cursor: pointer;
-      transition: all 150ms;
-      white-space: nowrap;
-    }
-
-    .filter-btn:hover { border-color: #C8C6C2; color: var(--text); }
-
-    .filter-btn.active {
-      background: var(--accent);
-      border-color: var(--accent);
-      color: #fff;
-      font-weight: 600;
-    }
-
-    .filter-count {
-      display: inline-flex; align-items: center; justify-content: center;
-      width: 18px; height: 18px;
-      background: rgba(255,255,255,0.2);
-      border-radius: 100px;
-      font-size: 10px; font-weight: 700;
-      margin-left: 4px;
-    }
-
-    .filter-btn:not(.active) .filter-count {
-      background: #F0EDE8;
-      color: var(--muted);
-    }
-
-    /* ══ TEMPLATES GRID ══ */
-    .templates-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-      gap: 16px;
-    }
-
-    /* ══ TEMPLATE CARD ══ */
-    .template-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      overflow: hidden;
-      transition: box-shadow 200ms, transform 200ms;
-      animation: fadeUp 0.4s ease both;
-    }
-
-    .template-card:hover {
-      box-shadow: var(--shadow-lg);
-      transform: translateY(-2px);
-    }
-
-    /* Card header */
-    .tc-head {
-      padding: 18px 20px 14px;
-      border-bottom: 1px solid #F8F6F2;
-    }
-
-    .tc-top {
-      display: flex; align-items: flex-start;
-      justify-content: space-between; gap: 10px;
-      margin-bottom: 10px;
-    }
-
-    .tc-icon {
-      width: 38px; height: 38px;
-      border-radius: 9px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 17px; flex-shrink: 0;
-    }
-
-    .tc-tags { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
-
-    .tc-tag {
-      font-size: 10px; font-weight: 700;
-      text-transform: uppercase; letter-spacing: 0.4px;
-      padding: 3px 9px; border-radius: 100px;
-    }
-
-    .tag-single   { background: #F0EDE8; color: #6B5E4E; }
-    .tag-pipeline { background: #EFF6FF; color: #1E40AF; }
-    .tag-combo    { background: #F5F0FF; color: #6D28D9; }
-    .tag-diagnosis{ background: #FFF4E8; color: #92400E; }
-
-    .tc-id {
-      font-family: 'Syne', sans-serif;
-      font-size: 10px; font-weight: 700;
-      text-transform: uppercase; letter-spacing: 0.5px;
-      color: var(--muted);
-      background: var(--bg); padding: 3px 9px;
-      border-radius: 100px;
-    }
-
-    .tc-name {
-      font-family: 'Syne', sans-serif;
-      font-size: 15px; font-weight: 700;
-      color: var(--text); letter-spacing: -0.2px;
-      margin-bottom: 5px;
-    }
-
-    .tc-desc {
-      font-size: 13px; color: var(--muted);
-      line-height: 1.55;
-    }
-
-    /* Card body — collapsed preview */
-    .tc-preview {
-      padding: 14px 20px;
-      background: #FAFAF8;
-      border-bottom: 1px solid var(--border);
-      font-family: var(--mono);
-      font-size: 12px; color: #888;
-      line-height: 1.7;
-      max-height: 90px;
-      overflow: hidden;
-      position: relative;
-    }
-
-    .tc-preview::after {
-      content: '';
-      position: absolute; bottom: 0; left: 0; right: 0;
-      height: 32px;
-      background: linear-gradient(to bottom, transparent, #FAFAF8);
-    }
-
-    /* Card footer */
-    .tc-foot {
-      padding: 12px 16px;
-      display: flex; align-items: center;
-      justify-content: space-between; gap: 10px;
-    }
-
-    .tc-engines {
-      display: flex; gap: 4px; flex-wrap: wrap;
-    }
-
-    .tc-engine-pip {
-      font-size: 10px; font-weight: 600;
-      padding: 3px 8px; border-radius: 5px;
-      background: var(--bg); color: var(--muted);
-      border: 1px solid var(--border);
-    }
-
-    /* Copy button */
-    .btn-copy-tmpl {
-      display: flex; align-items: center; gap: 6px;
-      background: var(--accent); color: #fff;
-      font-family: 'Syne', sans-serif;
-      font-size: 12px; font-weight: 700;
-      padding: 8px 16px; border-radius: 7px;
-      border: none; cursor: pointer;
-      transition: background 150ms, transform 150ms;
-      white-space: nowrap; min-height: 36px;
-      flex-shrink: 0;
-    }
-
-    .btn-copy-tmpl:hover { background: #000; transform: translateY(-1px); }
-    .btn-copy-tmpl:active { transform: translateY(0); }
-    .btn-copy-tmpl svg { width: 13px; height: 13px; }
-    .btn-copy-tmpl.copied { background: var(--success); }
-
-    /* Expand toggle */
-    .btn-expand-tmpl {
-      background: none; border: none;
-      font-size: 12px; color: var(--muted);
-      cursor: pointer; display: flex; align-items: center; gap: 5px;
-      padding: 4px 8px; border-radius: 5px;
-      transition: background 150ms, color 150ms;
-      font-family: 'DM Sans', sans-serif;
-    }
-
-    .btn-expand-tmpl:hover { background: var(--bg); color: var(--text); }
-    .btn-expand-tmpl svg { width: 12px; height: 12px; transition: transform 200ms; }
-    .btn-expand-tmpl.open svg { transform: rotate(180deg); }
-
-    /* Expanded full content */
-    .tc-full-content {
-      display: none;
-      padding: 16px 20px;
-      border-top: 1px solid var(--border);
-      background: #FAFAF8;
-      font-family: var(--mono);
-      font-size: 12.5px;
-      line-height: 1.75;
-      color: #2D2D2D;
-      white-space: pre-wrap;
-      word-break: break-word;
-      max-height: 400px;
-      overflow-y: auto;
-      scrollbar-width: thin;
-      scrollbar-color: #D0CEC8 transparent;
-    }
-
-    .tc-full-content.open { display: block; }
-
-    /* ══ TOAST ══ */
-    .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: #1A1A1A; color: #fff; padding: 12px 20px; border-radius: 10px; font-size: 14px; font-weight: 500; display: flex; align-items: center; gap: 10px; box-shadow: 0 8px 32px rgba(0,0,0,0.25); transition: transform 300ms cubic-bezier(0.34,1.56,0.64,1), opacity 300ms; opacity: 0; z-index: 999; white-space: nowrap; }
-    .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
-    .toast svg { width: 16px; height: 16px; color: #22C55E; }
-
-    /* Mobile overlay */
-    .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 99; }
-
-    @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
-
-    /* Stagger cards */
-    .template-card:nth-child(1)  { animation-delay: 0.05s; }
-    .template-card:nth-child(2)  { animation-delay: 0.10s; }
-    .template-card:nth-child(3)  { animation-delay: 0.15s; }
-    .template-card:nth-child(4)  { animation-delay: 0.20s; }
-    .template-card:nth-child(5)  { animation-delay: 0.25s; }
-    .template-card:nth-child(6)  { animation-delay: 0.30s; }
-    .template-card:nth-child(7)  { animation-delay: 0.35s; }
-    .template-card:nth-child(8)  { animation-delay: 0.40s; }
-    .template-card:nth-child(9)  { animation-delay: 0.45s; }
-    .template-card:nth-child(10) { animation-delay: 0.50s; }
-    .template-card:nth-child(11) { animation-delay: 0.55s; }
-    .template-card:nth-child(12) { animation-delay: 0.60s; }
-    .template-card:nth-child(13) { animation-delay: 0.65s; }
-    .template-card:nth-child(14) { animation-delay: 0.70s; }
-    .template-card:nth-child(15) { animation-delay: 0.75s; }
-
-    /* Responsive */
-    @media (max-width: 768px) {
-      .sidebar { transform: translateX(-100%); }
-      .sidebar.open { transform: translateX(0); }
-      .sidebar-overlay { display: block; opacity: 0; pointer-events: none; transition: opacity 300ms; }
-      .sidebar-overlay.open { opacity: 1; pointer-events: auto; }
-      .main { margin-left: 0; }
-      .menu-btn { display: flex; }
-      .content { padding: 20px 16px 60px; }
-      .topbar { padding: 0 16px; }
-      .templates-grid { grid-template-columns: 1fr; }
-      .filter-bar { gap: 6px; }
-    }
-  </style>
+@media(max-width:768px){
+  .sidebar{transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0);box-shadow:var(--shadow-lg)}
+  .main{margin-left:0}
+  .hamburger{display:block}
+  .topbar{padding:14px 16px}
+  .content{padding:16px}
+  .coming-soon{padding:40px 20px}
+}
+</style>
 </head>
 <body>
 
-<div class="layout">
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
 
-  <!-- ══ SIDEBAR ══ -->
-  <aside class="sidebar" id="sidebar">
-    <div class="sidebar-header">
-      <a href="/dashboard.html" class="sidebar-logo">
-        <div class="sidebar-logomark"><svg viewBox="0 0 24 24"><path d="M13 2L4.5 13.5H11L10 22L19.5 10.5H13Z"/></svg></div>
-        <span class="sidebar-brand">ForgeAI</span>
-      </a>
-      <div class="user-pill">
-        <div class="user-avatar" id="sidebar-avatar">U</div>
-        <div class="user-info">
-          <div class="user-name" id="sidebar-name">Loading...</div>
-          <div class="user-tier"><span class="tier-dot"></span><span id="sidebar-tier">Core Plan</span></div>
-        </div>
-      </div>
+<aside class="sidebar" id="sidebar">
+  <a href="/dashboard.html" class="sidebar-logo">
+    <div class="logo-icon">⚡</div>
+    <span class="logo-text">Forge<span>AI</span></span>
+  </a>
+  <div class="sidebar-user">
+    <div class="user-badge starter" id="tierBadge">🌟 STARTER</div>
+    <div class="user-name" id="userName">Loading...</div>
+    <div class="user-email" id="userEmail">...</div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section-title">Main</div>
+    <a href="/dashboard.html" class="nav-item"><span class="nav-icon">🏠</span> Dashboard</a>
+    <a href="/dashboard.html" class="nav-item"><span class="nav-icon">⚡</span> All Engines</a>
+    <a href="/templates.html" class="nav-item active"><span class="nav-icon">📋</span> Templates</a>
+    <div class="nav-section-title" style="margin-top:12px">Account</div>
+    <a href="/profile.html" class="nav-item"><span class="nav-icon">👤</span> Profile & Settings</a>
+  </nav>
+  <div class="sidebar-bottom">
+    <button class="btn-logout" onclick="handleLogout()"><span>🚪</span> Logout</button>
+  </div>
+</aside>
+
+<main class="main">
+  <div class="topbar">
+    <button class="hamburger" onclick="openSidebar()">☰</button>
+    <div class="topbar-title">Templates</div>
+  </div>
+
+  <div class="content">
+    <div class="page-header">
+      <div class="page-title">Templates</div>
+      <div class="page-sub">Ready-to-use prompts for common business scenarios</div>
     </div>
-    <nav class="sidebar-nav">
-      <div class="nav-section">
-        <div class="nav-section-label">Main</div>
-        <a href="/dashboard.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Dashboard</a>
-      </div>
-      <div class="nav-section">
-        <div class="nav-section-label">Engines (0–7)</div>
-        <a href="/engine/0" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4"/></svg>Intelligent Router<span class="nav-badge">E0</span></a>
-        <a href="/engine/1" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/></svg>Offer Positioning<span class="nav-badge">E1</span></a>
-        <a href="/engine/2" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Audience Psychology<span class="nav-badge">E2</span></a>
-        <a href="/engine/3" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>Hook & Angle<span class="nav-badge">E3</span></a>
-        <a href="/engine/4" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/></svg>Meta Ads<span class="nav-badge">E4</span></a>
-        <a href="/engine/5" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>Conversion Page<span class="nav-badge">E5</span></a>
-        <a href="/engine/6" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/></svg>Email Follow-up<span class="nav-badge">E6</span></a>
-        <a href="/engine/7" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Performance Diagnosis<span class="nav-badge">E7</span></a>
-      </div>
-      <div class="nav-section">
-        <div class="nav-section-label">Resources</div>
-        <a href="/templates.html" class="nav-item active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>Templates<span class="nav-badge">15</span></a>
-        <a href="/resources.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/></svg>Downloads</a>
-      </div>
-    </nav>
-    <div class="sidebar-footer">
-      <a href="/profile.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Profile & Settings</a>
-      <a href="#" id="logout-btn" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Sign Out</a>
-    </div>
-  </aside>
 
-  <div class="sidebar-overlay" id="sidebar-overlay"></div>
-
-  <!-- ══ MAIN ══ -->
-  <div class="main">
-    <header class="topbar">
-      <div class="topbar-left">
-        <button class="menu-btn" id="menu-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
-        <span class="topbar-title">Templates</span>
-      </div>
-      <div class="topbar-right">
-        <div class="topbar-avatar" id="topbar-avatar">U</div>
-      </div>
-    </header>
-
-    <div class="content">
-
-      <div class="page-header">
-        <h1 class="page-title">📋 Execution Templates</h1>
-        <p class="page-sub">15 ready-to-use templates — copy and paste directly into Claude.ai</p>
-      </div>
-
-      <!-- Filter Bar -->
-      <div class="filter-bar" id="filter-bar">
-        <button class="filter-btn active" data-filter="all">All <span class="filter-count">15</span></button>
-        <button class="filter-btn" data-filter="single">Single Engine <span class="filter-count">7</span></button>
-        <button class="filter-btn" data-filter="pipeline">Full Pipeline <span class="filter-count">1</span></button>
-        <button class="filter-btn" data-filter="combo">Combo <span class="filter-count">5</span></button>
-        <button class="filter-btn" data-filter="diagnosis">Diagnosis <span class="filter-count">2</span></button>
-      </div>
-
-      <!-- Templates Grid -->
-      <div class="templates-grid" id="templates-grid"></div>
-
+    <div class="coming-soon">
+      <span class="icon">📋</span>
+      <h2>Templates Coming Soon</h2>
+      <p>We're building a library of ready-to-use templates for ads, emails, landing pages, and more — all pre-wired to work with the ForgeAI engines.</p>
+      <span class="note">⚡ Check back soon — templates drop with the next update</span>
     </div>
   </div>
-</div>
-
-<!-- Toast -->
-<div class="toast" id="toast">
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-  <span id="toast-msg">Template copied! Paste into Claude.ai →</span>
-</div>
+</main>
 
 <script>
-  // ══════════════════════════════════════════════════════════
-  // TEMPLATES DATA
-  // Phase 6: content will come from Supabase (Admin Panel)
-  // For now: paste your template text in each content field
-  // ══════════════════════════════════════════════════════════
-  const TEMPLATES = [
-    // ── SINGLE ENGINE TEMPLATES (E1–E7) ──────────────────
-    {
-      id: 'E1', category: 'single',
-      icon: '🎯', iconBg: '#FFF4E8',
-      name: 'Offer Positioning Starter',
-      tag: 'Single Engine', tagClass: 'tag-single',
-      desc: 'Start with just your product idea — Engine 1 builds your complete offer positioning.',
-      engines: ['E1'],
-      content: `[TEMPLATE E1 — OFFER POSITIONING STARTER]
+function openSidebar(){document.getElementById('sidebar').classList.add('open');document.getElementById('sidebarOverlay').classList.add('open');}
+function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('sidebarOverlay').classList.remove('open');}
+function handleLogout(){
+  const sb = window.supabase || window._supabaseClient;
+  if(sb?.auth) sb.auth.signOut().then(()=>location.href='/login.html');
+  else location.href='/login.html';
+}
 
-Paste your E1 template content here.
-
-This is a placeholder. Replace with your actual template text from TEMPLATES_ALL_15_COMPLETE.md`,
-    },
-    {
-      id: 'E2', category: 'single',
-      icon: '🧠', iconBg: '#F0F9FF',
-      name: 'Audience Deep Dive',
-      tag: 'Single Engine', tagClass: 'tag-single',
-      desc: 'Get a complete psychological profile of your ideal buyer in one session.',
-      engines: ['E2'],
-      content: `[TEMPLATE E2 — AUDIENCE DEEP DIVE]\n\nPaste your E2 template content here.`,
-    },
-    {
-      id: 'E3', category: 'single',
-      icon: '⚡', iconBg: '#FFF0F0',
-      name: 'Hook Generator Blitz',
-      tag: 'Single Engine', tagClass: 'tag-single',
-      desc: 'Generate 20+ hooks and angles for your offer across multiple angles.',
-      engines: ['E3'],
-      content: `[TEMPLATE E3 — HOOK GENERATOR BLITZ]\n\nPaste your E3 template content here.`,
-    },
-    {
-      id: 'E4', category: 'single',
-      icon: '📱', iconBg: '#F0FFF4',
-      name: 'Meta Ads Quick Launch',
-      tag: 'Single Engine', tagClass: 'tag-single',
-      desc: 'Create a complete ad set — 3 primary texts, 5 headlines, 3 CTAs — ready to publish.',
-      engines: ['E4'],
-      content: `[TEMPLATE E4 — META ADS QUICK LAUNCH]\n\nPaste your E4 template content here.`,
-    },
-    {
-      id: 'E5', category: 'single',
-      icon: '📄', iconBg: '#FFFFF0',
-      name: 'Sales Page Builder',
-      tag: 'Single Engine', tagClass: 'tag-single',
-      desc: 'Full sales page copy from headline to CTA using proven conversion frameworks.',
-      engines: ['E5'],
-      content: `[TEMPLATE E5 — SALES PAGE BUILDER]\n\nPaste your E5 template content here.`,
-    },
-    {
-      id: 'E6', category: 'single',
-      icon: '✉️', iconBg: '#F5F0FF',
-      name: 'Email Sequence Creator',
-      tag: 'Single Engine', tagClass: 'tag-single',
-      desc: 'Build a 7-email welcome + nurture sequence for new leads.',
-      engines: ['E6'],
-      content: `[TEMPLATE E6 — EMAIL SEQUENCE CREATOR]\n\nPaste your E6 template content here.`,
-    },
-    {
-      id: 'E7', category: 'single',
-      icon: '🔍', iconBg: '#FFF8F0',
-      name: 'Funnel Audit',
-      tag: 'Single Engine', tagClass: 'tag-single',
-      desc: 'Full performance diagnosis of your existing funnel with prioritized fix list.',
-      engines: ['E7'],
-      content: `[TEMPLATE E7 — FUNNEL AUDIT]\n\nPaste your E7 template content here.`,
-    },
-
-    // ── FULL PIPELINE ─────────────────────────────────────
-    {
-      id: 'P1', category: 'pipeline',
-      icon: '🚀', iconBg: '#EFF6FF',
-      name: 'Complete Funnel Build',
-      tag: 'Full Pipeline', tagClass: 'tag-pipeline',
-      desc: 'Run all 7 engines in sequence — from raw idea to complete funnel ready to launch.',
-      engines: ['E1','E2','E3','E4','E5','E6','E7'],
-      content: `[TEMPLATE P1 — COMPLETE FUNNEL BUILD]\n\nPaste your Full Pipeline template content here.`,
-    },
-
-    // ── COMBO TEMPLATES (C1–C5) ───────────────────────────
-    {
-      id: 'C1', category: 'combo',
-      icon: '🎯', iconBg: '#F5F0FF',
-      name: 'Offer + Audience Foundation',
-      tag: 'Combo', tagClass: 'tag-combo',
-      desc: 'Build a rock-solid foundation before writing a single word of copy.',
-      engines: ['E1','E2'],
-      content: `[TEMPLATE C1 — OFFER + AUDIENCE FOUNDATION]\n\nPaste your C1 template content here.`,
-    },
-    {
-      id: 'C2', category: 'combo',
-      icon: '📱', iconBg: '#F5F0FF',
-      name: 'Ad Creative Suite',
-      tag: 'Combo', tagClass: 'tag-combo',
-      desc: 'Hooks + angles + full ad copy — everything you need for a campaign launch.',
-      engines: ['E3','E4'],
-      content: `[TEMPLATE C2 — AD CREATIVE SUITE]\n\nPaste your C2 template content here.`,
-    },
-    {
-      id: 'C3', category: 'combo',
-      icon: '💰', iconBg: '#F5F0FF',
-      name: 'High-Converting Funnel',
-      tag: 'Combo', tagClass: 'tag-combo',
-      desc: 'Sales page + email follow-up sequence — the two highest-impact funnel pieces.',
-      engines: ['E5','E6'],
-      content: `[TEMPLATE C3 — HIGH-CONVERTING FUNNEL]\n\nPaste your C3 template content here.`,
-    },
-    {
-      id: 'C4', category: 'combo',
-      icon: '⚡', iconBg: '#F5F0FF',
-      name: 'Launch Fast Track',
-      tag: 'Combo', tagClass: 'tag-combo',
-      desc: 'Minimum viable funnel — offer positioning + ads + landing page in record time.',
-      engines: ['E1','E3','E4','E5'],
-      content: `[TEMPLATE C4 — LAUNCH FAST TRACK]\n\nPaste your C4 template content here.`,
-    },
-    {
-      id: 'C5', category: 'combo',
-      icon: '🔄', iconBg: '#F5F0FF',
-      name: 'Full-Funnel Relaunch',
-      tag: 'Combo', tagClass: 'tag-combo',
-      desc: 'For existing funnels that need a refresh — diagnose first, then rebuild.',
-      engines: ['E7','E1','E3','E4','E5'],
-      content: `[TEMPLATE C5 — FULL-FUNNEL RELAUNCH]\n\nPaste your C5 template content here.`,
-    },
-
-    // ── DIAGNOSIS TEMPLATES (D1–D2) ───────────────────────
-    {
-      id: 'D1', category: 'diagnosis',
-      icon: '📊', iconBg: '#FFF4E8',
-      name: 'Ad Performance Review',
-      tag: 'Diagnosis', tagClass: 'tag-diagnosis',
-      desc: 'Diagnose why your ads aren\'t converting — get specific fixes for CTR, CPC, ROAS.',
-      engines: ['E7'],
-      content: `[TEMPLATE D1 — AD PERFORMANCE REVIEW]\n\nPaste your D1 template content here.`,
-    },
-    {
-      id: 'D2', category: 'diagnosis',
-      icon: '🩺', iconBg: '#FFF4E8',
-      name: 'Landing Page Diagnosis',
-      tag: 'Diagnosis', tagClass: 'tag-diagnosis',
-      desc: 'Find exactly why your landing page isn\'t converting and get a fix plan.',
-      engines: ['E7','E5'],
-      content: `[TEMPLATE D2 — LANDING PAGE DIAGNOSIS]\n\nPaste your D2 template content here.`,
-    },
-  ];
-
-  // ══════════════════════════════════════════════
-  // USER (Phase 5: replace with Supabase)
-  // ══════════════════════════════════════════════
-  const USER = window.COSU ?? { name: 'User', tier: 'core', initials: 'U' };
-
-  // ══════════════════════════════════════════════
-  // RENDER
-  // ══════════════════════════════════════════════
-  let activeFilter = 'all';
-  let toastTimeout = null;
-
-  function init() {
-    // User info
-    const initials = USER.name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
-    document.getElementById('sidebar-avatar').textContent = initials;
-    document.getElementById('topbar-avatar').textContent  = initials;
-    document.getElementById('sidebar-name').textContent   = USER.name;
-    document.getElementById('sidebar-tier').textContent   = USER.tier === 'complete' ? 'Complete Plan' : 'Core Plan';
-
-    renderTemplates();
-    setupFilters();
-  }
-
-  function renderTemplates() {
-    const grid = document.getElementById('templates-grid');
-    const filtered = activeFilter === 'all'
-      ? TEMPLATES
-      : TEMPLATES.filter(t => t.category === activeFilter);
-
-    grid.innerHTML = filtered.map((t, i) => `
-      <div class="template-card" data-id="${t.id}">
-
-        <div class="tc-head">
-          <div class="tc-top">
-            <div class="tc-icon" style="background:${t.iconBg}">${t.icon}</div>
-            <div class="tc-tags">
-              <span class="tc-tag ${t.tagClass}">${t.tag}</span>
-              <span class="tc-id">${t.id}</span>
-            </div>
-          </div>
-          <div class="tc-name">${t.name}</div>
-          <div class="tc-desc">${t.desc}</div>
-        </div>
-
-        <div class="tc-preview">${t.content.split('\n').slice(0,5).join('\n')}</div>
-
-        <div class="tc-foot">
-          <div class="tc-engines">
-            ${t.engines.map(e => `<span class="tc-engine-pip">${e}</span>`).join('')}
-          </div>
-          <div style="display:flex;gap:6px;align-items:center">
-            <button class="btn-expand-tmpl" data-id="${t.id}">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-              Preview
-            </button>
-            <button class="btn-copy-tmpl" data-id="${t.id}">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-              Copy
-            </button>
-          </div>
-        </div>
-
-        <div class="tc-full-content" id="full-${t.id}">${t.content}</div>
-
-      </div>
-    `).join('');
-
-    // Attach events
-    document.querySelectorAll('.btn-copy-tmpl').forEach(btn => {
-      btn.addEventListener('click', () => copyTemplate(btn.dataset.id));
-    });
-
-    document.querySelectorAll('.btn-expand-tmpl').forEach(btn => {
-      btn.addEventListener('click', () => toggleExpand(btn.dataset.id, btn));
-    });
-  }
-
-  function setupFilters() {
-    document.querySelectorAll('.filter-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        activeFilter = btn.dataset.filter;
-        renderTemplates();
-      });
-    });
-  }
-
-  // ── Copy ──────────────────────────────────────
-  async function copyTemplate(id) {
-    const tmpl = TEMPLATES.find(t => t.id === id);
-    if (!tmpl) return;
-
-    try { await navigator.clipboard.writeText(tmpl.content); }
-    catch (e) {
-      const ta = document.createElement('textarea');
-      ta.value = tmpl.content; ta.style.cssText = 'position:fixed;opacity:0';
-      document.body.appendChild(ta); ta.focus(); ta.select();
-      document.execCommand('copy'); document.body.removeChild(ta);
+(function initSidebar() {
+  let waited = 0;
+  const poll = setInterval(() => {
+    waited += 100;
+    if(window.COSU || waited >= 2000) {
+      clearInterval(poll);
+      if(window.COSU) {
+        const u = window.COSU;
+        document.getElementById('userEmail').textContent = u.email || '';
+        const name = (u.email||'').split('@')[0];
+        document.getElementById('userName').textContent = name.charAt(0).toUpperCase()+name.slice(1);
+        if(u.tier === 'pro') {
+          document.getElementById('tierBadge').textContent='⚡ PRO';
+          document.getElementById('tierBadge').className='user-badge pro';
+        }
+      }
     }
-
-    // Button feedback
-    const btn = document.querySelector(`.btn-copy-tmpl[data-id="${id}"]`);
-    if (btn) {
-      btn.classList.add('copied');
-      btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Copied!`;
-      setTimeout(() => {
-        btn.classList.remove('copied');
-        btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy`;
-      }, 2500);
-    }
-
-    // Toast
-    document.getElementById('toast-msg').textContent = `${tmpl.name} copied! Paste into Claude.ai →`;
-    const toast = document.getElementById('toast');
-    toast.classList.add('show');
-    if (toastTimeout) clearTimeout(toastTimeout);
-    toastTimeout = setTimeout(() => toast.classList.remove('show'), 3000);
-  }
-
-  // ── Expand preview ────────────────────────────
-  function toggleExpand(id, btn) {
-    const content = document.getElementById(`full-${id}`);
-    const isOpen  = content.classList.toggle('open');
-    btn.classList.toggle('open', isOpen);
-    btn.innerHTML = isOpen
-      ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="transform:rotate(180deg)"><polyline points="6 9 12 15 18 9"/></svg> Hide`
-      : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg> Preview`;
-  }
-
-  // ══════════════════════════════════════════════
-  // MOBILE SIDEBAR
-  // ══════════════════════════════════════════════
-  const sidebar = document.getElementById('sidebar');
-  const overlay = document.getElementById('sidebar-overlay');
-  document.getElementById('menu-btn').addEventListener('click', () => { sidebar.classList.add('open'); overlay.classList.add('open'); document.body.style.overflow='hidden'; });
-  overlay.addEventListener('click', () => { sidebar.classList.remove('open'); overlay.classList.remove('open'); document.body.style.overflow=''; });
-  document.getElementById('logout-btn').addEventListener('click', e => { e.preventDefault(); window.cosLogout(); });
-
-  // Boot
-  init();
+  }, 100);
+})();
 </script>
-
 </body>
 </html>

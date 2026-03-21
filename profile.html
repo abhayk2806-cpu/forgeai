@@ -1,1170 +1,501 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Profile & Settings — ForgeAI</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="/supabase.js"></script>
-  <script src="/auth.js"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Profile & Settings — ForgeAI</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/supabase.js"></script>
+<script src="/auth.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F7F7F5;--surface:#FFFFFF;--border:#E8E8E4;--text:#1A1A1A;--text-muted:#6B6B6B;
+  --text-light:#9B9B9B;--accent:#F97316;--accent-light:#FFF4ED;--accent-hover:#EA6C0A;
+  --green:#10B981;--green-light:#ECFDF5;--blue:#3B82F6;--blue-light:#EFF6FF;
+  --red:#EF4444;--red-light:#FEF2F2;--red-border:#FECACA;
+  --sidebar-w:260px;--radius:12px;
+  --shadow:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.04);
+  --shadow-lg:0 10px 15px rgba(0,0,0,.08),0 4px 6px rgba(0,0,0,.04);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
 
-    :root {
-      --bg:        #F4F2EE;
-      --sidebar:   #1A1A1A;
-      --card:      #FFFFFF;
-      --text:      #1A1A1A;
-      --muted:     #7A7A7A;
-      --border:    #E2E0DA;
-      --accent:    #1A1A1A;
-      --success:   #2D6A4F;
-      --success-bg:#EDFBF3;
-      --success-border:#B7E8CC;
-      --danger:    #DC2626;
-      --danger-bg: #FEF2F2;
-      --danger-border:#FECACA;
-      --shadow:    0 2px 12px rgba(0,0,0,0.07);
-      --shadow-lg: 0 8px 32px rgba(0,0,0,0.12);
-      --sidebar-w: 240px;
-      --mono: 'DM Mono', monospace;
-    }
+/* SIDEBAR */
+.sidebar{position:fixed;top:0;left:0;width:var(--sidebar-w);height:100vh;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:100;transition:transform .3s cubic-bezier(.4,0,.2,1);overflow-y:auto}
+.sidebar-logo{padding:20px 20px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;text-decoration:none}
+.logo-icon{width:36px;height:36px;background:var(--accent);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.logo-text{font-size:17px;font-weight:700;color:var(--text);letter-spacing:-.3px}
+.logo-text span{color:var(--accent)}
+.sidebar-user{padding:16px 20px;border-bottom:1px solid var(--border)}
+.user-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:20px;font-size:12px;font-weight:600;font-family:'JetBrains Mono',monospace;margin-bottom:8px}
+.user-badge.pro{background:var(--accent-light);color:var(--accent)}
+.user-badge.starter{background:var(--blue-light);color:var(--blue)}
+.user-name{font-size:14px;font-weight:700;color:var(--text)}
+.user-email{font-size:12px;color:var(--text-muted);margin-top:2px}
+.sidebar-nav{padding:12px;flex:1}
+.nav-section-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-light);padding:8px 8px 4px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;text-decoration:none;color:var(--text-muted);font-size:14px;font-weight:500;transition:all .15s;margin-bottom:2px}
+.nav-item:hover{background:var(--bg);color:var(--text)}
+.nav-item.active{background:var(--accent-light);color:var(--accent);font-weight:600}
+.nav-icon{font-size:16px;width:20px;text-align:center}
+.sidebar-bottom{padding:12px;border-top:1px solid var(--border)}
+.btn-logout{width:100%;padding:9px 12px;background:none;border:1px solid var(--border);border-radius:8px;color:var(--text-muted);font-size:13px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:8px;transition:all .15s;font-family:'DM Sans',sans-serif}
+.btn-logout:hover{background:var(--red-light);color:var(--red);border-color:var(--red-border)}
 
-    html, body { height: 100%; font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); -webkit-font-smoothing: antialiased; }
-    .layout { display: flex; min-height: 100vh; }
+/* MAIN */
+.main{margin-left:var(--sidebar-w);min-height:100vh}
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:14px 28px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:50}
+.hamburger{display:none;background:none;border:none;cursor:pointer;padding:4px;font-size:22px;color:var(--text)}
+.topbar-title{font-size:18px;font-weight:700;color:var(--text);flex:1}
+.content{padding:28px;max-width:720px}
 
-    /* ══ SIDEBAR ══ */
-    .sidebar { width: var(--sidebar-w); min-width: var(--sidebar-w); background: var(--sidebar); display: flex; flex-direction: column; position: fixed; top: 0; left: 0; bottom: 0; z-index: 100; transition: transform 300ms cubic-bezier(0.4,0,0.2,1); overflow-y: auto; overflow-x: hidden; }
-    .sidebar-header { padding: 20px 20px 16px; border-bottom: 1px solid rgba(255,255,255,0.08); }
-    .sidebar-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; margin-bottom: 16px; }
-    .sidebar-logomark { width: 34px; height: 34px; background: #fff; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
-    .sidebar-logomark svg { width: 18px; height: 18px; fill: #1A1A1A; }
-    .sidebar-brand { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; color: #fff; }
-    .user-pill { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 10px 12px; display: flex; align-items: center; gap: 10px; }
-    .user-avatar-sm { width: 30px; height: 30px; background: rgba(255,255,255,0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; color: #fff; flex-shrink: 0; }
-    .user-info { min-width: 0; flex: 1; }
-    .user-name-sm { font-size: 13px; font-weight: 500; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .user-tier-sm { font-size: 11px; color: rgba(255,255,255,0.5); margin-top: 1px; }
-    .tier-dot { width: 6px; height: 6px; border-radius: 50%; background: #22C55E; display: inline-block; margin-right: 4px; }
-    .sidebar-nav { flex: 1; padding: 16px 12px; }
-    .nav-section { margin-bottom: 20px; }
-    .nav-section-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: rgba(255,255,255,0.3); padding: 0 8px; margin-bottom: 6px; }
-    .nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 7px; text-decoration: none; color: rgba(255,255,255,0.6); font-size: 13.5px; transition: background 150ms, color 150ms; margin-bottom: 2px; }
-    .nav-item:hover { background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.9); }
-    .nav-item.active { background: rgba(255,255,255,0.12); color: #fff; font-weight: 500; }
-    .nav-item svg { width: 15px; height: 15px; flex-shrink: 0; opacity: 0.7; }
-    .nav-item.active svg { opacity: 1; }
-    .nav-badge { margin-left: auto; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 100px; background: rgba(255,255,255,0.12); color: rgba(255,255,255,0.7); }
-    .sidebar-footer { padding: 12px; border-top: 1px solid rgba(255,255,255,0.08); }
+/* PAGE HEADER */
+.page-header{margin-bottom:28px}
+.page-title{font-size:26px;font-weight:700;color:var(--text);letter-spacing:-.4px;margin-bottom:6px}
+.page-sub{font-size:14px;color:var(--text-muted)}
 
-    /* ══ MAIN ══ */
-    .main { flex: 1; margin-left: var(--sidebar-w); min-height: 100vh; display: flex; flex-direction: column; }
-    .topbar { height: 60px; background: var(--card); border-bottom: 1px solid var(--border); padding: 0 28px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50; }
-    .topbar-left { display: flex; align-items: center; gap: 12px; }
-    .menu-btn { display: none; background: none; border: none; cursor: pointer; padding: 6px; color: var(--text); border-radius: 6px; }
-    .menu-btn svg { width: 20px; height: 20px; display: block; }
-    .topbar-title { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700; color: var(--text); letter-spacing: -0.3px; }
-    .topbar-right { display: flex; align-items: center; }
-    .topbar-avatar { width: 34px; height: 34px; background: var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; color: #fff; }
+/* CARDS */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:16px;box-shadow:var(--shadow)}
+.card-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:20px;display:flex;align-items:center;gap:8px}
+.card-title-icon{font-size:16px}
 
-    /* ══ CONTENT ══ */
-    .content { padding: 32px 28px 80px; max-width: 680px; }
+/* AVATAR SECTION */
+.avatar-section{display:flex;align-items:center;gap:18px;padding-bottom:20px;border-bottom:1px solid var(--border);margin-bottom:20px}
+.avatar-big{width:64px;height:64px;background:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:#fff;flex-shrink:0;font-family:'DM Sans',sans-serif}
+.av-name{font-size:18px;font-weight:700;color:var(--text);margin-bottom:4px}
+.av-email{font-size:13px;color:var(--text-muted);margin-bottom:8px}
+.av-badges{display:flex;gap:8px;flex-wrap:wrap}
+.plan-badge{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:700;padding:4px 12px;border-radius:100px;font-family:'JetBrains Mono',monospace}
+.plan-badge.pro{background:var(--accent-light);color:var(--accent)}
+.plan-badge.starter{background:var(--blue-light);color:var(--blue)}
+.joined-badge{display:inline-flex;align-items:center;gap:5px;font-size:12px;color:var(--text-muted);background:var(--bg);padding:4px 12px;border-radius:100px;border:1px solid var(--border)}
 
-    @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+/* FORM */
+.form-group{margin-bottom:16px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}
+.form-label{display:block;font-size:13px;font-weight:600;color:var(--text);margin-bottom:6px}
+.form-hint{font-size:12px;color:var(--text-light);margin-top:4px}
+.form-input{width:100%;padding:10px 14px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);background:var(--bg);border:1px solid var(--border);border-radius:8px;transition:border-color .15s,box-shadow .15s;outline:none;min-height:44px}
+.form-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(249,115,22,.12);background:#fff}
+.form-input:disabled{opacity:.55;cursor:not-allowed}
+.input-wrap{position:relative}
+.input-wrap .form-input{padding-right:44px}
+.toggle-pw{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text-muted);display:flex;align-items:center;padding:4px}
+.toggle-pw:hover{color:var(--text)}
 
-    /* ══ PAGE HEADER ══ */
-    .page-header { margin-bottom: 28px; animation: fadeUp 0.4s ease both; }
-    .page-title { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800; color: var(--text); letter-spacing: -0.4px; margin-bottom: 6px; }
-    .page-sub { font-size: 15px; color: var(--muted); }
+/* BUTTONS */
+.btn-save{background:var(--accent);color:#fff;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;padding:10px 20px;border-radius:8px;border:none;cursor:pointer;transition:background .15s;display:inline-flex;align-items:center;gap:7px}
+.btn-save:hover{background:var(--accent-hover)}
+.btn-save:disabled{opacity:.6;cursor:not-allowed}
 
-    /* ══ PROFILE CARD ══ */
-    .profile-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 24px;
-      margin-bottom: 16px;
-      animation: fadeUp 0.4s ease 0.05s both;
-    }
+/* LICENSE */
+.license-box{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:16px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
+.license-key{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:500;color:var(--text);letter-spacing:.5px}
+.btn-copy{background:none;border:1px solid var(--border);border-radius:7px;padding:7px 12px;font-size:12px;font-weight:600;color:var(--text-muted);cursor:pointer;display:flex;align-items:center;gap:6px;transition:all .15s;flex-shrink:0;font-family:'DM Sans',sans-serif}
+.btn-copy:hover{background:var(--border);color:var(--text)}
+.btn-copy.copied{background:var(--green-light);border-color:var(--green);color:var(--green)}
+.license-meta{display:flex;gap:20px;flex-wrap:wrap}
+.lm-item{display:flex;flex-direction:column;gap:3px}
+.lm-label{font-size:11px;color:var(--text-light);text-transform:uppercase;letter-spacing:.5px;font-weight:600}
+.lm-value{font-size:13px;font-weight:600;color:var(--text)}
+.lm-value.green{color:var(--green)}
 
-    .card-title {
-      font-family: 'Syne', sans-serif;
-      font-size: 14px; font-weight: 700;
-      color: var(--text); letter-spacing: -0.1px;
-      margin-bottom: 20px;
-      display: flex; align-items: center; gap: 8px;
-    }
+/* UPGRADE STRIP */
+.upgrade-strip{background:linear-gradient(135deg,#1A1A1A 0%,#2D2D2D 100%);border-radius:10px;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:16px}
+.us-text{font-size:13px;color:rgba(255,255,255,.65)}
+.us-text strong{color:#fff}
+.btn-upgrade-sm{background:var(--accent);color:#fff;font-size:12px;font-weight:700;padding:8px 16px;border-radius:7px;text-decoration:none;white-space:nowrap;transition:background .15s;flex-shrink:0}
+.btn-upgrade-sm:hover{background:var(--accent-hover)}
 
-    .card-title svg { width: 15px; height: 15px; color: var(--muted); }
+/* PASSWORD STRENGTH */
+.pw-strength{margin-top:8px}
+.pw-bars{display:flex;gap:4px;margin-bottom:4px}
+.pw-bar{flex:1;height:3px;background:var(--border);border-radius:2px;transition:background .3s}
+.pw-bar.weak{background:var(--red)}
+.pw-bar.fair{background:#F59E0B}
+.pw-bar.good{background:var(--blue)}
+.pw-bar.strong{background:var(--green)}
+.pw-label{font-size:11px;color:var(--text-light)}
 
-    /* Avatar section */
-    .avatar-section {
-      display: flex; align-items: center; gap: 18px;
-      padding-bottom: 20px;
-      border-bottom: 1px solid var(--border);
-      margin-bottom: 20px;
-    }
+/* TOGGLE */
+.toggle-row{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 0;border-bottom:1px solid var(--border)}
+.toggle-row:last-child{border-bottom:none;padding-bottom:0}
+.toggle-row:first-child{padding-top:0}
+.toggle-label{font-size:14px;font-weight:500;color:var(--text);margin-bottom:2px}
+.toggle-desc{font-size:12px;color:var(--text-muted)}
+.toggle-switch{position:relative;width:44px;height:24px;flex-shrink:0}
+.toggle-switch input{opacity:0;width:0;height:0}
+.toggle-slider{position:absolute;inset:0;background:var(--border);border-radius:100px;cursor:pointer;transition:background .2s}
+.toggle-slider::before{content:'';position:absolute;width:18px;height:18px;background:#fff;border-radius:50%;top:3px;left:3px;transition:transform .2s;box-shadow:0 1px 4px rgba(0,0,0,.2)}
+.toggle-switch input:checked + .toggle-slider{background:var(--accent)}
+.toggle-switch input:checked + .toggle-slider::before{transform:translateX(20px)}
 
-    .avatar-big {
-      width: 64px; height: 64px;
-      background: var(--accent);
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-family: 'Syne', sans-serif;
-      font-size: 22px; font-weight: 800;
-      color: #fff; flex-shrink: 0;
-    }
+/* DANGER */
+.card.danger-card{border-color:var(--red-border)}
+.danger-row{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 0;border-bottom:1px solid var(--red-border)}
+.danger-row:last-child{border-bottom:none;padding-bottom:0}
+.danger-row:first-child{padding-top:0}
+.danger-label{font-size:14px;font-weight:500;color:var(--text);margin-bottom:2px}
+.danger-desc{font-size:12px;color:var(--text-muted)}
+.btn-danger{background:var(--red-light);color:var(--red);font-size:13px;font-weight:600;padding:8px 16px;border-radius:8px;border:1px solid var(--red-border);cursor:pointer;white-space:nowrap;transition:background .15s;flex-shrink:0;font-family:'DM Sans',sans-serif}
+.btn-danger:hover{background:var(--red-border)}
 
-    .avatar-info {}
-    .avatar-name { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
-    .avatar-email { font-size: 13px; color: var(--muted); margin-bottom: 8px; }
-    .avatar-badges { display: flex; gap: 8px; flex-wrap: wrap; }
+/* TOAST */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:#1A1A1A;color:#fff;padding:12px 20px;border-radius:10px;font-size:14px;font-weight:500;display:flex;align-items:center;gap:10px;box-shadow:var(--shadow-lg);transition:transform .3s cubic-bezier(.34,1.56,.64,1),opacity .3s;opacity:0;z-index:999}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
 
-    .plan-badge {
-      display: inline-flex; align-items: center; gap: 5px;
-      font-size: 12px; font-weight: 700;
-      padding: 4px 12px; border-radius: 100px;
-    }
+/* SIDEBAR OVERLAY */
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:99}
+.sidebar-overlay.open{display:block}
 
-    .plan-badge.core { background: #F0EDE8; color: #6B5E4E; }
-    .plan-badge.complete { background: var(--success-bg); color: var(--success); }
-    .plan-badge svg { width: 11px; height: 11px; }
-
-    .joined-badge {
-      display: inline-flex; align-items: center; gap: 5px;
-      font-size: 12px; color: var(--muted);
-      background: var(--bg); padding: 4px 12px;
-      border-radius: 100px; border: 1px solid var(--border);
-    }
-
-    /* Form fields */
-    .form-group { margin-bottom: 16px; }
-    .form-label { display: block; font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 6px; }
-    .form-hint  { font-size: 12px; color: var(--muted); margin-top: 4px; }
-
-    .form-input {
-      width: 100%;
-      padding: 10px 14px;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 14px; color: var(--text);
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      transition: border-color 150ms, box-shadow 150ms;
-      outline: none;
-      min-height: 44px;
-    }
-
-    .form-input:focus {
-      border-color: #A0A0A0;
-      box-shadow: 0 0 0 3px rgba(0,0,0,0.06);
-      background: #fff;
-    }
-
-    .form-input:disabled {
-      opacity: 0.55; cursor: not-allowed;
-      background: #EEECE8;
-    }
-
-    .form-input.readonly {
-      font-family: var(--mono);
-      font-size: 13px;
-      cursor: default;
-    }
-
-    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-
-    /* Password toggle */
-    .input-wrap { position: relative; }
-    .input-wrap .form-input { padding-right: 44px; }
-    .toggle-pw {
-      position: absolute; right: 12px; top: 50%;
-      transform: translateY(-50%);
-      background: none; border: none;
-      cursor: pointer; color: var(--muted);
-      display: flex; align-items: center; justify-content: center;
-      padding: 4px;
-    }
-    .toggle-pw svg { width: 16px; height: 16px; }
-    .toggle-pw:hover { color: var(--text); }
-
-    /* Save button */
-    .btn-save {
-      background: var(--accent); color: #fff;
-      font-family: 'Syne', sans-serif;
-      font-size: 13px; font-weight: 700;
-      padding: 10px 20px; border-radius: 8px;
-      border: none; cursor: pointer;
-      transition: background 150ms, transform 150ms;
-      min-height: 42px; display: flex;
-      align-items: center; gap: 7px;
-    }
-
-    .btn-save:hover { background: #000; transform: translateY(-1px); }
-    .btn-save:active { transform: translateY(0); }
-    .btn-save svg { width: 14px; height: 14px; }
-    .btn-save.saving { opacity: 0.7; pointer-events: none; }
-    .btn-save.saved { background: var(--success); }
-
-    /* ══ LICENSE CARD ══ */
-    .license-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 24px;
-      margin-bottom: 16px;
-      animation: fadeUp 0.4s ease 0.1s both;
-    }
-
-    .license-box {
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 16px 18px;
-      display: flex; align-items: center;
-      justify-content: space-between; gap: 12px;
-      margin-bottom: 14px;
-    }
-
-    .license-key {
-      font-family: var(--mono);
-      font-size: 15px; font-weight: 500;
-      color: var(--text); letter-spacing: 0.5px;
-    }
-
-    .btn-copy-license {
-      background: none; border: 1px solid var(--border);
-      border-radius: 7px; padding: 7px 12px;
-      font-size: 12px; font-weight: 600;
-      color: var(--muted); cursor: pointer;
-      display: flex; align-items: center; gap: 6px;
-      transition: background 150ms, color 150ms;
-      flex-shrink: 0; white-space: nowrap;
-    }
-
-    .btn-copy-license:hover { background: var(--border); color: var(--text); }
-    .btn-copy-license svg { width: 13px; height: 13px; }
-    .btn-copy-license.copied { background: var(--success-bg); border-color: var(--success-border); color: var(--success); }
-
-    .license-meta {
-      display: flex; gap: 20px; flex-wrap: wrap;
-    }
-
-    .lm-item {
-      display: flex; flex-direction: column; gap: 2px;
-    }
-
-    .lm-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.4px; font-weight: 600; }
-    .lm-value { font-size: 13.5px; font-weight: 500; color: var(--text); }
-
-    .lm-value.plan-complete { color: var(--success); }
-    .lm-value.plan-core     { color: #92400E; }
-
-    /* Upgrade strip */
-    .upgrade-strip {
-      background: #1A1A1A;
-      border-radius: 10px;
-      padding: 14px 18px;
-      display: flex; align-items: center;
-      justify-content: space-between; gap: 14px;
-      margin-top: 16px;
-    }
-
-    .us-text { font-size: 13px; color: rgba(255,255,255,0.65); }
-    .us-text strong { color: #fff; }
-
-    .btn-upgrade-strip {
-      background: #fff; color: #1A1A1A;
-      font-family: 'Syne', sans-serif;
-      font-size: 12px; font-weight: 700;
-      padding: 8px 16px; border-radius: 7px;
-      text-decoration: none; white-space: nowrap;
-      transition: opacity 150ms;
-      flex-shrink: 0;
-    }
-
-    .btn-upgrade-strip:hover { opacity: 0.85; }
-
-    /* ══ PASSWORD CARD ══ */
-    .password-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 24px;
-      margin-bottom: 16px;
-      animation: fadeUp 0.4s ease 0.15s both;
-    }
-
-    /* Password strength */
-    .pw-strength { margin-top: 6px; }
-    .pw-bars { display: flex; gap: 4px; margin-bottom: 4px; }
-    .pw-bar { flex: 1; height: 3px; background: var(--border); border-radius: 2px; transition: background 300ms; }
-    .pw-bar.weak   { background: #EF4444; }
-    .pw-bar.fair   { background: #F59E0B; }
-    .pw-bar.good   { background: #3B82F6; }
-    .pw-bar.strong { background: var(--success); }
-    .pw-label { font-size: 11px; color: var(--muted); }
-
-    /* ══ NOTIFICATIONS CARD ══ */
-    .notif-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 24px;
-      margin-bottom: 16px;
-      animation: fadeUp 0.4s ease 0.2s both;
-    }
-
-    .toggle-row {
-      display: flex; align-items: center;
-      justify-content: space-between; gap: 16px;
-      padding: 12px 0;
-      border-bottom: 1px solid #F8F6F2;
-    }
-
-    .toggle-row:last-child { border-bottom: none; padding-bottom: 0; }
-    .toggle-row:first-child { padding-top: 0; }
-
-    .toggle-info {}
-    .toggle-label { font-size: 14px; font-weight: 500; color: var(--text); margin-bottom: 2px; }
-    .toggle-desc  { font-size: 12px; color: var(--muted); }
-
-    /* Toggle switch */
-    .toggle-switch { position: relative; width: 44px; height: 24px; flex-shrink: 0; }
-    .toggle-switch input { opacity: 0; width: 0; height: 0; }
-    .toggle-slider {
-      position: absolute; inset: 0;
-      background: var(--border); border-radius: 100px;
-      cursor: pointer; transition: background 200ms;
-    }
-    .toggle-slider::before {
-      content: '';
-      position: absolute;
-      width: 18px; height: 18px;
-      background: #fff; border-radius: 50%;
-      top: 3px; left: 3px;
-      transition: transform 200ms;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.2);
-    }
-    .toggle-switch input:checked + .toggle-slider { background: var(--accent); }
-    .toggle-switch input:checked + .toggle-slider::before { transform: translateX(20px); }
-
-    /* ══ DANGER ZONE ══ */
-    .danger-card {
-      background: var(--card);
-      border: 1px solid var(--danger-border);
-      border-radius: 14px;
-      padding: 24px;
-      margin-bottom: 16px;
-      animation: fadeUp 0.4s ease 0.25s both;
-    }
-
-    .danger-card .card-title { color: var(--danger); }
-    .danger-card .card-title svg { color: var(--danger); opacity: 0.7; }
-
-    .danger-row {
-      display: flex; align-items: center;
-      justify-content: space-between; gap: 16px;
-      padding: 14px 0;
-      border-bottom: 1px solid #FEE2E2;
-    }
-
-    .danger-row:last-child { border-bottom: none; padding-bottom: 0; }
-    .danger-row:first-child { padding-top: 0; }
-
-    .danger-info {}
-    .danger-label { font-size: 14px; font-weight: 500; color: var(--text); margin-bottom: 2px; }
-    .danger-desc  { font-size: 12px; color: var(--muted); }
-
-    .btn-danger {
-      background: var(--danger-bg); color: var(--danger);
-      font-size: 13px; font-weight: 600;
-      padding: 8px 16px; border-radius: 8px;
-      border: 1px solid var(--danger-border);
-      cursor: pointer; white-space: nowrap;
-      transition: background 150ms;
-      flex-shrink: 0;
-    }
-
-    .btn-danger:hover { background: #FECACA; }
-
-    /* ══ TOAST ══ */
-    .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: #1A1A1A; color: #fff; padding: 12px 20px; border-radius: 10px; font-size: 14px; font-weight: 500; display: flex; align-items: center; gap: 10px; box-shadow: 0 8px 32px rgba(0,0,0,0.25); transition: transform 300ms cubic-bezier(0.34,1.56,0.64,1), opacity 300ms; opacity: 0; z-index: 999; }
-    .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
-    .toast svg { width: 16px; height: 16px; color: #22C55E; }
-
-    /* Confirm modal */
-    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 200; align-items: center; justify-content: center; padding: 24px; }
-    .modal-overlay.open { display: flex; }
-    .modal { background: #fff; border-radius: 14px; padding: 28px; max-width: 400px; width: 100%; box-shadow: var(--shadow-lg); animation: fadeUp 0.3s ease both; }
-    .modal-title { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
-    .modal-desc  { font-size: 14px; color: var(--muted); line-height: 1.6; margin-bottom: 24px; }
-    .modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
-    .btn-modal-cancel { background: var(--bg); color: var(--text); font-size: 14px; font-weight: 500; padding: 10px 18px; border-radius: 8px; border: 1px solid var(--border); cursor: pointer; }
-    .btn-modal-confirm { background: var(--danger); color: #fff; font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; padding: 10px 18px; border-radius: 8px; border: none; cursor: pointer; }
-
-    /* Mobile overlay */
-    .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 99; }
-
-    @media (max-width: 768px) {
-      .sidebar { transform: translateX(-100%); }
-      .sidebar.open { transform: translateX(0); }
-      .sidebar-overlay { display: block; opacity: 0; pointer-events: none; transition: opacity 300ms; }
-      .sidebar-overlay.open { opacity: 1; pointer-events: auto; }
-      .main { margin-left: 0; }
-      .menu-btn { display: flex; }
-      .content { padding: 20px 16px 60px; }
-      .topbar { padding: 0 16px; }
-      .form-row { grid-template-columns: 1fr; }
-      .avatar-section { flex-direction: column; align-items: flex-start; gap: 12px; }
-      .license-box { flex-direction: column; align-items: flex-start; gap: 10px; }
-      .upgrade-strip { flex-direction: column; align-items: flex-start; }
-      .danger-row { flex-direction: column; align-items: flex-start; gap: 10px; }
-      .modal-actions { flex-direction: column-reverse; }
-      .btn-modal-cancel, .btn-modal-confirm { width: 100%; text-align: center; }
-    }
-  </style>
+@media(max-width:768px){
+  .sidebar{transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0);box-shadow:var(--shadow-lg)}
+  .main{margin-left:0}
+  .hamburger{display:block}
+  .topbar{padding:14px 16px}
+  .content{padding:16px}
+  .form-row{grid-template-columns:1fr}
+  .avatar-section{flex-direction:column;align-items:flex-start;gap:12px}
+  .license-box{flex-direction:column;align-items:flex-start;gap:10px}
+  .upgrade-strip{flex-direction:column;align-items:flex-start}
+  .danger-row{flex-direction:column;align-items:flex-start;gap:10px}
+}
+</style>
 </head>
 <body>
 
-<div class="layout">
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
 
-  <!-- ══ SIDEBAR ══ -->
-  <aside class="sidebar" id="sidebar">
-    <div class="sidebar-header">
-      <a href="/dashboard.html" class="sidebar-logo">
-        <div class="sidebar-logomark"><svg viewBox="0 0 24 24"><path d="M13 2L4.5 13.5H11L10 22L19.5 10.5H13Z"/></svg></div>
-        <span class="sidebar-brand">ForgeAI</span>
-      </a>
-      <div class="user-pill">
-        <div class="user-avatar-sm" id="sidebar-avatar">U</div>
-        <div class="user-info">
-          <div class="user-name-sm" id="sidebar-name">Loading...</div>
-          <div class="user-tier-sm"><span class="tier-dot"></span><span id="sidebar-tier">Core Plan</span></div>
+<aside class="sidebar" id="sidebar">
+  <a href="/dashboard.html" class="sidebar-logo">
+    <div class="logo-icon">⚡</div>
+    <span class="logo-text">Forge<span>AI</span></span>
+  </a>
+  <div class="sidebar-user">
+    <div class="user-badge starter" id="tierBadge">🌟 STARTER</div>
+    <div class="user-name" id="sidebarName">Loading...</div>
+    <div class="user-email" id="sidebarEmail">...</div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section-title">Main</div>
+    <a href="/dashboard.html" class="nav-item"><span class="nav-icon">🏠</span> Dashboard</a>
+    <a href="/dashboard.html" class="nav-item"><span class="nav-icon">⚡</span> All Engines</a>
+    <a href="/templates.html" class="nav-item"><span class="nav-icon">📋</span> Templates</a>
+    <div class="nav-section-title" style="margin-top:12px">Account</div>
+    <a href="/profile.html" class="nav-item active"><span class="nav-icon">👤</span> Profile & Settings</a>
+  </nav>
+  <div class="sidebar-bottom">
+    <button class="btn-logout" onclick="handleLogout()"><span>🚪</span> Logout</button>
+  </div>
+</aside>
+
+<main class="main">
+  <div class="topbar">
+    <button class="hamburger" onclick="openSidebar()">☰</button>
+    <div class="topbar-title">Profile & Settings</div>
+  </div>
+
+  <div class="content">
+
+    <div class="page-header">
+      <div class="page-title">Profile & Settings</div>
+      <div class="page-sub">Manage your account, license, and preferences</div>
+    </div>
+
+    <!-- PROFILE CARD -->
+    <div class="card">
+      <div class="card-title"><span class="card-title-icon">👤</span> Account Information</div>
+      <div class="avatar-section">
+        <div class="avatar-big" id="profileAvatar">U</div>
+        <div>
+          <div class="av-name" id="profileName">Loading...</div>
+          <div class="av-email" id="profileEmail">...</div>
+          <div class="av-badges">
+            <span class="plan-badge starter" id="profilePlanBadge">🌟 STARTER</span>
+            <span class="joined-badge">📅 Joined <span id="profileJoined">—</span></span>
+          </div>
         </div>
+      </div>
+      <div class="form-row">
+        <div>
+          <label class="form-label">Display Name</label>
+          <input class="form-input" type="text" id="inputName" placeholder="Your name">
+        </div>
+        <div>
+          <label class="form-label">Email Address</label>
+          <input class="form-input" type="email" id="inputEmail" disabled>
+          <div class="form-hint">Email cannot be changed</div>
+        </div>
+      </div>
+      <button class="btn-save" id="btnSaveProfile" onclick="saveProfile()">💾 Save Changes</button>
+    </div>
+
+    <!-- LICENSE CARD -->
+    <div class="card">
+      <div class="card-title"><span class="card-title-icon">🔑</span> License & Plan</div>
+      <div class="license-box">
+        <div class="license-key" id="licenseKey">FORGEAI-XXXXXX</div>
+        <button class="btn-copy" id="btnCopyLicense" onclick="copyLicense()">📋 Copy Key</button>
+      </div>
+      <div class="license-meta">
+        <div class="lm-item">
+          <span class="lm-label">Plan</span>
+          <span class="lm-value" id="lmPlan">Starter</span>
+        </div>
+        <div class="lm-item">
+          <span class="lm-label">Status</span>
+          <span class="lm-value green">✓ Active</span>
+        </div>
+        <div class="lm-item">
+          <span class="lm-label">Access</span>
+          <span class="lm-value" id="lmAccess">Starter Engines</span>
+        </div>
+        <div class="lm-item">
+          <span class="lm-label">Type</span>
+          <span class="lm-value">Lifetime · One-time</span>
+        </div>
+      </div>
+      <div class="upgrade-strip" id="upgradeStrip" style="display:none">
+        <div class="us-text"><strong>Unlock Pro engines</strong> — get all current + future engines forever</div>
+        <a href="/#pricing" class="btn-upgrade-sm">⚡ Upgrade for ₹1,000</a>
       </div>
     </div>
-    <nav class="sidebar-nav">
-      <div class="nav-section">
-        <div class="nav-section-label">Main</div>
-        <a href="/dashboard.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Dashboard</a>
+
+    <!-- PASSWORD CARD -->
+    <div class="card">
+      <div class="card-title"><span class="card-title-icon">🔒</span> Change Password</div>
+      <div class="form-group">
+        <label class="form-label">New Password</label>
+        <div class="input-wrap">
+          <input class="form-input" type="password" id="inputNewPw" placeholder="Enter new password" oninput="checkPasswordStrength(this.value)">
+          <button class="toggle-pw" type="button" onclick="togglePw('inputNewPw', this)">👁</button>
+        </div>
+        <div class="pw-strength">
+          <div class="pw-bars">
+            <div class="pw-bar" id="pwBar1"></div>
+            <div class="pw-bar" id="pwBar2"></div>
+            <div class="pw-bar" id="pwBar3"></div>
+            <div class="pw-bar" id="pwBar4"></div>
+          </div>
+          <div class="pw-label" id="pwLabel">Enter a password</div>
+        </div>
       </div>
-      <div class="nav-section">
-        <div class="nav-section-label">Engines (0–7)</div>
-        <a href="/engine/0" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4"/></svg>Intelligent Router<span class="nav-badge">E0</span></a>
-        <a href="/engine/1" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/></svg>Offer Positioning<span class="nav-badge">E1</span></a>
-        <a href="/engine/2" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Audience Psychology<span class="nav-badge">E2</span></a>
-        <a href="/engine/3" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>Hook & Angle<span class="nav-badge">E3</span></a>
-        <a href="/engine/4" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/></svg>Meta Ads<span class="nav-badge">E4</span></a>
-        <a href="/engine/5" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>Conversion Page<span class="nav-badge">E5</span></a>
-        <a href="/engine/6" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/></svg>Email Follow-up<span class="nav-badge">E6</span></a>
-        <a href="/engine/7" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Performance Diagnosis<span class="nav-badge">E7</span></a>
+      <div class="form-group">
+        <label class="form-label">Confirm New Password</label>
+        <div class="input-wrap">
+          <input class="form-input" type="password" id="inputConfirmPw" placeholder="Confirm new password">
+          <button class="toggle-pw" type="button" onclick="togglePw('inputConfirmPw', this)">👁</button>
+        </div>
       </div>
-      <div class="nav-section">
-        <div class="nav-section-label">Resources</div>
-        <a href="/templates.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>Templates<span class="nav-badge">15</span></a>
-        <a href="/resources.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/></svg>Downloads</a>
-      </div>
-    </nav>
-    <div class="sidebar-footer">
-      <a href="/profile.html" class="nav-item active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Profile & Settings</a>
-      <a href="#" id="logout-btn" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Sign Out</a>
+      <button class="btn-save" id="btnSavePw" onclick="changePassword()">🔒 Update Password</button>
     </div>
-  </aside>
 
-  <div class="sidebar-overlay" id="sidebar-overlay"></div>
-
-  <!-- ══ MAIN ══ -->
-  <div class="main">
-    <header class="topbar">
-      <div class="topbar-left">
-        <button class="menu-btn" id="menu-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
-        <span class="topbar-title">Profile & Settings</span>
+    <!-- PREFERENCES -->
+    <div class="card">
+      <div class="card-title"><span class="card-title-icon">🔔</span> Notifications</div>
+      <div class="toggle-row">
+        <div>
+          <div class="toggle-label">Product Updates</div>
+          <div class="toggle-desc">Get notified when new engines are added</div>
+        </div>
+        <label class="toggle-switch"><input type="checkbox" id="notifUpdates" checked><span class="toggle-slider"></span></label>
       </div>
-      <div class="topbar-right">
-        <div class="topbar-avatar" id="topbar-avatar">U</div>
+      <div class="toggle-row">
+        <div>
+          <div class="toggle-label">Usage Tips</div>
+          <div class="toggle-desc">Receive tips on using engines effectively</div>
+        </div>
+        <label class="toggle-switch"><input type="checkbox" id="notifTips"><span class="toggle-slider"></span></label>
       </div>
-    </header>
+    </div>
 
-    <div class="content">
-
-      <div class="page-header">
-        <h1 class="page-title">⚙️ Profile & Settings</h1>
-        <p class="page-sub">Manage your account, license, and preferences</p>
+    <!-- DANGER ZONE -->
+    <div class="card danger-card">
+      <div class="card-title" style="color:var(--red)"><span class="card-title-icon">⚠️</span> Danger Zone</div>
+      <div class="danger-row">
+        <div>
+          <div class="danger-label">Sign Out Everywhere</div>
+          <div class="danger-desc">Log out of all active sessions across devices</div>
+        </div>
+        <button class="btn-danger" onclick="handleLogout()">Sign Out</button>
       </div>
+    </div>
 
-      <!-- ══ PROFILE CARD ══ -->
-      <div class="profile-card">
-        <div class="card-title">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-          Account Information
-        </div>
+  </div>
+</main>
 
-        <!-- Avatar -->
-        <div class="avatar-section">
-          <div class="avatar-big" id="profile-avatar">U</div>
-          <div class="avatar-info">
-            <div class="avatar-name" id="profile-name">Loading...</div>
-            <div class="avatar-email" id="profile-email"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="dbb7b4babfb2b5bc9bbeb6bab2b7f5b8b4b6">[email&#160;protected]</a></div>
-            <div class="avatar-badges">
-              <span class="plan-badge" id="profile-plan-badge">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-                Core Plan
-              </span>
-              <span class="joined-badge">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                Joined <span id="profile-joined">—</span>
-              </span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Name + Email -->
-        <div class="form-row" style="margin-bottom:16px">
-          <div class="form-group" style="margin-bottom:0">
-            <label class="form-label">Full Name</label>
-            <input class="form-input" type="text" id="input-name" placeholder="Your name">
-          </div>
-          <div class="form-group" style="margin-bottom:0">
-            <label class="form-label">Email Address</label>
-            <input class="form-input" type="email" id="input-email" placeholder="your@email.com" disabled>
-            <div class="form-hint">Email cannot be changed</div>
-          </div>
-        </div>
-
-        <button class="btn-save" id="btn-save-profile">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-          Save Changes
-        </button>
-      </div>
-
-      <!-- ══ LICENSE CARD ══ -->
-      <div class="license-card">
-        <div class="card-title">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-          License & Plan
-        </div>
-
-        <div class="license-box">
-          <div class="license-key" id="license-key">ACE-CORE-XXXXX</div>
-          <button class="btn-copy-license" id="btn-copy-license">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-            Copy Key
-          </button>
-        </div>
-
-        <div class="license-meta">
-          <div class="lm-item">
-            <span class="lm-label">Plan</span>
-            <span class="lm-value" id="lm-plan">Core</span>
-          </div>
-          <div class="lm-item">
-            <span class="lm-label">Status</span>
-            <span class="lm-value" style="color:var(--success)">✓ Active</span>
-          </div>
-          <div class="lm-item">
-            <span class="lm-label">Access</span>
-            <span class="lm-value" id="lm-access">Engines 0–7 + Templates</span>
-          </div>
-          <div class="lm-item">
-            <span class="lm-label">Type</span>
-            <span class="lm-value">Lifetime · One-time</span>
-          </div>
-        </div>
-
-        <!-- Upgrade strip — Core only -->
-        <div class="upgrade-strip" id="upgrade-strip" style="display:none">
-          <div class="us-text">Unlock 6 Advanced Tools — <strong id="us-price">₹1,000 more</strong></div>
-          <a href="#" class="btn-upgrade-strip" id="us-upgrade-btn">Upgrade to Complete →</a>
-        </div>
-      </div>
-
-      <!-- ══ PASSWORD CARD ══ -->
-      <div class="password-card">
-        <div class="card-title">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg>
-          Change Password
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">Current Password</label>
-          <div class="input-wrap">
-            <input class="form-input" type="password" id="input-current-pw" placeholder="Enter current password">
-            <button class="toggle-pw" type="button" data-target="input-current-pw">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-            </button>
-          </div>
-        </div>
-
-        <div class="form-row" style="margin-bottom:16px">
-          <div class="form-group" style="margin-bottom:0">
-            <label class="form-label">New Password</label>
-            <div class="input-wrap">
-              <input class="form-input" type="password" id="input-new-pw" placeholder="Min 8 characters">
-              <button class="toggle-pw" type="button" data-target="input-new-pw">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-              </button>
-            </div>
-            <!-- Strength meter -->
-            <div class="pw-strength" id="pw-strength" style="display:none">
-              <div class="pw-bars">
-                <div class="pw-bar" id="bar1"></div>
-                <div class="pw-bar" id="bar2"></div>
-                <div class="pw-bar" id="bar3"></div>
-                <div class="pw-bar" id="bar4"></div>
-              </div>
-              <div class="pw-label" id="pw-label">Weak</div>
-            </div>
-          </div>
-          <div class="form-group" style="margin-bottom:0">
-            <label class="form-label">Confirm New Password</label>
-            <div class="input-wrap">
-              <input class="form-input" type="password" id="input-confirm-pw" placeholder="Repeat new password">
-              <button class="toggle-pw" type="button" data-target="input-confirm-pw">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <button class="btn-save" id="btn-save-password">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-          Update Password
-        </button>
-
-        <!-- TODO Phase 5: supabase.auth.updateUser({ password: newPw }) -->
-      </div>
-
-      <!-- ══ NOTIFICATIONS CARD ══ -->
-      <div class="notif-card">
-        <div class="card-title">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-          Email Notifications
-        </div>
-
-        <div class="toggle-row">
-          <div class="toggle-info">
-            <div class="toggle-label">Product Updates</div>
-            <div class="toggle-desc">New engine updates and feature releases</div>
-          </div>
-          <label class="toggle-switch">
-            <input type="checkbox" id="notif-updates" checked>
-            <span class="toggle-slider"></span>
-          </label>
-        </div>
-
-        <div class="toggle-row">
-          <div class="toggle-info">
-            <div class="toggle-label">New Tools Added</div>
-            <div class="toggle-desc">Get notified when new tools are available</div>
-          </div>
-          <label class="toggle-switch">
-            <input type="checkbox" id="notif-tools" checked>
-            <span class="toggle-slider"></span>
-          </label>
-        </div>
-
-        <div class="toggle-row">
-          <div class="toggle-info">
-            <div class="toggle-label">Marketing Tips</div>
-            <div class="toggle-desc">Weekly conversion tips and case studies</div>
-          </div>
-          <label class="toggle-switch">
-            <input type="checkbox" id="notif-marketing">
-            <span class="toggle-slider"></span>
-          </label>
-        </div>
-      </div>
-
-      <!-- ══ DANGER ZONE ══ -->
-      <div class="danger-card">
-        <div class="card-title">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-          Danger Zone
-        </div>
-
-        <div class="danger-row">
-          <div class="danger-info">
-            <div class="danger-label">Sign out of all devices</div>
-            <div class="danger-desc">Revoke all active sessions everywhere</div>
-          </div>
-          <button class="btn-danger" id="btn-signout-all">Sign Out Everywhere</button>
-        </div>
-
-        <div class="danger-row">
-          <div class="danger-info">
-            <div class="danger-label">Delete Account</div>
-            <div class="danger-desc">Permanently delete your account. This cannot be undone. Your license key will be deactivated.</div>
-          </div>
-          <button class="btn-danger" id="btn-delete-account">Delete Account</button>
-        </div>
-      </div>
-
-    </div><!-- /content -->
-  </div><!-- /main -->
-</div>
-
-<!-- Toast -->
+<!-- TOAST -->
 <div class="toast" id="toast">
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-  <span id="toast-msg">Saved!</span>
+  <span id="toastMsg">Saved!</span>
 </div>
 
-<!-- Confirm Modal -->
-<div class="modal-overlay" id="modal">
-  <div class="modal">
-    <div class="modal-title" id="modal-title">Are you sure?</div>
-    <div class="modal-desc"  id="modal-desc">This action cannot be undone.</div>
-    <div class="modal-actions">
-      <button class="btn-modal-cancel"  id="modal-cancel">Cancel</button>
-      <button class="btn-modal-confirm" id="modal-confirm">Confirm</button>
-    </div>
-  </div>
-</div>
+<script>
+const ANON_KEY = SUPABASE_ANON;
+let currentUser = null;
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-  // auth.js verified login + set window.COSU from Supabase
-  const COSU = window.COSU ?? { name: 'User', email: '', tier: 'core', initials: 'U' };
+function showToast(msg, isError=false) {
+  const t = document.getElementById('toast');
+  t.querySelector('#toastMsg').textContent = msg;
+  t.style.background = isError ? 'var(--red)' : '#1A1A1A';
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 3000);
+}
 
-  const USER = {
-    name:       COSU.name,
-    email:      COSU.email,
-    tier:       COSU.tier,
-    licenseKey: '—',      // loaded below from purchases table
-    joinedDate: COSU.session?.user?.created_at ?? new Date().toISOString(),
-  };
+function openSidebar(){document.getElementById('sidebar').classList.add('open');document.getElementById('sidebarOverlay').classList.add('open');}
+function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('sidebarOverlay').classList.remove('open');}
+function handleLogout(){
+  const sb = window.supabase || window._supabaseClient;
+  if(sb?.auth) sb.auth.signOut().then(()=>location.href='/login.html');
+  else location.href='/login.html';
+}
 
-  const PRICING = {
-    IN:      { label: '₹1,000 more', url: 'cashfree-upgrade' },
-    DEFAULT: { label: '$30 more',    url: 'https://habitforge24.gumroad.com/l/conversionos-upgrade' },
-  };
+function togglePw(inputId, btn) {
+  const el = document.getElementById(inputId);
+  if(el.type === 'password') { el.type='text'; btn.textContent='🙈'; }
+  else { el.type='password'; btn.textContent='👁'; }
+}
 
-  let toastTimer = null;
+function checkPasswordStrength(val) {
+  const bars = [1,2,3,4].map(i=>document.getElementById('pwBar'+i));
+  const label = document.getElementById('pwLabel');
+  bars.forEach(b=>{b.className='pw-bar';});
+  if(!val) { label.textContent='Enter a password'; return; }
+  let score = 0;
+  if(val.length >= 8)  score++;
+  if(val.length >= 12) score++;
+  if(/[A-Z]/.test(val) && /[a-z]/.test(val)) score++;
+  if(/[0-9]/.test(val) && /[^A-Za-z0-9]/.test(val)) score++;
+  const levels = ['weak','fair','good','strong'];
+  const labels = ['Weak','Fair','Good','Strong'];
+  const cls = levels[score-1] || 'weak';
+  bars.slice(0,Math.max(score,1)).forEach(b=>b.classList.add(cls));
+  label.textContent = labels[score-1] || 'Too short';
+}
 
-  // Load license key from Supabase purchases table
-  async function loadLicenseKey() {
-    try {
-      const { data } = await window.supabase
-        .from('purchases')
-        .select('license_key')
-        .eq('user_id', COSU.id)
-        .single();
-      if (data?.license_key) {
-        USER.licenseKey = data.license_key;
-        document.getElementById('license-key').textContent = data.license_key;
-      }
-    } catch (e) { /* Silent fail — license key display is non-critical */ }
+async function saveProfile() {
+  const sb = window.supabase || window._supabaseClient;
+  if(!sb?.auth) return;
+  const name = document.getElementById('inputName').value.trim();
+  if(!name) { showToast('Please enter a name', true); return; }
+  const btn = document.getElementById('btnSaveProfile');
+  btn.disabled = true; btn.textContent = '⏳ Saving...';
+  try {
+    const { error } = await sb.auth.updateUser({ data: { full_name: name } });
+    if(error) throw error;
+    // Update display
+    document.getElementById('profileName').textContent = name;
+    document.getElementById('sidebarName').textContent = name;
+    document.getElementById('profileAvatar').textContent = name.charAt(0).toUpperCase();
+    showToast('✅ Profile saved!');
+  } catch(e) {
+    showToast('Failed to save: '+e.message, true);
+  }
+  btn.disabled = false; btn.textContent = '💾 Save Changes';
+}
+
+async function changePassword() {
+  const sb = window.supabase || window._supabaseClient;
+  if(!sb?.auth) return;
+  const newPw = document.getElementById('inputNewPw').value;
+  const confirmPw = document.getElementById('inputConfirmPw').value;
+  if(newPw.length < 8) { showToast('Password must be at least 8 characters', true); return; }
+  if(newPw !== confirmPw) { showToast('Passwords do not match', true); return; }
+  const btn = document.getElementById('btnSavePw');
+  btn.disabled = true; btn.textContent = '⏳ Updating...';
+  try {
+    const { error } = await sb.auth.updateUser({ password: newPw });
+    if(error) throw error;
+    document.getElementById('inputNewPw').value = '';
+    document.getElementById('inputConfirmPw').value = '';
+    document.querySelectorAll('.pw-bar').forEach(b=>b.className='pw-bar');
+    document.getElementById('pwLabel').textContent = 'Enter a password';
+    showToast('✅ Password updated successfully!');
+  } catch(e) {
+    showToast('Failed: '+e.message, true);
+  }
+  btn.disabled = false; btn.textContent = '🔒 Update Password';
+}
+
+async function copyLicense() {
+  const key = document.getElementById('licenseKey').textContent;
+  await navigator.clipboard.writeText(key);
+  const btn = document.getElementById('btnCopyLicense');
+  btn.classList.add('copied'); btn.textContent = '✅ Copied!';
+  setTimeout(()=>{ btn.classList.remove('copied'); btn.textContent = '📋 Copy Key'; }, 2500);
+}
+
+async function loadProfile() {
+  // Wait for COSU from auth.js
+  let waited = 0;
+  while(!window.COSU && waited < 2000) {
+    await new Promise(r=>setTimeout(r,100));
+    waited += 100;
   }
 
-  // ══════════════════════════════════════════════
-  // INIT
-  // ══════════════════════════════════════════════
-  function init() {
-    const isComplete = USER.tier === 'complete';
-    const initials   = COSU.initials ?? 'U';
-    const joined     = new Date(USER.joinedDate).toLocaleDateString('en-IN', { month:'short', year:'numeric' });
+  const cosu = window.COSU;
+  const sb = window.supabase || window._supabaseClient;
+  if(!cosu || !sb) return;
 
-    // Sidebar & topbar
-    document.getElementById('sidebar-avatar').textContent = initials;
-    document.getElementById('topbar-avatar').textContent  = initials;
-    document.getElementById('sidebar-name').textContent   = USER.name;
-    document.getElementById('sidebar-tier').textContent   = isComplete ? 'Complete Plan' : 'Core Plan';
+  currentUser = cosu;
+  const { data: { user } } = await sb.auth.getUser();
+  if(!user) return;
 
-    // Profile card
-    document.getElementById('profile-avatar').textContent = initials;
-    document.getElementById('profile-name').textContent   = USER.name;
-    document.getElementById('profile-email').textContent  = USER.email;
-    document.getElementById('profile-joined').textContent = joined;
-    document.getElementById('input-name').value           = USER.name;
-    document.getElementById('input-email').value          = USER.email;
+  const email = user.email || '';
+  const meta = user.user_metadata || {};
+  const name = meta.full_name || email.split('@')[0] || 'User';
+  const initial = name.charAt(0).toUpperCase();
+  const tier = cosu.tier || 'starter';
+  const isPro = tier === 'pro';
 
-    // Plan badge
-    const badge = document.getElementById('profile-plan-badge');
-    if (isComplete) {
-      badge.className = 'plan-badge complete';
-      badge.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Complete Plan`;
-    } else {
-      badge.className = 'plan-badge core';
-      badge.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Core Plan`;
+  // Update avatar + info
+  document.getElementById('profileAvatar').textContent = initial;
+  document.getElementById('profileName').textContent = name;
+  document.getElementById('profileEmail').textContent = email;
+  document.getElementById('inputName').value = name;
+  document.getElementById('inputEmail').value = email;
+
+  // Sidebar
+  document.getElementById('sidebarName').textContent = name;
+  document.getElementById('sidebarEmail').textContent = email;
+
+  // Joined date
+  if(user.created_at) {
+    const d = new Date(user.created_at);
+    document.getElementById('profileJoined').textContent = d.toLocaleDateString('en-IN',{month:'short',year:'numeric'});
+  }
+
+  // Tier
+  if(isPro) {
+    document.getElementById('tierBadge').textContent='⚡ PRO';
+    document.getElementById('tierBadge').className='user-badge pro';
+    document.getElementById('profilePlanBadge').textContent='⚡ PRO';
+    document.getElementById('profilePlanBadge').className='plan-badge pro';
+    document.getElementById('lmPlan').textContent='Pro';
+    document.getElementById('lmAccess').textContent='All Engines — Lifetime';
+    document.getElementById('upgradeStrip').style.display='none';
+  } else {
+    document.getElementById('upgradeStrip').style.display='flex';
+  }
+
+  // License key from purchases
+  try {
+    const { data: purchase } = await sb.from('purchases')
+      .select('order_id,created_at,tier')
+      .eq('user_id', user.id)
+      .order('created_at',{ascending:false})
+      .limit(1).single();
+    if(purchase?.order_id) {
+      document.getElementById('licenseKey').textContent = purchase.order_id;
     }
-
-    // License
-    document.getElementById('license-key').textContent = USER.licenseKey;
-    document.getElementById('lm-plan').textContent     = isComplete ? 'Complete' : 'Core';
-    document.getElementById('lm-plan').className       = isComplete ? 'lm-value plan-complete' : 'lm-value plan-core';
-    document.getElementById('lm-access').textContent   = isComplete
-      ? 'Engines 0–7 + 6 Tools + Templates'
-      : 'Engines 0–7 + Templates';
-
-    // Upgrade strip
-    if (!isComplete) {
-      document.getElementById('upgrade-strip').style.display = 'flex';
-      detectPricing();
-    }
+  } catch(e) {
+    document.getElementById('licenseKey').textContent = `FORGEAI-${user.id.substring(0,8).toUpperCase()}`;
   }
+}
 
-  async function detectPricing() {
-    let p = PRICING.DEFAULT;
-    try {
-      const res  = await fetch('https://ipapi.co/json/', { signal: AbortSignal.timeout(4000) });
-      const data = await res.json();
-      if (data.country_code === 'IN') p = PRICING.IN;
-    } catch (e) {}
-    document.getElementById('us-price').textContent   = p.label;
-    const upgradeBtn = document.getElementById('us-upgrade-btn');
-    upgradeBtn.onclick = function(e) {
-      e.preventDefault();
-      if(p.url === 'cashfree-upgrade') {
-        openCheckoutModal('upgrade');
-      } else {
-        window.location.href = p.url;
-      }
-    };
-  }
-
-  // ══════════════════════════════════════════════
-  // SAVE PROFILE — Real Supabase
-  // ══════════════════════════════════════════════
-  document.getElementById('btn-save-profile').addEventListener('click', async function() {
-    const name = document.getElementById('input-name').value.trim();
-    if (!name) { showToast('Please enter your name', false); return; }
-
-    this.classList.add('saving');
-    this.textContent = 'Saving...';
-
-    const { error } = await window.supabase.auth.updateUser({
-      data: { name: name }
-    });
-
-    if (error) {
-      this.classList.remove('saving');
-      this.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/></svg> Save Changes`;
-      showToast('Error: ' + error.message, false);
-      return;
-    }
-
-    this.classList.remove('saving');
-    this.classList.add('saved');
-    this.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Saved!`;
-
-    document.getElementById('profile-name').textContent  = name;
-    document.getElementById('sidebar-name').textContent  = name;
-    const initials = name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
-    document.getElementById('profile-avatar').textContent = initials;
-    document.getElementById('sidebar-avatar').textContent = initials;
-    document.getElementById('topbar-avatar').textContent  = initials;
-
-    showToast('Profile updated successfully!');
-
-    setTimeout(() => {
-      this.classList.remove('saved');
-      this.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/></svg> Save Changes`;
-    }, 2500);
-  });
-
-  // ══════════════════════════════════════════════
-  // COPY LICENSE KEY
-  // ══════════════════════════════════════════════
-  document.getElementById('btn-copy-license').addEventListener('click', async function() {
-    try { await navigator.clipboard.writeText(USER.licenseKey); }
-    catch (e) {
-      const ta = document.createElement('textarea');
-      ta.value = USER.licenseKey; ta.style.cssText='position:fixed;opacity:0';
-      document.body.appendChild(ta); ta.focus(); ta.select();
-      document.execCommand('copy'); document.body.removeChild(ta);
-    }
-    this.classList.add('copied');
-    this.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Copied!`;
-    setTimeout(() => {
-      this.classList.remove('copied');
-      this.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy Key`;
-    }, 2000);
-    showToast('License key copied!');
-  });
-
-  // ══════════════════════════════════════════════
-  // CHANGE PASSWORD
-  // TODO Phase 5: supabase.auth.updateUser({ password: newPw })
-  // ══════════════════════════════════════════════
-  document.getElementById('input-new-pw').addEventListener('input', function() {
-    const val = this.value;
-    const strength = document.getElementById('pw-strength');
-    if (!val) { strength.style.display = 'none'; return; }
-    strength.style.display = 'block';
-    const score = getPasswordScore(val);
-    const bars  = [document.getElementById('bar1'), document.getElementById('bar2'), document.getElementById('bar3'), document.getElementById('bar4')];
-    const levels = ['', 'weak', 'fair', 'good', 'strong'];
-    const labels = ['', 'Weak', 'Fair', 'Good', 'Strong'];
-    bars.forEach((b, i) => b.className = 'pw-bar ' + (i < score ? levels[score] : ''));
-    document.getElementById('pw-label').textContent = labels[score];
-  });
-
-  document.getElementById('btn-save-password').addEventListener('click', async function() {
-    const current = document.getElementById('input-current-pw').value;
-    const newPw   = document.getElementById('input-new-pw').value;
-    const confirm = document.getElementById('input-confirm-pw').value;
-
-    if (!current) { showToast('Enter your current password', false); return; }
-    if (newPw.length < 8) { showToast('New password must be 8+ characters', false); return; }
-    if (newPw !== confirm) { showToast('Passwords do not match', false); return; }
-
-    this.classList.add('saving');
-    this.textContent = 'Updating...';
-
-    // Supabase: verify current password by re-signing in
-    // Use window.COSU.email directly (most reliable source)
-    const currentEmail = window.COSU?.email || USER.email;
-    if (!currentEmail) {
-      showToast('Session error. Please logout and login again.', false);
-      this.classList.remove('saving');
-      this.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Update Password`;
-      return;
-    }
-
-    const { error: verifyErr } = await window.supabase.auth.signInWithPassword({
-      email:    currentEmail,
-      password: current,
-    });
-
-    if (verifyErr) {
-      this.classList.remove('saving');
-      this.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Update Password`;
-      showToast('Current password is incorrect', false);
-      return;
-    }
-
-    // Now update to new password
-    const { error } = await window.supabase.auth.updateUser({ password: newPw });
-
-    if (error) {
-      this.classList.remove('saving');
-      this.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Update Password`;
-      showToast('Error: ' + error.message, false);
-      return;
-    }
-
-    this.classList.remove('saving');
-    this.classList.add('saved');
-    this.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Password Updated!`;
-
-    document.getElementById('input-current-pw').value = '';
-    document.getElementById('input-new-pw').value     = '';
-    document.getElementById('input-confirm-pw').value = '';
-    document.getElementById('pw-strength').style.display = 'none';
-
-    showToast('Password changed successfully!');
-    setTimeout(() => {
-      this.classList.remove('saved');
-      this.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Update Password`;
-    }, 2500);
-  });
-
-  // ══════════════════════════════════════════════
-  // PASSWORD SHOW/HIDE
-  // ══════════════════════════════════════════════
-  document.querySelectorAll('.toggle-pw').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const input = document.getElementById(btn.dataset.target);
-      input.type  = input.type === 'password' ? 'text' : 'password';
-    });
-  });
-
-  // ══════════════════════════════════════════════
-  // DANGER ZONE — Real Supabase
-  // ══════════════════════════════════════════════
-  document.getElementById('btn-signout-all').addEventListener('click', () => {
-    showModal(
-      'Sign out everywhere?',
-      'This will end all active sessions on all devices. You will need to log in again.',
-      async () => {
-        await window.supabase.auth.signOut({ scope: 'global' });
-        window.location.replace('/login.html');
-      }
-    );
-  });
-
-  document.getElementById('btn-delete-account').addEventListener('click', () => {
-    showModal(
-      'Delete your account?',
-      'This will permanently delete your account and deactivate your license key. This cannot be undone.',
-      async () => {
-        // Note: full delete requires a Supabase Edge Function (Phase 6 admin)
-        // For now: sign out + show message
-        showToast('Account deletion requested. We will email you confirmation within 24 hours.');
-        await window.supabase.auth.signOut();
-        setTimeout(() => window.location.replace('/login.html'), 2000);
-      }
-    );
-  });
-
-  // Logout button
-  document.getElementById('logout-btn').addEventListener('click', e => {
-    e.preventDefault(); window.cosLogout();
-  });
-
-  // ══════════════════════════════════════════════
-  // HELPERS
-  // ══════════════════════════════════════════════
-  function showToast(msg, success = true) {
-    document.getElementById('toast-msg').textContent = msg;
-    const toast = document.getElementById('toast');
-    toast.classList.add('show');
-    if (toastTimer) clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => toast.classList.remove('show'), 3000);
-  }
-
-  function showModal(title, desc, onConfirm) {
-    document.getElementById('modal-title').textContent = title;
-    document.getElementById('modal-desc').textContent  = desc;
-    document.getElementById('modal').classList.add('open');
-    document.getElementById('modal-confirm').onclick = () => {
-      document.getElementById('modal').classList.remove('open');
-      onConfirm();
-    };
-  }
-
-  document.getElementById('modal-cancel').addEventListener('click', () => {
-    document.getElementById('modal').classList.remove('open');
-  });
-
-  document.getElementById('modal').addEventListener('click', function(e) {
-    if (e.target === this) this.classList.remove('open');
-  });
-
-  function getPasswordScore(pw) {
-    let s = 0;
-    if (pw.length >= 8)  s++;
-    if (pw.length >= 12) s++;
-    if (/[A-Z]/.test(pw) && /[0-9]/.test(pw)) s++;
-    if (/[^A-Za-z0-9]/.test(pw)) s++;
-    return Math.min(s, 4);
-  }
-
-  function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
-
-  // Mobile sidebar
-  const sidebar = document.getElementById('sidebar');
-  const overlay = document.getElementById('sidebar-overlay');
-  document.getElementById('menu-btn').addEventListener('click', () => { sidebar.classList.add('open'); overlay.classList.add('open'); document.body.style.overflow='hidden'; });
-  overlay.addEventListener('click', () => { sidebar.classList.remove('open'); overlay.classList.remove('open'); document.body.style.overflow=''; });
-
-  // ══════════════════════════════════════════════
-  // INIT — Wait for auth.js to complete
-  // ══════════════════════════════════════════════
-  function waitForCOSU(callback, tries = 0) {
-    if (window.COSU) {
-      callback();
-    } else if (tries < 20) {
-      setTimeout(() => waitForCOSU(callback, tries + 1), 100);
-    } else {
-      // Fallback — reload if COSU never loads
-      window.location.replace('/login.html');
-    }
-  }
-
-  waitForCOSU(function() {
-    // Re-read COSU after auth.js finishes
-    const COSU2 = window.COSU;
-    USER.name  = COSU2.name  ?? 'User';
-    USER.email = COSU2.email ?? '';
-    USER.tier  = COSU2.tier  ?? 'core';
-    init();
-    loadLicenseKey();
-  });
-
-
-  // ─── Checkout Modal ───────────────────────────────────────────────
-  function openCheckoutModal(plan) {
-    const modal = document.getElementById('cos-checkout-modal');
-    if(!modal) return;
-    modal.dataset.plan = plan;
-    modal.style.display = 'flex';
-    document.body.style.overflow = 'hidden';
-    document.getElementById('cos-modal-name').value = window.COSU?.name || '';
-    document.getElementById('cos-modal-email').value = window.COSU?.email || '';
-    document.getElementById('cos-modal-error').textContent = '';
-  }
-
-  function closeCheckoutModal() {
-    const modal = document.getElementById('cos-checkout-modal');
-    if(!modal) return;
-    modal.style.display = 'none';
-    document.body.style.overflow = '';
-  }
-
-  async function submitCheckout() {
-    const modal = document.getElementById('cos-checkout-modal');
-    const plan  = modal.dataset.plan;
-    const name  = document.getElementById('cos-modal-name').value.trim();
-    const email = document.getElementById('cos-modal-email').value.trim();
-    const errEl = document.getElementById('cos-modal-error');
-    const btn   = document.getElementById('cos-modal-btn');
-
-    errEl.textContent = '';
-    if(!name) { errEl.textContent = 'Please enter your name.'; return; }
-    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { errEl.textContent = 'Please enter a valid email.'; return; }
-
-    btn.disabled = true;
-    btn.textContent = 'Creating order...';
-
-    try {
-      const res  = await fetch('/.netlify/functions/create-order', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, plan })
-      });
-      const data = await res.json();
-
-      if(!res.ok || !data.paymentSessionId) {
-        errEl.textContent = data.error || 'Something went wrong.';
-        btn.disabled = false;
-        btn.textContent = 'Proceed to Payment →';
-        return;
-      }
-
-      if(!window.Cashfree) {
-        await new Promise((res, rej) => {
-          const s = document.createElement('script');
-          s.src = 'https://sdk.cashfree.com/js/v3/cashfree.js';
-          s.onload = res; s.onerror = rej;
-          document.head.appendChild(s);
-        });
-      }
-      const cashfree = window.Cashfree({ mode: data.cfEnv === 'PROD' ? 'production' : 'sandbox' });
-      closeCheckoutModal();
-      cashfree.checkout({ paymentSessionId: data.paymentSessionId, redirectTarget: '_self' });
-
-    } catch(err) {
-      errEl.textContent = 'Connection error. Please try again.';
-      btn.disabled = false;
-      btn.textContent = 'Proceed to Payment →';
-    }
-  }
-
+document.addEventListener('DOMContentLoaded', loadProfile);
 </script>
-
-<!-- CHECKOUT MODAL -->
-<div id="cos-checkout-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:9999;align-items:center;justify-content:center;padding:16px;">
-  <div style="background:#fff;border-radius:20px;padding:36px 32px;max-width:420px;width:100%;position:relative;box-shadow:0 20px 60px rgba(0,0,0,0.2);">
-    <button onclick="closeCheckoutModal()" style="position:absolute;top:16px;right:16px;background:none;border:none;cursor:pointer;font-size:20px;color:#6B6B6B;">✕</button>
-    <div style="font-size:24px;margin-bottom:8px;">⚡</div>
-    <h3 style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:#1A1A1A;margin:0 0 6px;">Upgrade to Complete!</h3>
-    <p style="font-size:14px;color:#6B6B6B;margin:0 0 24px;line-height:1.6;">Confirm your details to proceed.</p>
-    <div style="margin-bottom:14px;">
-      <label style="font-size:13px;font-weight:600;color:#1A1A1A;display:block;margin-bottom:6px;">Full Name</label>
-      <input id="cos-modal-name" type="text" style="width:100%;padding:12px 14px;border:1.5px solid #E4E2DC;border-radius:10px;font-size:15px;outline:none;font-family:'DM Sans',sans-serif;">
-    </div>
-    <div style="margin-bottom:16px;">
-      <label style="font-size:13px;font-weight:600;color:#1A1A1A;display:block;margin-bottom:6px;">Email Address</label>
-      <input id="cos-modal-email" type="email" style="width:100%;padding:12px 14px;border:1.5px solid #E4E2DC;border-radius:10px;font-size:15px;outline:none;font-family:'DM Sans',sans-serif;">
-    </div>
-    <div id="cos-modal-error" style="color:#DC2626;font-size:13px;margin-bottom:12px;min-height:18px;"></div>
-    <button id="cos-modal-btn" onclick="submitCheckout()" style="width:100%;background:#1A1A1A;color:#fff;border:none;border-radius:12px;padding:16px;font-family:'Syne',sans-serif;font-size:16px;font-weight:800;cursor:pointer;">Proceed to Payment →</button>
-    <p style="font-size:12px;color:#ABABAB;text-align:center;margin-top:14px;">🔒 Secured by Cashfree · No card stored</p>
-  </div>
-</div>
-
 </body>
 </html>

@@ -35,7 +35,6 @@ document.documentElement.style.visibility = 'hidden';
     '/resources.html':       'any',
     '/profile.html':         'any',
     '/contact.html':         'any',
-    '/engine-page.html':     'any',
     '/tool-page.html':       'pro',
   };
 
