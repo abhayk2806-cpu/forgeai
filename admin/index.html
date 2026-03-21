@@ -403,8 +403,11 @@ function closeModal(id){document.getElementById(id).classList.remove('open');}
 function closeEditModal(ev){if(ev.target===document.getElementById('editModal'))closeModal('editModal');}
 
 // ─── API ───
-async function sbGet(table,params=''){
-  const r=await fetch(`${SB_URL}/rest/v1/${table}?${params}`,{headers:{'apikey':ANON,'Authorization':'Bearer '+ANON}});
+// All reads go through admin-read.js (service key, bypasses RLS)
+async function adminRead(table='all') {
+  const r = await fetch(`/.netlify/functions/admin-read?table=${table}`, {
+    headers: { 'x-admin-password': getAdminPwd() },
+  });
   return r.json();
 }
 // All writes go through admin-write.js Netlify function (uses service key, bypasses RLS)
@@ -428,9 +431,10 @@ async function saveContent(id,content){
 
 // ─── LOAD ───
 async function loadAll(){
-  const[c,e]=await Promise.all([sbGet('categories','order=sort_order'),sbGet('engines','is_active=eq.true&order=sort_order')]);
-  cats=Array.isArray(c)?c:[];engs=Array.isArray(e)?e:[];
-  document.getElementById('engBadge').textContent=engs.length;
+  const d = await adminRead('all');
+  cats = Array.isArray(d.categories) ? d.categories : [];
+  engs = Array.isArray(d.engines)    ? d.engines    : [];
+  document.getElementById('engBadge').textContent = engs.length;
 }
 
 // ─── OVERVIEW ───
@@ -438,14 +442,10 @@ async function loadOverview(){
   await loadAll();
   document.getElementById('ov-total').textContent=engs.length;
   document.getElementById('ov-cats').textContent=cats.length;
-  // count content
-  let filled=0;
-  for(const e of engs){
-    if(contentCache[e.id]===undefined){
-      try{const r=await sbGet('content_items','id=eq.'+e.id+'&select=content');contentCache[e.id]=r[0]?.content||'';}catch(err){contentCache[e.id]='';}
-    }
-    if(contentCache[e.id])filled++;
-  }
+  // count content — load all at once via admin-read
+  const cd = await adminRead('content_items');
+  if(cd.data) cd.data.forEach(item => { contentCache[item.id] = item.content || ''; });
+  const filled = engs.filter(e => contentCache[e.id]).length;
   document.getElementById('ov-content').textContent=filled+'/'+engs.length;
 }
 
@@ -621,12 +621,10 @@ async function deleteEng(id,name){
 async function renderContentList(){
   const el=document.getElementById('contentList');
   el.innerHTML='<div style="color:var(--text-muted);font-size:13px;padding:12px">Loading content...</div>';
-  const items=await Promise.all(engs.map(async e=>{
-    if(contentCache[e.id]===undefined){
-      try{const r=await sbGet('content_items','id=eq.'+e.id+'&select=content');contentCache[e.id]=r[0]?.content||'';}catch(err){contentCache[e.id]='';}
-    }
-    return{...e,content:contentCache[e.id]};
-  }));
+  // Load all content items at once via service key
+  const cd = await adminRead('content_items');
+  if(cd.data) cd.data.forEach(item => { contentCache[item.id] = item.content || ''; });
+  const items = engs.map(e => ({...e, content: contentCache[e.id] || ''}));
   el.innerHTML=items.map(e=>`
     <div class="engine-row">
       <div class="engine-row-header" onclick="toggleRow('cr-${e.id}')">
@@ -684,14 +682,15 @@ function previewContent(id){
 async function loadUsers(){
   document.getElementById('usersTbody').innerHTML='<tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:20px">Loading...</td></tr>';
   try{
-    const data=await sbGet('purchases','order=created_at.desc');
-    if(Array.isArray(data)&&data.length){
+    const d = await adminRead('purchases');
+    const data = d.data || [];
+    if(data.length){
       allPurchases=data;
       document.getElementById('ov-users').textContent=data.length;
       document.getElementById('userBadge').textContent=data.length;
       renderUsersTable(data);
     } else {
-      document.getElementById('usersTbody').innerHTML=`<tr><td colspan="7" style="text-align:center;padding:24px"><div style="font-size:13px;color:var(--text-muted)">⚠️ RLS blocks anon access. <a href="https://supabase.com/dashboard/project/scunqqruwxajzcegmtcg/editor" target="_blank" style="color:var(--accent)">View in Supabase →</a></div></td></tr>`;
+      document.getElementById('usersTbody').innerHTML='<tr><td colspan="7" style="text-align:center;padding:24px;font-size:13px;color:var(--text-muted)">No purchases yet</td></tr>';
     }
   }catch(e){document.getElementById('usersTbody').innerHTML='<tr><td colspan="7" style="text-align:center;color:var(--red);padding:20px;font-size:13px">Error loading</td></tr>';}
 }
