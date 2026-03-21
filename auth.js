@@ -44,7 +44,22 @@ document.documentElement.style.visibility = 'hidden';
 
   if (rule === 'public') { showPage(); return; }
 
-  const { data: { session } } = await sb.auth.getSession();
+  let { data: { session } } = await sb.auth.getSession();
+
+  // If no session yet, wait briefly for onAuthStateChange to hydrate it
+  // (Supabase can be slow to restore session from cookie right after redirect)
+  if (!session) {
+    session = await new Promise((resolve) => {
+      const timer = setTimeout(() => resolve(null), 1500);
+      const { data: { subscription } } = sb.auth.onAuthStateChange((event, s) => {
+        if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+          clearTimeout(timer);
+          subscription.unsubscribe();
+          resolve(s);
+        }
+      });
+    });
+  }
 
   if (!session) {
     try { sessionStorage.setItem('cos_redirect_after_login', window.location.href); } catch(e) {}
