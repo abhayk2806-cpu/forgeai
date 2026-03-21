@@ -196,6 +196,59 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .ep-lock-msg p{font-size:14px;margin-bottom:20px}
 .ep-copy-success{display:none;font-size:12px;color:var(--green);font-weight:600;padding:6px 0}
 
+/* ── GUIDES SECTION ── */
+.guide-page-header{margin-bottom:28px}
+.guide-page-title{font-size:26px;font-weight:700;color:var(--text);letter-spacing:-.4px;margin-bottom:6px}
+.guide-page-sub{font-size:14px;color:var(--text-muted)}
+
+/* Guide nav tabs */
+.guide-nav{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:28px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+.guide-nav-btn{padding:7px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:var(--surface);color:var(--text-muted);transition:all .15s;font-family:'DM Sans',sans-serif}
+.guide-nav-btn:hover{border-color:var(--accent);color:var(--accent)}
+.guide-nav-btn.active{background:var(--accent);border-color:var(--accent);color:white}
+
+/* Guide panels */
+.guide-panel{display:none}
+.guide-panel.active{display:block}
+
+/* Guide article */
+.guide-article{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:16px;box-shadow:var(--shadow)}
+.guide-article-header{padding:20px 24px 16px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;gap:14px}
+.guide-article-icon{width:44px;height:44px;border-radius:12px;background:var(--accent-light);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.guide-article-title{font-size:17px;font-weight:700;color:var(--text);margin-bottom:4px}
+.guide-article-desc{font-size:13px;color:var(--text-muted);line-height:1.5}
+.guide-article-body{padding:24px}
+
+/* Guide typography */
+.g-h2{font-size:15px;font-weight:700;color:var(--text);margin:0 0 12px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.g-h3{font-size:13px;font-weight:700;color:var(--text);margin:16px 0 8px;text-transform:uppercase;letter-spacing:.5px}
+.g-p{font-size:14px;color:var(--text-muted);line-height:1.7;margin-bottom:12px}
+.g-p:last-child{margin-bottom:0}
+.g-steps{display:flex;flex-direction:column;gap:12px;margin-bottom:16px}
+.g-step{display:flex;gap:14px;align-items:flex-start}
+.g-step-num{width:28px;height:28px;background:var(--accent);color:white;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;margin-top:1px}
+.g-step-body{flex:1}
+.g-step-title{font-size:14px;font-weight:600;color:var(--text);margin-bottom:3px}
+.g-step-desc{font-size:13px;color:var(--text-muted);line-height:1.6}
+.g-callout{background:var(--accent-light);border:1px solid #FDBA74;border-radius:8px;padding:12px 16px;font-size:13px;color:#92400E;line-height:1.6;margin-bottom:14px;display:flex;gap:10px}
+.g-callout-icon{flex-shrink:0;font-size:15px}
+.g-callout.blue{background:var(--blue-light);border-color:#93C5FD;color:#1E3A8A}
+.g-callout.green{background:var(--green-light);border-color:#6EE7B7;color:#065F46}
+.g-code{background:#1A1A1A;border-radius:8px;padding:14px 16px;font-family:'JetBrains Mono',monospace;font-size:12px;color:#D4D4D4;line-height:1.7;margin-bottom:12px;white-space:pre-wrap;word-break:break-word}
+.g-tag{display:inline-flex;align-items:center;gap:5px;background:var(--accent-light);color:var(--accent);font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;font-family:'JetBrains Mono',monospace;margin-right:6px;margin-bottom:4px}
+.g-divider{border:none;border-top:1px solid var(--border);margin:20px 0}
+.g-list{display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
+.g-list-item{display:flex;gap:10px;font-size:13px;color:var(--text-muted);line-height:1.6;align-items:flex-start}
+.g-list-item::before{content:'→';color:var(--accent);font-weight:700;flex-shrink:0;margin-top:1px}
+.g-llm-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:14px}
+.g-llm-card{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px 14px}
+.g-llm-name{font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px}
+.g-llm-detail{font-size:12px;color:var(--text-muted);line-height:1.5}
+.g-engine-badge{display:inline-flex;align-items:center;gap:6px;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px 12px;font-size:12px;font-weight:600;color:var(--text);margin:4px 4px 4px 0}
+.g-first-chat{background:#1A1A1A;border-radius:10px;padding:18px;margin-bottom:12px}
+.g-first-chat-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#888;margin-bottom:10px}
+.g-first-chat-text{font-size:13px;color:#E5E5E5;line-height:1.7;font-style:italic}
+
 /* SIDEBAR OVERLAY */
 .sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:99}
 .sidebar-overlay.open{display:block}
@@ -248,6 +301,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
     <div class="nav-section-title">Main</div>
     <button class="nav-item active" id="navDashboard" onclick="showView('dashboard')"><span class="nav-icon">🏠</span> Dashboard</button>
     <button class="nav-item" id="navEngines" onclick="showView('engines')"><span class="nav-icon">⚡</span> All Engines <span class="nav-badge" id="totalBadge">—</span></button>
+    <button class="nav-item" id="navGuides" onclick="showView('guides')"><span class="nav-icon">📖</span> Guides</button>
     <button class="nav-item" onclick="window.location.href='templates.html'"><span class="nav-icon">📋</span> Templates</button>
     <div class="nav-section-title" style="margin-top:12px">Account</div>
     <button class="nav-item" onclick="window.location.href='profile.html'"><span class="nav-icon">👤</span> Profile & Settings</button>
@@ -312,6 +366,907 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
       </div>
     </div>
   </div>
+
+  <!-- GUIDES VIEW -->
+  <div class="content" id="viewGuides" style="display:none">
+    <div class="guide-page-header">
+      <div class="guide-page-title">📖 Guides</div>
+      <div class="guide-page-sub">Everything you need to get real results from ForgeAI engines</div>
+    </div>
+
+    <!-- GUIDE NAV -->
+    <div class="guide-nav">
+      <button class="guide-nav-btn active" onclick="switchGuide('getting-started', this)">🚀 Getting Started</button>
+      <button class="guide-nav-btn" onclick="switchGuide('copy-forge', this)">✍️ Copy Forge</button>
+      <button class="guide-nav-btn" onclick="switchGuide('email-forge', this)">📧 Email Forge</button>
+      <button class="guide-nav-btn" onclick="switchGuide('seo-forge', this)">🔍 SEO Forge</button>
+      <button class="guide-nav-btn" onclick="switchGuide('social-forge', this)">📱 Social Forge</button>
+      <button class="guide-nav-btn" onclick="switchGuide('ad-forge', this)">📣 Ad Forge</button>
+      <button class="guide-nav-btn" onclick="switchGuide('page-forge', this)">🏠 Page Forge</button>
+      <button class="guide-nav-btn" onclick="switchGuide('business-forge', this)">💼 Business Forge</button>
+      <button class="guide-nav-btn" onclick="switchGuide('marketing-forge', this)">📈 Marketing Forge</button>
+      <button class="guide-nav-btn" onclick="switchGuide('pixel-ai', this)">🎨 Pixel AI</button>
+      <button class="guide-nav-btn" onclick="switchGuide('cinematic-ai', this)">🎬 Cinematic AI</button>
+      <button class="guide-nav-btn" onclick="switchGuide('ig-forge', this)">📸 Instagram Forge</button>
+      <button class="guide-nav-btn" onclick="switchGuide('music-forge', this)">🎵 Music Forge</button>
+      <button class="guide-nav-btn" onclick="switchGuide('engine-forge', this)">⚙️ Engine Forge</button>
+      <button class="guide-nav-btn" onclick="switchGuide('skill-forge', this)">🧠 Skill Forge</button>
+      <button class="guide-nav-btn" onclick="switchGuide('resume-forge', this)">📄 Resume Forge</button>
+      <button class="guide-nav-btn" onclick="switchGuide('pipeline', this)" style="background:var(--accent);border-color:var(--accent);color:white">⚡ ConversionOS Pipeline</button>
+    </div>
+
+    <!-- ══ GETTING STARTED ══ -->
+    <div class="guide-panel active" id="guide-getting-started">
+
+      <div class="guide-article">
+        <div class="guide-article-header">
+          <div class="guide-article-icon">🧠</div>
+          <div>
+            <div class="guide-article-title">What is ForgeAI?</div>
+            <div class="guide-article-desc">Understand what engines are and how the whole system works</div>
+          </div>
+        </div>
+        <div class="guide-article-body">
+          <p class="g-p">ForgeAI gives you a set of <strong>AI engines</strong> — each one is a carefully written system prompt that turns Claude (or any other LLM) into a specialized expert for a specific job.</p>
+          <p class="g-p">Think of it this way: normally, when you ask an AI to "write an ad," you get a generic result because the AI has no context about how to write a real, high-converting ad. An engine changes that. You paste the engine into a Project, and from that point on, every conversation in that project runs through a trained expert — not a general AI.</p>
+          <div class="g-callout">
+            <span class="g-callout-icon">💡</span>
+            <span>You are not prompting an AI. You are activating a specialist. The engine is the training — your chat message is just the task you give to that specialist.</span>
+          </div>
+          <p class="g-p">ForgeAI has 16 engines covering copywriting, ads, SEO, email, social media, video, music, business planning, Instagram growth, resume writing, and more. The ConversionOS Pipeline combines them all into one complete marketing system.</p>
+        </div>
+      </div>
+
+      <div class="guide-article">
+        <div class="guide-article-header">
+          <div class="guide-article-icon">🏗️</div>
+          <div>
+            <div class="guide-article-title">How to Set Up a Project in Any LLM</div>
+            <div class="guide-article-desc">Step-by-step setup for Claude, ChatGPT, and Gemini</div>
+          </div>
+        </div>
+        <div class="guide-article-body">
+          <p class="g-p">A <strong>Project</strong> is a persistent workspace inside an LLM that remembers a system prompt across all conversations. This is where you paste the engine. Here's how to do it in the three most popular LLMs:</p>
+
+          <div class="g-llm-grid">
+            <div class="g-llm-card">
+              <div class="g-llm-name">Claude.ai ⭐ Recommended</div>
+              <div class="g-llm-detail">Projects → New Project → Project Instructions = paste engine here. Every chat in this project runs through the engine.</div>
+            </div>
+            <div class="g-llm-card">
+              <div class="g-llm-name">ChatGPT</div>
+              <div class="g-llm-detail">My GPTs → Create GPT → Instructions = paste engine. Or use a new chat with Custom Instructions enabled.</div>
+            </div>
+            <div class="g-llm-card">
+              <div class="g-llm-name">Gemini</div>
+              <div class="g-llm-detail">Gems → Create a Gem → Instructions = paste engine. Each Gem acts as a persistent engine session.</div>
+            </div>
+          </div>
+
+          <div class="g-h2">Setting Up on Claude.ai (Detailed Steps)</div>
+          <div class="g-steps">
+            <div class="g-step">
+              <div class="g-step-num">1</div>
+              <div class="g-step-body">
+                <div class="g-step-title">Go to claude.ai and click "Projects" in the left sidebar</div>
+                <div class="g-step-desc">You need a Claude.ai account. The free plan works, but Claude Pro gives much longer context and better results.</div>
+              </div>
+            </div>
+            <div class="g-step">
+              <div class="g-step-num">2</div>
+              <div class="g-step-body">
+                <div class="g-step-title">Click "New Project" and give it a name</div>
+                <div class="g-step-desc">Name it after the engine — e.g., "Copy Forge", "Ad Forge". This keeps things organised if you use multiple engines.</div>
+              </div>
+            </div>
+            <div class="g-step">
+              <div class="g-step-num">3</div>
+              <div class="g-step-body">
+                <div class="g-step-title">Click "Set project instructions" or "Edit project instructions"</div>
+                <div class="g-step-desc">This is the system prompt field. This is exactly where the engine goes.</div>
+              </div>
+            </div>
+            <div class="g-step">
+              <div class="g-step-num">4</div>
+              <div class="g-step-body">
+                <div class="g-step-title">Go back to ForgeAI, open the engine, click "Copy Engine Prompt"</div>
+                <div class="g-step-desc">The full engine prompt is now on your clipboard.</div>
+              </div>
+            </div>
+            <div class="g-step">
+              <div class="g-step-num">5</div>
+              <div class="g-step-body">
+                <div class="g-step-title">Paste it into the Project Instructions field and save</div>
+                <div class="g-step-desc">Do not add anything else here. The engine is complete as-is. Just paste and save.</div>
+              </div>
+            </div>
+            <div class="g-step">
+              <div class="g-step-num">6</div>
+              <div class="g-step-body">
+                <div class="g-step-title">Start a new chat inside the project</div>
+                <div class="g-step-desc">Every conversation you start inside this project now runs through the engine. Claude is now your specialist — give it your first task.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="g-callout green">
+            <span class="g-callout-icon">✅</span>
+            <span><strong>One project per engine.</strong> Don't mix engines in the same project. Create a separate project for each engine you use — this keeps the AI focused and gives you the best results.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="guide-article">
+        <div class="guide-article-header">
+          <div class="guide-article-icon">⚡</div>
+          <div>
+            <div class="guide-article-title">The 3-Step Workflow</div>
+            <div class="guide-article-desc">How to go from engine to output every single time</div>
+          </div>
+        </div>
+        <div class="guide-article-body">
+          <div class="g-steps">
+            <div class="g-step">
+              <div class="g-step-num">1</div>
+              <div class="g-step-body">
+                <div class="g-step-title">Pick the right engine for your task</div>
+                <div class="g-step-desc">Want to write an ad? Use Ad Forge. Writing a blog post? SEO Forge. Building an email sequence? Email Forge. Each engine is purpose-built — use the right one for the right job.</div>
+              </div>
+            </div>
+            <div class="g-step">
+              <div class="g-step-num">2</div>
+              <div class="g-step-body">
+                <div class="g-step-title">Copy the engine prompt and paste it into your LLM Project</div>
+                <div class="g-step-desc">Do this once per engine. After that, just open the project and chat — the engine is always active.</div>
+              </div>
+            </div>
+            <div class="g-step">
+              <div class="g-step-num">3</div>
+              <div class="g-step-body">
+                <div class="g-step-title">Give the AI your brief and let it work</div>
+                <div class="g-step-desc">Each guide below tells you exactly what to type for your first message. The more context you give — your product, audience, goal — the better the output.</div>
+              </div>
+            </div>
+          </div>
+          <div class="g-callout blue">
+            <span class="g-callout-icon">📌</span>
+            <span><strong>Golden rule:</strong> The AI is only as good as the brief you give it. Tell it your product name, what it does, who it's for, and what result you want. Don't just say "write me an ad" — that's like hiring an expert and giving them zero information.</span>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /getting-started -->
+
+    <!-- ══ COPY FORGE ══ -->
+    <div class="guide-panel" id="guide-copy-forge">
+      <div class="guide-article">
+        <div class="guide-article-header">
+          <div class="guide-article-icon">✍️</div>
+          <div>
+            <div class="guide-article-title">Copy Forge</div>
+            <div class="guide-article-desc">High-converting sales copy &amp; persuasive content that sells</div>
+          </div>
+        </div>
+        <div class="guide-article-body">
+          <div class="g-h2">What This Engine Does</div>
+          <p class="g-p">Copy Forge turns Claude into a direct-response copywriter. It writes copy that is built to convert — not just sound nice. It understands persuasion psychology, hooks, emotional triggers, and calls to action. Use it for anything where the words need to make someone take action: buy, click, sign up, or respond.</p>
+          <div class="g-list">
+            <div class="g-list-item">Product descriptions and sales pages</div>
+            <div class="g-list-item">Facebook and Instagram ad copy</div>
+            <div class="g-list-item">Landing page headlines and CTAs</div>
+            <div class="g-list-item">Email subject lines and offer descriptions</div>
+          </div>
+
+          <div class="g-h2">Your First Chat Message</div>
+          <p class="g-p">After pasting the engine and starting a new chat, type something like this:</p>
+          <div class="g-first-chat">
+            <div class="g-first-chat-label">Example first message</div>
+            <div class="g-first-chat-text">"My product is [product name]. It helps [target audience] to [main benefit/result]. The price is [price]. The biggest pain point my audience has is [pain point]. Write me a high-converting sales page for it."</div>
+          </div>
+          <div class="g-callout">
+            <span class="g-callout-icon">💡</span>
+            <span>The more specific you are about your audience's pain and your product's unique result, the sharper the copy. Vague brief = vague copy.</span>
+          </div>
+
+          <div class="g-h2">What to Tell It</div>
+          <div class="g-list">
+            <div class="g-list-item">Your product/service name and what it does</div>
+            <div class="g-list-item">Who your ideal customer is (be specific — age, situation, problem)</div>
+            <div class="g-list-item">The #1 result or transformation your product delivers</div>
+            <div class="g-list-item">Price and any offer details (bonus, guarantee, urgency)</div>
+            <div class="g-list-item">The format you need (Facebook ad, landing page, email, etc.)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ EMAIL FORGE ══ -->
+    <div class="guide-panel" id="guide-email-forge">
+      <div class="guide-article">
+        <div class="guide-article-header">
+          <div class="guide-article-icon">📧</div>
+          <div>
+            <div class="guide-article-title">Email Forge</div>
+            <div class="guide-article-desc">Complete email sequences, campaigns &amp; newsletters</div>
+          </div>
+        </div>
+        <div class="guide-article-body">
+          <div class="g-h2">What This Engine Does</div>
+          <p class="g-p">Email Forge makes Claude an expert email marketer. It writes full sequences — not just individual emails — with the right structure, timing logic, subject lines, and body copy. It understands the psychology of nurturing leads from cold to purchase, and how to write emails people actually open and read.</p>
+          <div class="g-list">
+            <div class="g-list-item">Welcome sequences for new subscribers</div>
+            <div class="g-list-item">Product launch campaigns (pre-launch, launch day, close)</div>
+            <div class="g-list-item">Cold outreach series for B2B</div>
+            <div class="g-list-item">Abandoned cart recovery emails</div>
+            <div class="g-list-item">Weekly newsletters with value + offer</div>
+          </div>
+
+          <div class="g-h2">Your First Chat Message</div>
+          <div class="g-first-chat">
+            <div class="g-first-chat-label">Example first message</div>
+            <div class="g-first-chat-text">"I need a 5-email welcome sequence for new subscribers to my [business type] business. My audience is [who they are]. My product is [product name] priced at [price]. The goal of the sequence is to build trust and lead them toward buying. Brand voice is [casual/professional/bold]."</div>
+          </div>
+          <div class="g-callout">
+            <span class="g-callout-icon">💡</span>
+            <span>Always tell it: how many emails, the goal of the sequence, your brand voice, and what the reader should do at the end of the sequence. This gives you a structured campaign, not random emails.</span>
+          </div>
+
+          <div class="g-h2">What to Tell It</div>
+          <div class="g-list">
+            <div class="g-list-item">Type of sequence (welcome, launch, re-engagement, cold outreach)</div>
+            <div class="g-list-item">Number of emails needed</div>
+            <div class="g-list-item">Your product/service and price</div>
+            <div class="g-list-item">Target audience and their main problem</div>
+            <div class="g-list-item">Desired tone — formal, conversational, bold, story-based</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ SEO FORGE ══ -->
+    <div class="guide-panel" id="guide-seo-forge">
+      <div class="guide-article">
+        <div class="guide-article-header">
+          <div class="guide-article-icon">🔍</div>
+          <div>
+            <div class="guide-article-title">SEO Forge</div>
+            <div class="guide-article-desc">SEO-optimised articles &amp; blog posts that rank on Google</div>
+          </div>
+        </div>
+        <div class="guide-article-body">
+          <div class="g-h2">What This Engine Does</div>
+          <p class="g-p">SEO Forge turns Claude into an SEO content strategist and writer. It doesn't just write blog posts — it writes posts structured to rank. It understands keyword placement, heading hierarchy, search intent, featured snippet formatting, and internal linking logic. Use it when you need content that brings in organic traffic, not just content that reads well.</p>
+          <div class="g-list">
+            <div class="g-list-item">Long-form SEO blog articles (1500–3000+ words)</div>
+            <div class="g-list-item">Keyword-rich service and product pages</div>
+            <div class="g-list-item">Meta titles and meta descriptions</div>
+            <div class="g-list-item">Featured snippet optimised answer sections</div>
+          </div>
+
+          <div class="g-h2">Your First Chat Message</div>
+          <div class="g-first-chat">
+            <div class="g-first-chat-label">Example first message</div>
+            <div class="g-first-chat-text">"Write a long-form SEO blog post targeting the keyword '[your target keyword]'. My website is about [niche/topic]. Target audience: [who reads it]. Competitor articles ranking for this keyword are around [length] words. Include a featured snippet section, proper H2/H3 structure, and a strong CTA at the end."</div>
+          </div>
+          <div class="g-callout">
+            <span class="g-callout-icon">💡</span>
+            <span>Always give it your primary keyword, secondary keywords if you have them, and the search intent (informational, transactional, comparison). The engine uses these to structure the article correctly.</span>
+          </div>
+
+          <div class="g-h2">What to Tell It</div>
+          <div class="g-list">
+            <div class="g-list-item">Your primary target keyword (exact phrase)</div>
+            <div class="g-list-item">Your website niche and domain authority level (new site vs. established)</div>
+            <div class="g-list-item">Article length target</div>
+            <div class="g-list-item">Any secondary keywords to include</div>
+            <div class="g-list-item">Desired CTA — what should the reader do after reading?</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ SOCIAL FORGE ══ -->
+    <div class="guide-panel" id="guide-social-forge">
+      <div class="guide-article">
+        <div class="guide-article-header">
+          <div class="guide-article-icon">📱</div>
+          <div>
+            <div class="guide-article-title">Social Forge</div>
+            <div class="guide-article-desc">Viral social media content for Instagram, LinkedIn, Twitter &amp; more</div>
+          </div>
+        </div>
+        <div class="guide-article-body">
+          <div class="g-h2">What This Engine Does</div>
+          <p class="g-p">Social Forge is your social media content engine. It doesn't write generic posts — it writes platform-specific content optimised for how each algorithm and audience actually behaves. A LinkedIn post has a completely different structure to a Twitter thread or a TikTok script. This engine knows the difference and writes accordingly.</p>
+          <div class="g-list">
+            <div class="g-list-item">Full 30-day content calendars for any platform</div>
+            <div class="g-list-item">LinkedIn posts with hooks, story, and CTA structure</div>
+            <div class="g-list-item">Viral hooks and captions for Instagram and TikTok</div>
+            <div class="g-list-item">Twitter/X threads that build following and engagement</div>
+          </div>
+
+          <div class="g-h2">Your First Chat Message</div>
+          <div class="g-first-chat">
+            <div class="g-first-chat-label">Example first message</div>
+            <div class="g-first-chat-text">"Create a 30-day content calendar for my [platform — LinkedIn/Instagram/Twitter] account. My niche is [niche]. My audience is [describe them]. My goal is [grow followers / drive leads / build authority / sell product]. Brand tone: [professional/casual/bold/educational]."</div>
+          </div>
+          <div class="g-callout">
+            <span class="g-callout-icon">💡</span>
+            <span>Tell it the platform first — the engine changes its strategy based on where the content will live. LinkedIn content that works well will completely flop on TikTok and vice versa.</span>
+          </div>
+
+          <div class="g-h2">What to Tell It</div>
+          <div class="g-list">
+            <div class="g-list-item">Which platform (LinkedIn, Instagram, Twitter/X, TikTok, YouTube)</div>
+            <div class="g-list-item">Your niche, topic, or business type</div>
+            <div class="g-list-item">Your content goal (awareness, leads, sales, authority)</div>
+            <div class="g-list-item">How many posts or what time period to cover</div>
+            <div class="g-list-item">Your brand voice and any topics to include or avoid</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ AD FORGE ══ -->
+    <div class="guide-panel" id="guide-ad-forge">
+      <div class="guide-article">
+        <div class="guide-article-header">
+          <div class="guide-article-icon">📣</div>
+          <div>
+            <div class="guide-article-title">Ad Forge</div>
+            <div class="guide-article-desc">Full-stack Facebook &amp; Instagram ad campaigns</div>
+          </div>
+        </div>
+        <div class="guide-article-body">
+          <div class="g-h2">What This Engine Does</div>
+          <p class="g-p">Ad Forge makes Claude a Meta advertising specialist. It goes beyond writing ad copy — it builds complete campaigns including audience targeting strategy, creative angle recommendations, multiple ad variations for A/B testing, and retargeting sequences. Use it when you're spending money on Meta ads and want every element of the campaign thought through properly.</p>
+          <div class="g-list">
+            <div class="g-list-item">Complete Facebook and Instagram ad campaigns</div>
+            <div class="g-list-item">Audience targeting strategy and interest stacking</div>
+            <div class="g-list-item">Retargeting sequences (cold → warm → hot audience)</div>
+            <div class="g-list-item">Multiple ad variations for split testing</div>
+          </div>
+
+          <div class="g-h2">Your First Chat Message</div>
+          <div class="g-first-chat">
+            <div class="g-first-chat-label">Example first message</div>
+            <div class="g-first-chat-text">"Build a complete Facebook/Instagram ad campaign for my product. Product: [name and description]. Price: [price]. Target audience: [age, location, interests, situation]. Campaign objective: [traffic / leads / conversions / purchases]. Budget range: [daily budget]. Give me 3 ad variations with different angles, targeting suggestions, and a retargeting plan."</div>
+          </div>
+          <div class="g-callout">
+            <span class="g-callout-icon">💡</span>
+            <span>The more detail you give about your customer — their age, what they care about, what they've tried before, what frustrates them — the more accurate the targeting and angles will be.</span>
+          </div>
+
+          <div class="g-h2">What to Tell It</div>
+          <div class="g-list">
+            <div class="g-list-item">Your product/offer and price point</div>
+            <div class="g-list-item">Campaign objective (awareness, traffic, leads, sales)</div>
+            <div class="g-list-item">Your target customer — detailed demographics and psychographics</div>
+            <div class="g-list-item">Your budget and whether it's a new or existing campaign</div>
+            <div class="g-list-item">Any previous ads that worked or didn't work</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ PAGE FORGE ══ -->
+    <div class="guide-panel" id="guide-page-forge">
+      <div class="guide-article">
+        <div class="guide-article-header">
+          <div class="guide-article-icon">🏠</div>
+          <div>
+            <div class="guide-article-title">Page Forge</div>
+            <div class="guide-article-desc">High-converting landing pages &amp; sales funnels</div>
+          </div>
+        </div>
+        <div class="guide-article-body">
+          <div class="g-h2">What This Engine Does</div>
+          <p class="g-p">Page Forge turns Claude into a conversion-focused landing page architect. It writes full page copy — headline, subheadline, problem section, solution, proof, offer, FAQ, CTA — using proven funnel frameworks like AIDA, PAS, and VSL structure. Use it when you need a page that converts visitors into leads or buyers, not just looks good.</p>
+          <div class="g-list">
+            <div class="g-list-item">Full landing page copy from top to bottom</div>
+            <div class="g-list-item">Lead magnet opt-in pages</div>
+            <div class="g-list-item">Video Sales Letter (VSL) scripts and page structure</div>
+            <div class="g-list-item">Sales funnel architecture and section flow</div>
+          </div>
+
+          <div class="g-h2">Your First Chat Message</div>
+          <div class="g-first-chat">
+            <div class="g-first-chat-label">Example first message</div>
+            <div class="g-first-chat-text">"Write a full landing page for my [product/service]. Name: [name]. Price: [price]. Audience: [who it's for]. The main pain they have: [pain point]. The main result/transformation: [outcome]. Include: headline, sub-headline, problem section, solution, 3 key benefits, social proof section placeholder, FAQ (5 questions), and a strong CTA."</div>
+          </div>
+          <div class="g-callout">
+            <span class="g-callout-icon">💡</span>
+            <span>Tell it which framework you want — AIDA (Attention, Interest, Desire, Action), PAS (Problem, Agitate, Solve), or VSL (Video Sales Letter). If you don't specify, it will pick the best one for your offer type.</span>
+          </div>
+
+          <div class="g-h2">What to Tell It</div>
+          <div class="g-list">
+            <div class="g-list-item">Product name, description, and price</div>
+            <div class="g-list-item">Target audience and their core frustration</div>
+            <div class="g-list-item">The one big transformation or result you deliver</div>
+            <div class="g-list-item">Any proof you have (testimonials, results, numbers)</div>
+            <div class="g-list-item">The desired page type (opt-in, sales, VSL, webinar)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ BUSINESS FORGE ══ -->
+    <div class="guide-panel" id="guide-business-forge">
+      <div class="guide-article">
+        <div class="guide-article-header">
+          <div class="guide-article-icon">💼</div>
+          <div>
+            <div class="guide-article-title">Business Forge</div>
+            <div class="guide-article-desc">Complete business planning &amp; strategy documents</div>
+          </div>
+        </div>
+        <div class="guide-article-body">
+          <div class="g-h2">What This Engine Does</div>
+          <p class="g-p">Business Forge makes Claude a seasoned business strategist. It builds serious business documents — not the kind that look good on paper but the kind that actually guide decisions. Use it when you're starting, scaling, or pitching a business and need structured thinking around the model, revenue, operations, and strategy.</p>
+          <div class="g-list">
+            <div class="g-list-item">Full business plans with financial projections</div>
+            <div class="g-list-item">Investor pitch deck content and narrative</div>
+            <div class="g-list-item">Standard Operating Procedures (SOPs)</div>
+            <div class="g-list-item">Revenue model design and pricing strategy</div>
+          </div>
+
+          <div class="g-h2">Your First Chat Message</div>
+          <div class="g-first-chat">
+            <div class="g-first-chat-label">Example first message</div>
+            <div class="g-first-chat-text">"Create a full business plan for my [type of business]. Business idea: [description]. Target market: [who you serve]. Revenue model: [how you make money]. Stage: [idea / pre-revenue / early revenue]. My main goal right now: [raise funding / build team / launch product / scale]. Include executive summary, market analysis, revenue projections, and go-to-market strategy."</div>
+          </div>
+          <div class="g-callout">
+            <span class="g-callout-icon">💡</span>
+            <span>The more honest you are about your current stage and constraints, the more realistic and useful the output. Don't pretend you have traction you don't have — the engine works better with accurate context.</span>
+          </div>
+
+          <div class="g-h2">What to Tell It</div>
+          <div class="g-list">
+            <div class="g-list-item">Your business idea or current business description</div>
+            <div class="g-list-item">Current stage (idea, launched, growing, raising funds)</div>
+            <div class="g-list-item">Target market size and customer profile</div>
+            <div class="g-list-item">Revenue model — how do you actually make money?</div>
+            <div class="g-list-item">What document you need and who will read it</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ MARKETING FORGE ══ -->
+    <div class="guide-panel" id="guide-marketing-forge">
+      <div class="guide-article">
+        <div class="guide-article-header">
+          <div class="guide-article-icon">📈</div>
+          <div>
+            <div class="guide-article-title">Marketing Forge</div>
+            <div class="guide-article-desc">Full marketing strategy &amp; go-to-market plans</div>
+          </div>
+        </div>
+        <div class="guide-article-body">
+          <div class="g-h2">What This Engine Does</div>
+          <p class="g-p">Marketing Forge turns Claude into a CMO-level marketing strategist. It builds complete, executable marketing plans — not vague advice but specific channels, timelines, messaging frameworks, and campaign calendars. Use it when you need to build a marketing strategy from scratch or when your current marketing is scattered and you need a clear direction.</p>
+          <div class="g-list">
+            <div class="g-list-item">90-day marketing roadmaps with channel priorities</div>
+            <div class="g-list-item">Brand voice guide and messaging hierarchy</div>
+            <div class="g-list-item">Product launch go-to-market (GTM) plans</div>
+            <div class="g-list-item">Campaign calendars with content and ad mix</div>
+          </div>
+
+          <div class="g-h2">Your First Chat Message</div>
+          <div class="g-first-chat">
+            <div class="g-first-chat-label">Example first message</div>
+            <div class="g-first-chat-text">"Build a 90-day marketing strategy for my business. Business: [name and description]. Product/service: [what you sell]. Target audience: [who]. Current marketing: [what you're doing now]. Budget: [monthly marketing budget]. Goal: [X revenue / X leads / X followers in 90 days]. My biggest marketing challenge: [what's not working]."</div>
+          </div>
+          <div class="g-callout">
+            <span class="g-callout-icon">💡</span>
+            <span>Give it your actual budget. A strategy for ₹5,000/month is completely different from one for ₹50,000/month. If you give it a fake budget, you'll get an unusable plan.</span>
+          </div>
+
+          <div class="g-h2">What to Tell It</div>
+          <div class="g-list">
+            <div class="g-list-item">Your business and product description</div>
+            <div class="g-list-item">Real monthly marketing budget</div>
+            <div class="g-list-item">Specific 90-day goal (revenue, leads, signups)</div>
+            <div class="g-list-item">What marketing you've already tried</div>
+            <div class="g-list-item">Your target customer in detail</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ PIXEL AI ══ -->
+    <div class="guide-panel" id="guide-pixel-ai">
+      <div class="guide-article">
+        <div class="guide-article-header">
+          <div class="guide-article-icon">🎨</div>
+          <div>
+            <div class="guide-article-title">Pixel AI</div>
+            <div class="guide-article-desc">Professional AI image prompts for Midjourney, DALL-E &amp; Stable Diffusion</div>
+          </div>
+        </div>
+        <div class="guide-article-body">
+          <div class="g-h2">What This Engine Does</div>
+          <p class="g-p">Pixel AI is an image prompt engineer. Writing good AI image prompts is a skill most people don't have — bad prompts produce generic, unusable images. Pixel AI knows the exact syntax, style modifiers, lighting descriptors, camera terms, and negative prompts each tool needs to produce professional-quality visuals. Use it when you need marketing images, product mockups, brand visuals, or ad creatives.</p>
+          <div class="g-list">
+            <div class="g-list-item">Product mockups and marketing visuals</div>
+            <div class="g-list-item">Social media graphics and banner ads</div>
+            <div class="g-list-item">Brand identity concepts and logo ideas</div>
+            <div class="g-list-item">Ad creative generation for Meta and Google</div>
+          </div>
+
+          <div class="g-h2">Your First Chat Message</div>
+          <div class="g-first-chat">
+            <div class="g-first-chat-label">Example first message</div>
+            <div class="g-first-chat-text">"Generate 5 image prompts for [Midjourney / DALL-E / Stable Diffusion]. I need: [describe the type of image — product photo, person, scene, logo concept, etc.]. Style I want: [photorealistic / illustration / cinematic / minimalist / etc.]. Brand colours: [if relevant]. Use case: [social media post / ad creative / website banner]. Give me optimised prompts I can paste directly."</div>
+          </div>
+          <div class="g-callout">
+            <span class="g-callout-icon">💡</span>
+            <span>Always tell it which AI image tool you're using — Midjourney, DALL-E, and Stable Diffusion have different prompt syntax. The engine adapts accordingly.</span>
+          </div>
+
+          <div class="g-h2">What to Tell It</div>
+          <div class="g-list">
+            <div class="g-list-item">Which image AI tool you're using</div>
+            <div class="g-list-item">What the image needs to show or communicate</div>
+            <div class="g-list-item">Style, mood, lighting, and colour preferences</div>
+            <div class="g-list-item">The intended use (ad, social post, website, print)</div>
+            <div class="g-list-item">Any brand guidelines or visual restrictions</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ CINEMATIC AI ══ -->
+    <div class="guide-panel" id="guide-cinematic-ai">
+      <div class="guide-article">
+        <div class="guide-article-header">
+          <div class="guide-article-icon">🎬</div>
+          <div>
+            <div class="guide-article-title">Cinematic AI</div>
+            <div class="guide-article-desc">Cinematic video scripts, storyboards &amp; AI video prompts</div>
+          </div>
+        </div>
+        <div class="guide-article-body">
+          <div class="g-h2">What This Engine Does</div>
+          <p class="g-p">Cinematic AI is your video content engine. It writes video scripts with proper scene structure, voiceover copy, storyboard breakdowns, and AI video prompts for tools like Runway, Pika, and Sora. Use it when you're creating YouTube Shorts, Instagram Reels, product demo videos, or full Video Sales Letters. It thinks in scenes and visuals, not just words.</p>
+          <div class="g-list">
+            <div class="g-list-item">YouTube Shorts and Instagram Reels scripts</div>
+            <div class="g-list-item">VSL (Video Sales Letter) scripts with scene breakdown</div>
+            <div class="g-list-item">Product demo video scripts</div>
+            <div class="g-list-item">Runway, Pika, and Sora video prompts</div>
+          </div>
+
+          <div class="g-h2">Your First Chat Message</div>
+          <div class="g-first-chat">
+            <div class="g-first-chat-label">Example first message</div>
+            <div class="g-first-chat-text">"Write a [60-second Reels script / VSL script / YouTube Short script] for my [product/brand/topic]. Product: [description]. Target audience: [who]. Goal of the video: [sell / educate / grow followers / drive traffic]. Tone: [energetic / calm / authoritative / conversational]. Include: hook, scene breakdown, voiceover lines, and on-screen text suggestions."</div>
+          </div>
+          <div class="g-callout">
+            <span class="g-callout-icon">💡</span>
+            <span>Specify the video length — 15 seconds, 60 seconds, 3 minutes, 10 minutes all have completely different structures. Don't leave this vague.</span>
+          </div>
+
+          <div class="g-h2">What to Tell It</div>
+          <div class="g-list">
+            <div class="g-list-item">Video type and platform (Reels, Short, VSL, demo)</div>
+            <div class="g-list-item">Target length in seconds or minutes</div>
+            <div class="g-list-item">Your product or topic</div>
+            <div class="g-list-item">The one action you want viewers to take after watching</div>
+            <div class="g-list-item">Whether you need AI video prompts alongside the script</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ INSTAGRAM FORGE ══ -->
+    <div class="guide-panel" id="guide-ig-forge">
+      <div class="guide-article">
+        <div class="guide-article-header">
+          <div class="guide-article-icon">📸</div>
+          <div>
+            <div class="guide-article-title">Instagram Growth Forge</div>
+            <div class="guide-article-desc">Complete Instagram growth system</div>
+          </div>
+        </div>
+        <div class="guide-article-body">
+          <div class="g-h2">What This Engine Does</div>
+          <p class="g-p">Instagram Growth Forge is a dedicated Instagram growth engine. It goes beyond content — it covers profile optimisation, Reels scripting, hashtag research, DM sales scripts, and follower-to-customer conversion. Use it if Instagram is a primary growth channel for your business and you want a systematic approach to growing and monetising your account.</p>
+          <div class="g-list">
+            <div class="g-list-item">Profile bio and highlights optimisation</div>
+            <div class="g-list-item">Viral Reels scripts with hook and retention structure</div>
+            <div class="g-list-item">DM outreach and sales conversion scripts</div>
+            <div class="g-list-item">Hashtag research and cluster strategy</div>
+          </div>
+
+          <div class="g-h2">Your First Chat Message</div>
+          <div class="g-first-chat">
+            <div class="g-first-chat-label">Example first message</div>
+            <div class="g-first-chat-text">"Help me build a full Instagram growth system. My niche: [niche]. Current followers: [number]. My offer/product: [what you sell]. Target audience: [describe them]. My goal: [X followers / X clients / X sales per month]. Start with a full profile audit — bio, highlights, link-in-bio strategy — then give me a 30-day Reels plan."</div>
+          </div>
+          <div class="g-callout">
+            <span class="g-callout-icon">💡</span>
+            <span>Tell it your current follower count and what's working or not. The engine adjusts strategy based on where you are — a 200-follower account needs a different approach than a 20,000-follower account.</span>
+          </div>
+
+          <div class="g-h2">What to Tell It</div>
+          <div class="g-list">
+            <div class="g-list-item">Your niche and what you sell or offer</div>
+            <div class="g-list-item">Current account size and engagement rate</div>
+            <div class="g-list-item">Growth goal and timeline</div>
+            <div class="g-list-item">Content you've already tried</div>
+            <div class="g-list-item">Whether you want to focus on growth, sales, or both</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ MUSIC FORGE ══ -->
+    <div class="guide-panel" id="guide-music-forge">
+      <div class="guide-article">
+        <div class="guide-article-header">
+          <div class="guide-article-icon">🎵</div>
+          <div>
+            <div class="guide-article-title">Music Forge</div>
+            <div class="guide-article-desc">AI-powered lyrics &amp; music prompts for Suno and Udio</div>
+          </div>
+        </div>
+        <div class="guide-article-body">
+          <div class="g-h2">What This Engine Does</div>
+          <p class="g-p">Music Forge handles the written side of AI music creation. It writes complete song lyrics with proper verse/chorus/bridge structure, brand jingles, podcast intro scripts, and optimised prompts for Suno and Udio. Use it when you need music content for your brand, content, or personal projects — whether that's a full song, a background jingle, or just the Suno prompt to generate the right sound.</p>
+          <div class="g-list">
+            <div class="g-list-item">Complete song lyrics with full structure</div>
+            <div class="g-list-item">Brand jingles and advertising music scripts</div>
+            <div class="g-list-item">Podcast intro/outro scripts</div>
+            <div class="g-list-item">Suno and Udio generation prompts</div>
+          </div>
+
+          <div class="g-h2">Your First Chat Message</div>
+          <div class="g-first-chat">
+            <div class="g-first-chat-label">Example first message</div>
+            <div class="g-first-chat-text">"Write lyrics and a Suno prompt for a [genre] song about [topic/theme]. Mood: [upbeat / melancholic / energetic / calm]. Structure: [verse-chorus-verse-chorus-bridge-chorus]. Intended use: [personal / brand / content / podcast]. Key message or emotion to convey: [describe it]. Language: [English / Hindi / bilingual]."</div>
+          </div>
+          <div class="g-callout">
+            <span class="g-callout-icon">💡</span>
+            <span>For Suno and Udio prompts, tell the engine the exact genre, BPM feel (slow/mid/fast), instruments you want, and the mood. These details are what make AI music sound intentional rather than random.</span>
+          </div>
+
+          <div class="g-h2">What to Tell It</div>
+          <div class="g-list">
+            <div class="g-list-item">Genre and musical mood</div>
+            <div class="g-list-item">Topic or theme of the song</div>
+            <div class="g-list-item">Whether you need lyrics, a prompt, or both</div>
+            <div class="g-list-item">Intended use — brand, personal, content, podcast</div>
+            <div class="g-list-item">Language and any cultural context</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ ENGINE FORGE ══ -->
+    <div class="guide-panel" id="guide-engine-forge">
+      <div class="guide-article">
+        <div class="guide-article-header">
+          <div class="guide-article-icon">⚙️</div>
+          <div>
+            <div class="guide-article-title">Engine Forge</div>
+            <div class="guide-article-desc">Build your own custom AI engines for Claude</div>
+          </div>
+        </div>
+        <div class="guide-article-body">
+          <div class="g-h2">What This Engine Does</div>
+          <p class="g-p">Engine Forge is meta — it's an engine that builds other engines. It helps you create custom AI system prompts for specific roles, tasks, or niches. Use it if you want to build your own AI specialist for your business, create engines to sell to clients, or build internal tools for your team. The output is a ready-to-use system prompt you can paste into any LLM project.</p>
+          <div class="g-list">
+            <div class="g-list-item">Custom AI assistants for specific business roles</div>
+            <div class="g-list-item">Niche engines to sell as a product or service</div>
+            <div class="g-list-item">Internal team automation tools</div>
+            <div class="g-list-item">Prompt engineering for any use case</div>
+          </div>
+
+          <div class="g-h2">Your First Chat Message</div>
+          <div class="g-first-chat">
+            <div class="g-first-chat-label">Example first message</div>
+            <div class="g-first-chat-text">"Build me a custom AI engine for [role/job]. The engine should make Claude an expert in [specific domain]. Target user: [who will use it]. Main tasks it should handle: [list 3–5 tasks]. Tone and personality: [formal / casual / direct / encouraging]. Output format preferences: [bullet points / structured sections / conversational]. Any specific knowledge or frameworks it must always use: [describe]."</div>
+          </div>
+          <div class="g-callout">
+            <span class="g-callout-icon">💡</span>
+            <span>The more precisely you define the role, the better the engine. Think of it like writing a job description — what does this AI need to know, how should it behave, and what should it always and never do?</span>
+          </div>
+
+          <div class="g-h2">What to Tell It</div>
+          <div class="g-list">
+            <div class="g-list-item">The role or specialist the engine should simulate</div>
+            <div class="g-list-item">Who will be using the engine and for what tasks</div>
+            <div class="g-list-item">Must-have behaviours, tone, and output format</div>
+            <div class="g-list-item">Any frameworks, methods, or knowledge to bake in</div>
+            <div class="g-list-item">What the engine should never do or say</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ SKILL FORGE ══ -->
+    <div class="guide-panel" id="guide-skill-forge">
+      <div class="guide-article">
+        <div class="guide-article-header">
+          <div class="guide-article-icon">🧠</div>
+          <div>
+            <div class="guide-article-title">Skill Forge</div>
+            <div class="guide-article-desc">Learn any skill 10x faster with AI</div>
+          </div>
+        </div>
+        <div class="guide-article-body">
+          <div class="g-h2">What This Engine Does</div>
+          <p class="g-p">Skill Forge turns Claude into a personalised learning coach. It doesn't give you a generic "how to learn X" guide — it builds a structured, progressive curriculum tailored to your current level, time availability, and end goal. Use it when you want to learn something new fast and need a real plan with exercises, milestones, and resources — not just a list of YouTube videos.</p>
+          <div class="g-list">
+            <div class="g-list-item">30-day and 90-day personalised skill roadmaps</div>
+            <div class="g-list-item">Structured curriculum with daily/weekly tasks</div>
+            <div class="g-list-item">Practice exercises and feedback loops</div>
+            <div class="g-list-item">Mental models and expert frameworks for fast learning</div>
+          </div>
+
+          <div class="g-h2">Your First Chat Message</div>
+          <div class="g-first-chat">
+            <div class="g-first-chat-label">Example first message</div>
+            <div class="g-first-chat-text">"Create a 30-day learning roadmap for [skill you want to learn]. My current level: [complete beginner / some basics / intermediate]. Time I can give: [X hours per day / week]. My end goal: [what you want to be able to do with this skill]. My learning style: [visual / reading / doing / watching]. Resources I already have: [books, courses, tools]."</div>
+          </div>
+          <div class="g-callout">
+            <span class="g-callout-icon">💡</span>
+            <span>Be honest about your time — if you can only give 30 minutes a day, say that. A realistic plan you follow beats an ambitious plan you abandon after 3 days.</span>
+          </div>
+
+          <div class="g-h2">What to Tell It</div>
+          <div class="g-list">
+            <div class="g-list-item">The exact skill you want to learn</div>
+            <div class="g-list-item">Your current level (be honest)</div>
+            <div class="g-list-item">Time available per day or week</div>
+            <div class="g-list-item">Your specific end goal with this skill</div>
+            <div class="g-list-item">Any constraints (budget, tools, prior experience)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ RESUME FORGE ══ -->
+    <div class="guide-panel" id="guide-resume-forge">
+      <div class="guide-article">
+        <div class="guide-article-header">
+          <div class="guide-article-icon">📄</div>
+          <div>
+            <div class="guide-article-title">Resume Forge</div>
+            <div class="guide-article-desc">ATS-optimised resumes, cover letters &amp; LinkedIn profiles</div>
+          </div>
+        </div>
+        <div class="guide-article-body">
+          <div class="g-h2">What This Engine Does</div>
+          <p class="g-p">Resume Forge makes Claude a professional career coach and resume writer. It understands how ATS (Applicant Tracking Systems) work, what hiring managers actually look for, and how to position your experience to get callbacks. Use it when you're applying for jobs and need documents that pass automated screening and impress humans — not just look formatted.</p>
+          <div class="g-list">
+            <div class="g-list-item">ATS-optimised resume with correct keyword placement</div>
+            <div class="g-list-item">Role-specific cover letters that don't sound generic</div>
+            <div class="g-list-item">LinkedIn profile optimisation (headline, about, experience)</div>
+            <div class="g-list-item">Interview preparation and common question answers</div>
+          </div>
+
+          <div class="g-h2">Your First Chat Message</div>
+          <div class="g-first-chat">
+            <div class="g-first-chat-label">Example first message</div>
+            <div class="g-first-chat-text">"Build me an ATS-optimised resume for a [job title] role. My background: [your experience summary]. Key skills: [list your main skills]. Target role: [specific job title or company type]. Education: [your degree/certification]. I'm applying to [type of company — startup / corporate / agency]. Make it keyword-rich for ATS and compelling for human readers."</div>
+          </div>
+          <div class="g-callout">
+            <span class="g-callout-icon">💡</span>
+            <span>If you have a specific job description you're applying to, paste it in. The engine will tailor your resume to match the exact keywords and requirements in that JD — this dramatically increases your ATS pass rate.</span>
+          </div>
+
+          <div class="g-h2">What to Tell It</div>
+          <div class="g-list">
+            <div class="g-list-item">The exact job title or role you're targeting</div>
+            <div class="g-list-item">Your work experience (years, companies, key achievements)</div>
+            <div class="g-list-item">Your top skills and tools</div>
+            <div class="g-list-item">The job description if you have one (paste it in)</div>
+            <div class="g-list-item">Whether you need resume, cover letter, LinkedIn, or all three</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ CONVERSIONOS PIPELINE ══ -->
+    <div class="guide-panel" id="guide-pipeline">
+      <div class="guide-article">
+        <div class="guide-article-header">
+          <div class="guide-article-icon" style="background:var(--accent);color:white">⚡</div>
+          <div>
+            <div class="guide-article-title">ConversionOS Pipeline</div>
+            <div class="guide-article-desc">The complete AI-powered conversion funnel — from zero to selling</div>
+          </div>
+        </div>
+        <div class="guide-article-body">
+          <div class="g-callout" style="margin-bottom:20px">
+            <span class="g-callout-icon">⭐</span>
+            <span>This is a <strong>Pro Exclusive</strong> engine. It's the most advanced engine in ForgeAI — designed for people who want to build a complete marketing and conversion system, not just individual pieces.</span>
+          </div>
+
+          <div class="g-h2">What the Pipeline Is</div>
+          <p class="g-p">The ConversionOS Pipeline is not a single engine — it's an entire system. It combines the strategic thinking of multiple engines into one cohesive workflow that takes you from a raw business idea all the way to a running, converting funnel. Where other engines are specialists, the Pipeline is the strategist that connects everything.</p>
+          <p class="g-p">It covers offer positioning, audience research, ad strategy, landing page structure, email sequences, and post-sale retention — all in one connected workflow. The output isn't individual assets — it's a complete playbook you can execute immediately.</p>
+
+          <div class="g-h2">What It Builds</div>
+          <div class="g-list">
+            <div class="g-list-item"><strong>Offer Positioning</strong> — clarify exactly what you're selling, who it's for, and why they should buy it over anything else</div>
+            <div class="g-list-item"><strong>Ad Strategy</strong> — cold audience targeting, angles, hooks, and creative direction</div>
+            <div class="g-list-item"><strong>Landing Page</strong> — full funnel structure from ad click to conversion</div>
+            <div class="g-list-item"><strong>Email Sequence</strong> — post-opt-in nurture and purchase sequence</div>
+            <div class="g-list-item"><strong>Post-Sale System</strong> — upsell logic, retention, and referral triggers</div>
+          </div>
+
+          <hr class="g-divider">
+
+          <div class="g-h2">How to Run the Pipeline</div>
+          <p class="g-p">The Pipeline works in phases. Do not skip phases or jump ahead — each phase builds on the one before it. This is a full strategy session, not a quick output generator.</p>
+
+          <div class="g-steps">
+            <div class="g-step">
+              <div class="g-step-num">1</div>
+              <div class="g-step-body">
+                <div class="g-step-title">Set up the Pipeline as a dedicated Claude Project</div>
+                <div class="g-step-desc">Create a new Project in Claude.ai called "ConversionOS Pipeline". Paste the engine prompt into Project Instructions. This is your war room — all pipeline work happens here.</div>
+              </div>
+            </div>
+            <div class="g-step">
+              <div class="g-step-num">2</div>
+              <div class="g-step-body">
+                <div class="g-step-title">Start with a full business brief</div>
+                <div class="g-step-desc">Your first message sets the entire context for everything that follows. Be as thorough as possible — the Pipeline uses this to make every subsequent output coherent and connected.</div>
+              </div>
+            </div>
+            <div class="g-step">
+              <div class="g-step-num">3</div>
+              <div class="g-step-body">
+                <div class="g-step-title">Work through each phase in order</div>
+                <div class="g-step-desc">Ask for Phase 1 first. Review it. Give feedback. Then ask for Phase 2. Don't rush — spend real time on positioning before jumping to ads. Weak positioning makes everything downstream worse.</div>
+              </div>
+            </div>
+            <div class="g-step">
+              <div class="g-step-num">4</div>
+              <div class="g-step-body">
+                <div class="g-step-title">Use other engines for deep execution</div>
+                <div class="g-step-desc">The Pipeline gives you the strategy and structure. When you need to go deep on a specific asset — like writing 5 ad variations or a full 7-email sequence — switch to Ad Forge or Email Forge for that piece.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="g-h2">Your First Chat Message</div>
+          <div class="g-first-chat">
+            <div class="g-first-chat-label">Full Pipeline brief — paste this and fill in your details</div>
+            <div class="g-first-chat-text">"Let's run the full ConversionOS Pipeline for my business.
+
+Business: [name and what it does]
+Product/Offer: [what you sell, price, format — digital / physical / service]
+Target audience: [who they are, their situation, their pain]
+Current state: [do you have any sales, leads, traffic, or starting from zero?]
+Traffic source: [paid ads / organic / email / referral — or what you plan to use]
+Monthly budget for marketing: [realistic number]
+90-day goal: [specific revenue or lead target]
+Biggest challenge right now: [what's not working or what you're unsure of]
+
+Start with Phase 1: Offer Positioning. Analyse my offer, identify the strongest angle, and give me the core messaging framework I'll use across all channels."</div>
+          </div>
+
+          <div class="g-callout green">
+            <span class="g-callout-icon">✅</span>
+            <span><strong>Keep the same conversation going.</strong> The Pipeline builds context across messages. Don't start a new chat mid-pipeline — the AI needs the full history to keep everything consistent. If the conversation gets long, summarise where you are at the top of your next message.</span>
+          </div>
+
+          <div class="g-h2">When to Use Individual Engines vs the Pipeline</div>
+          <div class="g-list">
+            <div class="g-list-item"><strong>Use the Pipeline</strong> when you're building from scratch, relaunching, or need your whole funnel to be consistent and connected</div>
+            <div class="g-list-item"><strong>Use individual engines</strong> when you have a specific task — write these 3 ads, build this email sequence, optimise this landing page</div>
+            <div class="g-list-item"><strong>Combine both</strong> — use the Pipeline for strategy and structure, then switch to individual engines for deep execution of specific assets</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /viewGuides -->
 
   <!-- ALL ENGINES VIEW -->
   <div class="content" id="viewEngines" style="display:none">
@@ -397,13 +1352,41 @@ async function fetchData() {
 function showView(view) {
   document.getElementById('viewDashboard').style.display = view==='dashboard' ? 'block' : 'none';
   document.getElementById('viewEngines').style.display   = view==='engines'   ? 'block' : 'none';
+  document.getElementById('viewGuides').style.display    = view==='guides'    ? 'block' : 'none';
   document.getElementById('navDashboard').classList.toggle('active', view==='dashboard');
   document.getElementById('navEngines').classList.toggle('active',   view==='engines');
-  document.getElementById('topbarTitle').textContent = view==='dashboard' ? 'Dashboard' : 'All Engines';
+  document.getElementById('navGuides').classList.toggle('active',    view==='guides');
+  const titles = {dashboard:'Dashboard', engines:'All Engines', guides:'Guides'};
+  document.getElementById('topbarTitle').textContent = titles[view] || 'Dashboard';
   if(view==='engines' && document.getElementById('engineSections').children.length===0) {
     renderSections(allEngines, allCategories);
   }
   closeSidebar();
+}
+
+// ─── GUIDE TABS ───
+function switchGuide(id, btn) {
+  document.querySelectorAll('.guide-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.guide-nav-btn').forEach(b => {
+    b.classList.remove('active');
+    // Restore pipeline btn style
+    if(b.textContent.includes('Pipeline')) {
+      b.style.background = '';
+      b.style.borderColor = '';
+      b.style.color = '';
+    }
+  });
+  const panel = document.getElementById('guide-'+id);
+  if(panel) panel.classList.add('active');
+  btn.classList.add('active');
+  // Keep pipeline btn orange when active
+  if(id==='pipeline') {
+    btn.style.background = 'var(--accent)';
+    btn.style.borderColor = 'var(--accent)';
+    btn.style.color = 'white';
+  }
+  // Scroll to top of guides
+  document.getElementById('viewGuides').scrollIntoView({behavior:'smooth', block:'start'});
 }
 
 // ─── RENDER DASHBOARD RECENT ───
