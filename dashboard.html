@@ -1646,12 +1646,16 @@ function openEnginePanel() {
 }
 
 async function loadEngineContent(id, name) {
-  if(panelContentCache[id]) {
+  // Only use cache if it has real content (not a fallback placeholder)
+  if(panelContentCache[id] && !panelContentCache[id].startsWith('[')) {
     showPanelContent(panelContentCache[id]);
     return;
   }
   const content = await fetchEngineContent(id, name);
-  panelContentCache[id] = content;
+  // Only cache real content — don't cache fallback strings
+  if(content && !content.startsWith('[')) {
+    panelContentCache[id] = content;
+  }
   showPanelContent(content);
 }
 

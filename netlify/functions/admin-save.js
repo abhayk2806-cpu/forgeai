@@ -42,14 +42,19 @@ exports.handler = async (event) => {
 
   try {
     const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE);
+
+    // upsert: inserts if row doesn't exist, updates if it does
+    // This fixes the silent failure when content_items row is missing
     const { error } = await supabase
       .from('content_items')
-      .update({ content, updated_at: new Date().toISOString() })
-      .eq('id', id);
+      .upsert(
+        { id, type: 'engine', content, updated_at: new Date().toISOString() },
+        { onConflict: 'id' }
+      );
 
     if (error) throw error;
 
-    console.log('✅ Content saved:', id);
+    console.log('✅ Content upserted:', id);
     return { statusCode: 200, headers, body: JSON.stringify({ success: true }) };
 
   } catch (err) {
