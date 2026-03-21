@@ -1349,7 +1349,7 @@ async function fetchData() {
 }
 
 // ─── VIEWS ───
-function showView(view) {
+async function showView(view) {
   document.getElementById('viewDashboard').style.display = view==='dashboard' ? 'block' : 'none';
   document.getElementById('viewEngines').style.display   = view==='engines'   ? 'block' : 'none';
   document.getElementById('viewGuides').style.display    = view==='guides'    ? 'block' : 'none';
@@ -1358,10 +1358,31 @@ function showView(view) {
   document.getElementById('navGuides').classList.toggle('active',    view==='guides');
   const titles = {dashboard:'Dashboard', engines:'All Engines', guides:'Guides'};
   document.getElementById('topbarTitle').textContent = titles[view] || 'Dashboard';
-  if(view==='engines' && document.getElementById('engineSections').children.length===0) {
+  if(view==='engines') {
+    // Always re-fetch so deleted/added engines reflect immediately
+    await fetchData();
+    updateStats();
     renderSections(allEngines, allCategories);
+    renderFilterTabs();
+  }
+  if(view==='dashboard') {
+    // Re-fetch on return to dashboard too so stats stay fresh
+    await fetchData();
+    updateStats();
+    renderDashboardRecent();
   }
   closeSidebar();
+}
+
+function updateStats() {
+  document.getElementById('statTotal').textContent = allEngines.length;
+  document.getElementById('totalBadge').textContent = allEngines.length;
+  if(userTier === 'pro') {
+    document.getElementById('statUnlocked').textContent = allEngines.length;
+  } else {
+    document.getElementById('statUnlocked').textContent = allEngines.filter(e=>e.tier==='starter').length;
+  }
+  document.getElementById('dashSubtitle').textContent = `${allEngines.length} engines available`;
 }
 
 // ─── GUIDE TABS ───
@@ -1718,14 +1739,14 @@ function applyTier(tier) {
   if(tier==='pro'){
     document.getElementById('tierBadge').textContent='⚡ PRO';
     document.getElementById('tierBadge').className='user-badge pro';
-    document.getElementById('statUnlocked').textContent=allEngines.length;
     document.getElementById('upgradeBanner').style.display='none';
   } else {
     document.getElementById('tierBadge').textContent='🌟 STARTER';
     document.getElementById('tierBadge').className='user-badge starter';
-    document.getElementById('statUnlocked').textContent=allEngines.filter(e=>e.tier==='starter').length;
     document.getElementById('upgradeBanner').style.display='flex';
   }
+  // Always recalculate stats with current engine data + correct tier
+  updateStats();
   // Re-render with correct lock state
   renderDashboardRecent();
   if(document.getElementById('viewEngines').style.display!=='none'){
@@ -1741,10 +1762,8 @@ async function init() {
     return;
   }
 
-  document.getElementById('statTotal').textContent = allEngines.length;
-  document.getElementById('totalBadge').textContent = allEngines.length;
-
-  // Render immediately with default starter tier (no flicker/wait)
+  // Set stats + render immediately with default starter tier (no flicker/wait)
+  updateStats();
   renderDashboardRecent();
   renderFilterTabs();
 
