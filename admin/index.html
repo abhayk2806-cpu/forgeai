@@ -422,7 +422,7 @@ async function sbDelete(table,id){
 async function saveContent(id,content){
   saveInd('saving');
   try{
-    const r=await fetch('/.netlify/functions/admin-save',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id,content,adminPassword:getAdminPwd()})});
+    const r=await fetch('/.netlify/functions/admin-save',{method:'POST',headers:{'Content-Type':'application/json','x-admin-password':getAdminPwd()},body:JSON.stringify({id,content})});
     const d=await r.json();
     if(d.success){contentCache[id]=content;saveInd('saved');return true;}
     else{saveInd('error');toast('Error: '+d.error,'err');return false;}
@@ -734,7 +734,7 @@ async function checkAuth(){
 }
 async function verifyPwd(pwd){
   try{
-    const r=await fetch('/.netlify/functions/admin-save',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:'__test__',content:'',adminPassword:pwd})});
+    const r=await fetch('/.netlify/functions/admin-save',{method:'POST',headers:{'Content-Type':'application/json','x-admin-password':pwd},body:JSON.stringify({id:'__test__',content:''})});
     const d=await r.json();
     if(!d.success&&d.error==='Unauthorized'){sessionStorage.removeItem('adminPwd');alert('Wrong password!');location.href='../login.html';}
   }catch(e){}
