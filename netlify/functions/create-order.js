@@ -49,9 +49,9 @@ exports.handler = async (event) => {
 
   // ── Plan config (ForgeAI pricing) ─────────────────────────────
   const PLANS = {
-    starter: { amount: 999,  label: 'ForgeAI Starter Plan'          },
-    pro:     { amount: 1999, label: 'ForgeAI Pro Plan'               },
-    upgrade: { amount: 1000, label: 'ForgeAI Upgrade Starter to Pro' },
+    starter: { amount: 2,    label: 'ForgeAI Starter Plan'          },
+    pro:     { amount: 5,    label: 'ForgeAI Pro Plan'               },
+    upgrade: { amount: 3,    label: 'ForgeAI Upgrade Starter to Pro' },
   };
   const selectedPlan = PLANS[plan];
 

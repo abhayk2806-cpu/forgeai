@@ -347,7 +347,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
         <h3>🔓 Unlock All Engines — Upgrade to Pro</h3>
         <p>Get every engine + ForgeAI Pipeline + all future engines forever</p>
       </div>
-      <button class="btn-upgrade" onclick="handleUpgradeClick()">⚡ Upgrade for ₹1,000</button>
+      <button class="btn-upgrade" onclick="handleUpgradeClick()">⚡ Upgrade for ₹3</button>
     </div>
 
     <!-- RECENT ENGINES (first 6 shown on dashboard home) -->
@@ -1786,7 +1786,7 @@ function openEnginePanel() {
         <div class="lock-icon">🔒</div>
         <h3>Pro Engine</h3>
         <p>Upgrade to ForgeAI Pro to unlock this engine and all other Pro engines.</p>
-        <button class="ep-btn primary" onclick="handleUpgradeClick()">⚡ Upgrade for ₹1,000</button>
+        <button class="ep-btn primary" onclick="handleUpgradeClick()">⚡ Upgrade for ₹3</button>
       </div>`;
   } else {
     body.innerHTML = `
@@ -1975,7 +1975,7 @@ document.addEventListener('DOMContentLoaded', init);
     </div>
     <div style="padding:20px 24px">
       <div style="background:var(--accent-light);border:1px solid #FDBA74;border-radius:8px;padding:12px 16px;margin-bottom:20px">
-        <div style="font-size:13px;color:#92400E;font-weight:600">₹1,000 one-time · Lifetime access to all Pro engines</div>
+        <div style="font-size:13px;color:#92400E;font-weight:600">₹3 one-time · Lifetime access to all Pro engines</div>
       </div>
       <div style="margin-bottom:14px">
         <label style="display:block;font-size:13px;font-weight:600;color:var(--text);margin-bottom:6px">Full Name</label>
@@ -1986,7 +1986,7 @@ document.addEventListener('DOMContentLoaded', init);
         <input id="upgEmailInput" type="email" placeholder="your@email.com" style="width:100%;padding:10px 14px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);background:var(--bg);border:1px solid var(--border);border-radius:8px;outline:none;min-height:44px" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
       </div>
       <div id="upgErrorMsg" style="display:none;background:#FEF2F2;border:1px solid #FECACA;border-radius:8px;padding:10px 14px;font-size:13px;color:var(--red);margin-bottom:14px"></div>
-      <button id="upgPayBtn" onclick="submitUpgrade()" style="width:100%;padding:13px;background:var(--accent);color:white;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;display:flex;align-items:center;justify-content:center;gap:8px;transition:background .15s">⚡ Pay ₹1,000 — Upgrade Now</button>
+      <button id="upgPayBtn" onclick="submitUpgrade()" style="width:100%;padding:13px;background:var(--accent);color:white;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;display:flex;align-items:center;justify-content:center;gap:8px;transition:background .15s">⚡ Pay ₹3 — Upgrade Now</button>
       <div style="text-align:center;font-size:12px;color:var(--text-light);margin-top:10px">🔒 Secure payment via Cashfree · UPI, Cards, NetBanking</div>
     </div>
   </div>
@@ -2033,7 +2033,7 @@ function openUpgradeModal() {
   document.getElementById('upgErrorMsg').style.display = 'none';
   const btn = document.getElementById('upgPayBtn');
   btn.disabled = false;
-  btn.textContent = '⚡ Pay ₹1,000 — Upgrade Now';
+  btn.textContent = '⚡ Pay ₹3 — Upgrade Now';
 }
 
 function closeUpgradeModal() {
@@ -2098,7 +2098,7 @@ async function submitUpgrade() {
     errEl.textContent = err.message || 'Something went wrong. Please try again.';
     errEl.style.display = 'block';
     btn.disabled = false;
-    btn.textContent = '⚡ Pay ₹1,000 — Upgrade Now';
+    btn.textContent = '⚡ Pay ₹3 — Upgrade Now';
   }
 }
 </script>
