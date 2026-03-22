@@ -154,5 +154,35 @@ function handleLogout(){
   }, 100);
 })();
 </script>
+
+<!-- ══ HELP & SUPPORT BUTTON ══ -->
+<button id="helpSupportBtn" onclick="openHelpModal()" aria-label="Help & Support" style="position:fixed;bottom:24px;right:24px;z-index:500;width:52px;height:52px;border-radius:50%;background:#F97316;color:white;border:none;cursor:pointer;box-shadow:0 4px 16px rgba(249,115,22,.45);display:flex;align-items:center;justify-content:center;font-size:22px;transition:transform .15s,box-shadow .15s" onmouseenter="this.style.transform='scale(1.08)';this.style.boxShadow='0 6px 22px rgba(249,115,22,.55)'" onmouseleave="this.style.transform='scale(1)';this.style.boxShadow='0 4px 16px rgba(249,115,22,.45)'">?</button>
+<div id="helpModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:600;align-items:flex-end;justify-content:center;padding-bottom:0" onclick="closeHelpModal(event)">
+  <div style="background:#ffffff;border-radius:20px 20px 0 0;width:100%;max-width:480px;padding:28px 24px 32px;box-shadow:0 -8px 32px rgba(0,0,0,.15);animation:slideUp .22s ease">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+      <div><div style="font-size:17px;font-weight:700;color:#1A1A1A">Help &amp; Support</div><div style="font-size:12px;color:#9C9C96;margin-top:2px">We respond within 24 hours</div></div>
+      <button onclick="closeHelpModal(null,true)" style="background:#F7F7F5;border:none;width:32px;height:32px;border-radius:8px;cursor:pointer;font-size:18px;color:#9C9C96">✕</button>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <a href="mailto:thesaanvihub@gmail.com?subject=ForgeAI%20Technical%20Issue&body=Hi%20ForgeAI%20Team%2C%0A%0AI%20need%20help%20with%20a%20technical%20issue%3A%0A%0A" style="display:flex;align-items:center;gap:14px;padding:14px 16px;background:#F7F7F5;border:1px solid #E8E8E4;border-radius:12px;text-decoration:none;color:#1A1A1A">
+        <div style="width:38px;height:38px;border-radius:10px;background:#FFF4ED;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">🔧</div>
+        <div><div style="font-size:14px;font-weight:600">Report Technical Issue</div><div style="font-size:12px;color:#9C9C96;margin-top:2px">Bug, error, or something broken</div></div>
+      </a>
+      <a href="mailto:thesaanvihub@gmail.com?subject=ForgeAI%20Engine%20Not%20Working&body=Hi%20ForgeAI%20Team%2C%0A%0AEngine%20Name%3A%20%5BFill%20in%5D%0AProblem%3A%20%5BDescribe%20what%27s%20happening%5D%0A%0A" style="display:flex;align-items:center;gap:14px;padding:14px 16px;background:#F7F7F5;border:1px solid #E8E8E4;border-radius:12px;text-decoration:none;color:#1A1A1A">
+        <div style="width:38px;height:38px;border-radius:10px;background:#EFF6FF;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">⚡</div>
+        <div><div style="font-size:14px;font-weight:600">Engine Not Working</div><div style="font-size:12px;color:#9C9C96;margin-top:2px">Prompt issue or unexpected output</div></div>
+      </a>
+      <a href="mailto:thesaanvihub@gmail.com?subject=ForgeAI%20Feedback&body=Hi%20ForgeAI%20Team%2C%0A%0AMy%20feedback%3A%0A%0A" style="display:flex;align-items:center;gap:14px;padding:14px 16px;background:#F7F7F5;border:1px solid #E8E8E4;border-radius:12px;text-decoration:none;color:#1A1A1A">
+        <div style="width:38px;height:38px;border-radius:10px;background:#F0FDF4;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">💬</div>
+        <div><div style="font-size:14px;font-weight:600">Send Feedback</div><div style="font-size:12px;color:#9C9C96;margin-top:2px">Suggestions, ideas, or improvements</div></div>
+      </a>
+    </div>
+  </div>
+</div>
+<style>@keyframes slideUp{from{transform:translateY(100%);opacity:0}to{transform:translateY(0);opacity:1}}</style>
+<script>
+function openHelpModal(){document.getElementById('helpModal').style.display='flex';document.body.style.overflow='hidden';}
+function closeHelpModal(ev,force){if(!force&&ev&&ev.target!==document.getElementById('helpModal'))return;document.getElementById('helpModal').style.display='none';document.body.style.overflow='';}
+</script>
 </body>
 </html>
