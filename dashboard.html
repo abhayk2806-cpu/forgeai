@@ -123,6 +123,13 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .card-footer{display:flex;align-items:center;justify-content:space-between;padding-top:10px;border-top:1px solid var(--border);margin-top:auto}
 .card-action{font-size:12px;font-weight:600}
 .card-type-label{font-size:10px;color:var(--text-light);font-family:'JetBrains Mono',monospace}
+/* Engine update strip */
+.eng-update-strip{display:flex;align-items:center;justify-content:space-between;padding:7px 10px;background:var(--bg);border:1px solid var(--border);border-radius:8px;margin-top:2px;cursor:pointer;transition:background .15s}
+.eng-update-strip:hover{background:#F0EDE8}
+.eng-update-label{font-size:11px;color:var(--text-muted);font-weight:500}
+.eng-update-toggle{font-size:11px;color:var(--accent);font-weight:600}
+.eng-update-notes{font-size:12px;color:var(--text-muted);line-height:1.6;padding:0 2px;max-height:0;overflow:hidden;transition:max-height .25s ease,padding .25s ease}
+.eng-update-notes.open{max-height:200px;padding:8px 2px 2px}
 
 /* SKELETON */
 .skeleton{background:linear-gradient(90deg,#f0f0ee 25%,#e8e8e4 50%,#f0f0ee 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:8px}
@@ -1649,6 +1656,22 @@ function renderEngineCard(e, cat) {
     `<div class="use-case-item"><div class="use-case-dot" style="background:${cardColor}"></div>${uc}</div>`
   ).join('');
   const actionText = isLocked ? '🔒 Pro Only' : 'Open Engine →';
+
+  // ── Last Updated strip ──
+  let updatedHtml = '';
+  if (e.last_updated) {
+    const d = new Date(e.last_updated);
+    const label = d.toLocaleDateString('en-IN', { month: 'short', year: 'numeric' });
+    const safeId = e.id.replace(/[^a-z0-9]/gi, '-');
+    const notes = e.update_notes ? e.update_notes.replace(/'/g,"&#39;").replace(/"/g,'&quot;') : '';
+    updatedHtml = `
+      <div class="eng-update-strip" onclick="event.stopPropagation();toggleUpdateNotes('${safeId}')">
+        <span class="eng-update-label">📅 Updated ${label}</span>
+        <span class="eng-update-toggle" id="eng-toggle-${safeId}">▾ What's new</span>
+      </div>
+      <div class="eng-update-notes" id="eng-notes-${safeId}">${notes || 'No update notes available.'}</div>`;
+  }
+
   return `
     <div class="engine-card${isLocked?' locked':''}" style="--card-color:${cardColor}" onclick="openModal('${e.id}')">
       <div class="card-top">
@@ -1667,8 +1690,17 @@ function renderEngineCard(e, cat) {
         <span class="card-type-label">ENGINE</span>
         <span class="card-action" style="color:${isLocked?'var(--text-light)':cardColor}">${actionText}</span>
       </div>
+      ${updatedHtml}
     </div>
   `;
+}
+
+function toggleUpdateNotes(safeId) {
+  const notes = document.getElementById('eng-notes-' + safeId);
+  const toggle = document.getElementById('eng-toggle-' + safeId);
+  if (!notes) return;
+  const open = notes.classList.toggle('open');
+  if (toggle) toggle.textContent = open ? '▴ Hide' : '▾ What\'s new';
 }
 
 // ─── FILTER ───

@@ -64,25 +64,34 @@ exports.handler = async (event) => {
 
     // ── ENGINE ops ───────────────────────────────────────────
     if (action === 'engine:insert') {
-      const { id, name, icon, icon_bg, category_id, tier, tagline, use_cases, badge, sort_order } = payload;
+      const { id, name, icon, icon_bg, category_id, tier, tagline, use_cases, badge, sort_order, update_notes } = payload;
       if (!id || !name || !category_id) throw new Error('id, name, category_id required');
+      // Auto-set today's date as last_updated for new engines
+      const todayDate = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
       ({ error } = await sb.from('engines').insert({
         id, name,
-        icon:        icon        || '⚡',
-        icon_bg:     icon_bg     || '#FFF4ED',
+        icon:         icon         || '⚡',
+        icon_bg:      icon_bg      || '#FFF4ED',
         category_id,
-        tier:        tier        || 'pro',
-        tagline:     tagline     || '',
-        use_cases:   use_cases   || [],
-        badge:       badge       || '',
-        sort_order:  sort_order  || 99,
-        is_active:   true,
+        tier:         tier         || 'pro',
+        tagline:      tagline      || '',
+        use_cases:    use_cases    || [],
+        badge:        badge        || '',
+        sort_order:   sort_order   || 99,
+        is_active:    true,
+        last_updated: todayDate,
+        update_notes: update_notes || 'Initial release. Future updates — including new capabilities, prompt improvements, and feature additions — will be documented here.',
       }));
     }
 
     else if (action === 'engine:update') {
       const { id, ...fields } = payload;
       if (!id) throw new Error('id required');
+      // Auto-stamp last_updated to today whenever an engine is updated
+      // Only if update_notes is also being changed (meaningful update)
+      if (fields.update_notes !== undefined) {
+        fields.last_updated = new Date().toISOString().slice(0, 10);
+      }
       ({ error } = await sb.from('engines').update(fields).eq('id', id));
     }
 

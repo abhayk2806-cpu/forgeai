@@ -275,6 +275,10 @@ select.fi:focus{border-color:var(--accent)}
           </div>
           <div class="field-group"><div class="field-label">Sort Order</div><input class="fi" id="ne-order" type="number" placeholder="99" /></div>
         </div>
+        <div class="field-group">
+          <div class="field-label">Update Notes <span style="font-weight:400;color:var(--text-muted);font-size:11px">(shown to users on dashboard — auto-dated on save)</span></div>
+          <textarea class="fi" id="ne-update-notes" rows="3" placeholder="Initial release. Future updates will be documented here."></textarea>
+        </div>
         <div style="display:flex;gap:8px;margin-top:4px">
           <button class="btn btn-primary" onclick="saveNewEngine()">💾 Save Engine</button>
           <button class="btn btn-secondary" onclick="toggleAddEng()">Cancel</button>
@@ -365,6 +369,18 @@ select.fi:focus{border-color:var(--accent)}
       <div class="field-row">
         <div class="field-group"><div class="field-label">Badge</div><select class="fi" id="edit-badge"><option value="">None</option><option value="HOT">🔥 HOT</option><option value="NEW">NEW</option><option value="EXCLUSIVE">EXCLUSIVE</option></select></div>
         <div class="field-group"><div class="field-label">Sort Order</div><input class="fi" id="edit-order" type="number" /></div>
+      </div>
+      <div class="field-group">
+        <div class="field-label">Update Notes <span style="font-weight:400;color:var(--text-muted);font-size:11px">(shown to users — date auto-stamps on save when you change this)</span></div>
+        <textarea class="fi" id="edit-update-notes" rows="3" placeholder="What changed in this update..."></textarea>
+      </div>
+      <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-top:4px;display:flex;align-items:center;gap:8px">
+        <span style="font-size:14px">📅</span>
+        <div>
+          <div style="font-size:11px;color:var(--text-muted);font-weight:500">LAST UPDATED</div>
+          <div style="font-size:13px;color:var(--text-primary);font-weight:600" id="edit-last-updated-display">—</div>
+        </div>
+        <div style="font-size:11px;color:var(--text-muted);margin-left:auto">Auto-updates when you change notes</div>
       </div>
       <div style="display:flex;gap:8px;margin-top:14px">
         <button class="btn btn-primary" style="flex:1" onclick="saveEditEngine()">💾 Save Changes</button>
@@ -518,16 +534,17 @@ async function saveNewEngine(){
   const use_cases=ucsRaw.split('\n').map(s=>s.trim()).filter(Boolean);
   const badge=document.getElementById('ne-badge').value;
   const order=parseInt(document.getElementById('ne-order').value)||99;
+  const update_notes=document.getElementById('ne-update-notes').value.trim()||'Initial release. Future updates — including new capabilities, prompt improvements, and feature additions — will be documented here.';
   if(!id||!name||!cat){toast('ID, Name, Category required','err');return;}
   if(engs.find(e=>e.id===id)){toast('Yeh engine ID already exist karti hai','err');return;}
-  const body={id,name,icon,icon_bg:iconbg,category_id:cat,tier,tagline,use_cases,badge,sort_order:order};
+  const body={id,name,icon,icon_bg:iconbg,category_id:cat,tier,tagline,use_cases,badge,sort_order:order,update_notes};
   const r=await adminWrite('engine:insert',body);
   if(r.ok){
     toast('Engine saved! Dashboard mein aa jayegi ✅');
     engs.push({...body,use_cases});
     document.getElementById('engBadge').textContent=engs.length;
     renderEngList();toggleAddEng();
-    ['ne-id','ne-name','ne-icon','ne-iconbg','ne-tagline','ne-usecases','ne-order'].forEach(i=>document.getElementById(i).value='');
+    ['ne-id','ne-name','ne-icon','ne-iconbg','ne-tagline','ne-usecases','ne-order','ne-update-notes'].forEach(i=>document.getElementById(i).value='');
   } else {
     const err=await r.text();toast('Error: '+err,'err');
   }
@@ -579,6 +596,17 @@ function openEditModal(id){
   document.getElementById('edit-usecases').value=ucs.join('\n');
   document.getElementById('edit-badge').value=e.badge||'';
   document.getElementById('edit-order').value=e.sort_order;
+  document.getElementById('edit-update-notes').value=e.update_notes||'';
+  // Show current last_updated date
+  const displayEl=document.getElementById('edit-last-updated-display');
+  if(displayEl){
+    if(e.last_updated){
+      const d=new Date(e.last_updated);
+      displayEl.textContent=d.toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'});
+    } else {
+      displayEl.textContent='Not set';
+    }
+  }
   document.getElementById('editModal').classList.add('open');
 }
 
@@ -586,6 +614,7 @@ async function saveEditEngine(){
   const id=document.getElementById('edit-id').value;
   const ucsRaw=document.getElementById('edit-usecases').value.trim();
   const use_cases=ucsRaw.split('\n').map(s=>s.trim()).filter(Boolean);
+  const update_notes=document.getElementById('edit-update-notes').value.trim();
   const body={
     name:document.getElementById('edit-name').value.trim(),
     icon:document.getElementById('edit-icon').value.trim(),
@@ -594,13 +623,16 @@ async function saveEditEngine(){
     tagline:document.getElementById('edit-tagline').value.trim(),
     use_cases:JSON.stringify(use_cases),
     badge:document.getElementById('edit-badge').value,
-    sort_order:parseInt(document.getElementById('edit-order').value)||99
+    sort_order:parseInt(document.getElementById('edit-order').value)||99,
+    update_notes
   };
   const r=await adminWrite('engine:update',{id,...body,use_cases});
   if(r.ok){
+    // last_updated auto-stamped server-side when update_notes changes
+    const today=new Date().toISOString().slice(0,10);
     const idx=engs.findIndex(e=>e.id===id);
-    if(idx>-1)engs[idx]={...engs[idx],...body,use_cases};
-    renderEngList();closeModal('editModal');toast('Engine updated!');
+    if(idx>-1)engs[idx]={...engs[idx],...body,use_cases,last_updated:today};
+    renderEngList();closeModal('editModal');toast('Engine updated! ✅');
   } else toast('Error updating','err');
 }
 
