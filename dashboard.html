@@ -314,6 +314,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
     <button class="nav-item" onclick="window.location.href='profile.html'"><span class="nav-icon">👤</span> Profile & Settings</button>
   </nav>
   <div class="sidebar-bottom">
+    <button class="btn-logout" style="margin-bottom:8px;background:var(--bg);color:var(--text-muted);border:1px solid var(--border)" onclick="resetOnboarding();closeSidebar()"><span>🚀</span> Getting Started Guide</button>
     <button class="btn-logout" onclick="handleLogout()"><span>🚪</span> Logout</button>
   </div>
 </aside>
@@ -1966,6 +1967,7 @@ async function init() {
     const name = (u.email||'').split('@')[0];
     document.getElementById('userName').textContent = name.charAt(0).toUpperCase()+name.slice(1);
     applyTier(u.tier || 'starter');
+    maybeShowOnboarding();
   } else {
     // Fallback: wait for auth.js to finish hydrating (max 2s)
     let waited = 0;
@@ -1980,6 +1982,7 @@ async function init() {
           document.getElementById('userName').textContent = name.charAt(0).toUpperCase()+name.slice(1);
           applyTier(u.tier || 'starter');
         }
+        maybeShowOnboarding();
       }
     }, 100);
   }
@@ -2135,6 +2138,36 @@ async function submitUpgrade() {
 }
 </script>
 
+<!-- ══ FIRST-TIME ONBOARDING OVERLAY ══ -->
+<div id="onboardOverlay" style="display:none;position:fixed;inset:0;background:rgba(15,15,15,.75);z-index:800;align-items:center;justify-content:center;padding:20px;transition:opacity .3s">
+  <div id="onboardCard" style="background:var(--surface);border-radius:20px;width:100%;max-width:480px;box-shadow:0 24px 60px rgba(0,0,0,.2);overflow:hidden;transition:opacity .18s,transform .18s">
+    <!-- Progress bar -->
+    <div style="height:3px;background:var(--bg)">
+      <div id="onboardProgress" style="height:100%;background:var(--accent);transition:width .3s"></div>
+    </div>
+    <div style="padding:32px 28px 28px">
+      <!-- Icon + counter -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+        <div id="onboardIcon" style="width:52px;height:52px;border-radius:14px;background:var(--accent-light);display:flex;align-items:center;justify-content:center;font-size:26px">🎉</div>
+        <span id="onboardCounter" style="font-size:12px;color:var(--text-muted);font-weight:600;font-family:'JetBrains Mono',monospace">1 of 4</span>
+      </div>
+      <!-- Title -->
+      <div id="onboardTitle" style="font-size:20px;font-weight:700;color:var(--text);margin-bottom:12px;line-height:1.3">Welcome to ForgeAI</div>
+      <!-- Body -->
+      <div id="onboardBody" style="font-size:14px;color:var(--text-muted);line-height:1.7;margin-bottom:16px"></div>
+      <!-- Tip box -->
+      <div id="onboardTip" style="display:none;background:var(--accent-light);border:1px solid #FDBA74;border-radius:10px;padding:10px 14px;font-size:13px;color:#92400E;margin-bottom:16px;line-height:1.6"></div>
+      <!-- Progress dots -->
+      <div id="onboardDots" style="display:flex;gap:6px;align-items:center;margin-bottom:20px"></div>
+      <!-- Actions -->
+      <div style="display:flex;gap:10px;align-items:center">
+        <button id="onboardAction" onclick="onboardNext()" style="flex:1;padding:13px;background:var(--accent);color:white;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .15s" onmouseenter="this.style.background='var(--accent-hover)'" onmouseleave="this.style.background='var(--accent)'">Let's go →</button>
+        <button onclick="closeOnboarding()" style="padding:13px 16px;background:var(--bg);color:var(--text-muted);border:1px solid var(--border);border-radius:10px;font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap">Skip</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ══ HELP & SUPPORT BUTTON ══ -->
 <button id="helpSupportBtn" onclick="openHelpModal()" aria-label="Help & Support" style="position:fixed;bottom:24px;right:24px;z-index:500;width:52px;height:52px;border-radius:50%;background:#F97316;color:white;border:none;cursor:pointer;box-shadow:0 4px 16px rgba(249,115,22,.45);display:flex;align-items:center;justify-content:center;font-size:22px;transition:transform .15s,box-shadow .15s" onmouseenter="this.style.transform='scale(1.08)';this.style.boxShadow='0 6px 22px rgba(249,115,22,.55)'" onmouseleave="this.style.transform='scale(1)';this.style.boxShadow='0 4px 16px rgba(249,115,22,.45)'">?</button>
 
@@ -2192,6 +2225,105 @@ function closeHelpModal(ev, force) {
   if (!force && ev && ev.target !== document.getElementById('helpModal')) return;
   document.getElementById('helpModal').style.display = 'none';
   document.body.style.overflow = '';
+}
+
+// ══════════════════════════════════════════════════
+// FIRST-TIME ONBOARDING
+// ══════════════════════════════════════════════════
+const ONBOARD_KEY = 'forgeai_onboarded_v1';
+let _onboardStep = 0;
+
+const ONBOARD_STEPS = [
+  {
+    icon: '🎉',
+    title: 'Welcome to ForgeAI',
+    body: `You now have access to purpose-built AI engines — each one turns Claude into a specialist for a specific task.<br><br>This 3-step walkthrough will show you exactly how to use your first engine in under 2 minutes.`,
+    action: 'Let\'s go →',
+    tip: null
+  },
+  {
+    icon: '⚡',
+    title: 'Step 1 — Pick your engine',
+    body: `From your dashboard, click any engine card to open it.<br><br>Each engine has a specific job — <strong>Copy Forge</strong> writes sales copy, <strong>Email Forge</strong> builds email sequences, <strong>Ad Forge</strong> creates Meta ads, and so on.<br><br>Start with the one most relevant to what you're working on right now.`,
+    action: 'Got it →',
+    tip: '💡 Not sure where to start? Copy Forge is the most versatile engine for any business.'
+  },
+  {
+    icon: '📋',
+    title: 'Step 2 — Copy the engine prompt',
+    body: `Inside the engine, click <strong>"Copy Engine Prompt"</strong>.<br><br>This copies the full AI engine to your clipboard. The engine is a structured system prompt — it's what tells Claude exactly how to think and respond for your specific task.`,
+    action: 'Next →',
+    tip: null
+  },
+  {
+    icon: '🤖',
+    title: 'Step 3 — Paste into Claude.ai',
+    body: `<strong>1.</strong> Go to <a href="https://claude.ai" target="_blank" style="color:var(--accent);font-weight:600">claude.ai</a> and click <strong>Projects</strong> in the left sidebar<br><br><strong>2.</strong> Click <strong>New Project</strong> → then <strong>"Set project instructions"</strong><br><br><strong>3.</strong> Paste the engine content you copied → Click Save<br><br><strong>4.</strong> Start a new chat inside that project — Claude is now your specialist.`,
+    action: 'I\'m ready — open my dashboard →',
+    tip: '💡 Each engine works best in its own Claude Project. Don\'t mix multiple engines in one project.'
+  }
+];
+
+function maybeShowOnboarding() {
+  if (localStorage.getItem(ONBOARD_KEY)) return; // already seen
+  _onboardStep = 0;
+  renderOnboardStep(0);
+  document.getElementById('onboardOverlay').style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+
+function renderOnboardStep(step) {
+  const s = ONBOARD_STEPS[step];
+  const total = ONBOARD_STEPS.length;
+  document.getElementById('onboardIcon').textContent = s.icon;
+  document.getElementById('onboardTitle').textContent = s.title;
+  document.getElementById('onboardBody').innerHTML = s.body;
+  document.getElementById('onboardAction').textContent = s.action;
+  document.getElementById('onboardTip').style.display = s.tip ? 'block' : 'none';
+  document.getElementById('onboardTip').innerHTML = s.tip || '';
+  // Progress dots
+  document.getElementById('onboardDots').innerHTML = Array.from({length: total}, (_,i) =>
+    `<div style="width:${i===step?24:8}px;height:8px;border-radius:4px;background:${i===step?'var(--accent)':'var(--border)'};transition:all .3s"></div>`
+  ).join('');
+  // Step counter
+  document.getElementById('onboardCounter').textContent = `${step + 1} of ${total}`;
+  // Progress bar
+  const pct = Math.round(((step + 1) / total) * 100);
+  document.getElementById('onboardProgress').style.width = pct + '%';
+}
+
+function onboardNext() {
+  _onboardStep++;
+  if (_onboardStep >= ONBOARD_STEPS.length) {
+    closeOnboarding();
+  } else {
+    const card = document.getElementById('onboardCard');
+    card.style.opacity = '0';
+    card.style.transform = 'translateY(10px)';
+    setTimeout(() => {
+      renderOnboardStep(_onboardStep);
+      card.style.opacity = '1';
+      card.style.transform = 'translateY(0)';
+    }, 180);
+  }
+}
+
+function closeOnboarding() {
+  localStorage.setItem(ONBOARD_KEY, '1');
+  const overlay = document.getElementById('onboardOverlay');
+  overlay.style.opacity = '0';
+  setTimeout(() => { overlay.style.display = 'none'; document.body.style.overflow = ''; }, 300);
+}
+
+function resetOnboarding() {
+  localStorage.removeItem(ONBOARD_KEY);
+  _onboardStep = 0;
+  renderOnboardStep(0);
+  document.getElementById('onboardOverlay').style.display = 'flex';
+  document.getElementById('onboardOverlay').style.opacity = '1';
+  document.getElementById('onboardCard').style.opacity = '1';
+  document.getElementById('onboardCard').style.transform = 'translateY(0)';
+  document.body.style.overflow = 'hidden';
 }
 
 function showCopyDisclaimer(engineName) {
