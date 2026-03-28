@@ -87,7 +87,7 @@
     <span>Verifying payment...</span>
   </div>
 
-  <!-- Success state (hidden initially) -->
+  <!-- Success state — NEW PURCHASE (hidden initially) -->
   <div id="success-state" style="display:none">
     <div class="success-icon">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
@@ -127,38 +127,82 @@
     </a>
     <p class="help-text">Need help? <a href="mailto:thesaanvihub@gmail.com">thesaanvihub@gmail.com</a></p>
   </div>
+
+  <!-- Upgrade success state (hidden initially) -->
+  <div id="upgrade-state" style="display:none">
+    <div class="success-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <polyline points="20 6 9 17 4 12"/>
+      </svg>
+    </div>
+    <h1>You're now Pro! ⚡</h1>
+    <p class="subtitle">Your upgrade is confirmed.<br><strong>All engines are now unlocked</strong> — including every future engine.</p>
+
+    <div class="email-notice">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+        <polyline points="22,6 12,13 2,6"/>
+      </svg>
+      <p>Upgrade confirmation sent to your email. Your dashboard will reflect Pro access immediately.</p>
+    </div>
+
+    <div class="steps">
+      <div class="steps-title">What Just Happened</div>
+      <div class="step-item">
+        <div class="step-num">✓</div>
+        <div class="step-text">Payment verified<span>Your account has been upgraded to Pro</span></div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">✓</div>
+        <div class="step-text">All engines unlocked<span>ConversionOS Pipeline + all Pro engines are now active</span></div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">→</div>
+        <div class="step-text">Open your dashboard<span>Log back in if session expired, then access all engines</span></div>
+      </div>
+    </div>
+
+    <a href="/dashboard.html" class="btn-signup">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="13 17 18 12 13 7"/><polyline points="6 17 11 12 6 7"/></svg>
+      Open Dashboard
+    </a>
+    <p class="help-text">Need help? <a href="mailto:thesaanvihub@gmail.com">thesaanvihub@gmail.com</a></p>
+  </div>
 </div>
 
 <script>
   const params  = new URLSearchParams(window.location.search);
   const orderId = params.get('order_id') || params.get('cf_order_id') || '';
+  const plan    = params.get('plan') || '';
+  const isUpgrade = plan === 'upgrade';
 
-  // No order_id — redirect to sales page immediately
+  // No order_id — redirect based on context
   if (!orderId) {
-    window.location.replace('/#pricing');
+    window.location.replace(isUpgrade ? '/dashboard.html' : '/#pricing');
   } else {
     verifyAndShow(orderId);
   }
 
   async function verifyAndShow(orderId) {
+    const failRedirect = isUpgrade ? '/dashboard.html' : '/#pricing';
     try {
       const res  = await fetch('/.netlify/functions/verify-payment?order_id=' + orderId);
       const data = await res.json();
 
       if (data.status === 'SUCCESS') {
-        // Payment confirmed — show success page
         try { sessionStorage.setItem('cos_order_id', orderId); } catch(e) {}
         document.getElementById('verifying-state').style.display = 'none';
-        document.getElementById('success-state').style.display   = 'block';
+        // Show upgrade-specific or new-purchase success UI
+        document.getElementById(isUpgrade ? 'upgrade-state' : 'success-state').style.display = 'block';
         document.documentElement.style.visibility = '';
       } else {
-        // Not paid — redirect back to sales page
-        window.location.replace('/#pricing');
+        // Not paid — redirect back appropriately
+        window.location.replace(failRedirect);
       }
     } catch(e) {
-      // On error — show page anyway (webhook handles processing)
+      // On network error — show page anyway (webhook is the source of truth)
       document.getElementById('verifying-state').style.display = 'none';
-      document.getElementById('success-state').style.display   = 'block';
+      document.getElementById(isUpgrade ? 'upgrade-state' : 'success-state').style.display = 'block';
       document.documentElement.style.visibility = '';
     }
   }

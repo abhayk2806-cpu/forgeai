@@ -837,13 +837,8 @@
   }
 
   // ─── Tier-based display ───────────────────────────────────────────
-  // TODO: Phase 5 — Read tier from Supabase session user metadata
-  // const { data: { user } } = await supabase.auth.getUser();
-  // const tier = user?.user_metadata?.tier || 'core';
-  const tier = 'core'; // Placeholder — replaced in Phase 5
-
   function applyTier(t) {
-    if (t === 'complete') {
+    if (t === 'pro') {
       // Update badge
       const badge = document.getElementById('tier-badge');
       badge.textContent = 'Pro';
@@ -917,10 +912,11 @@
     btn.textContent = 'Creating order...';
 
     try {
+      const fb_event_id = `upgrade_cf_${Date.now()}_${Math.random().toString(36).substr(2,5)}`;
       const res  = await fetch('/.netlify/functions/create-order', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, plan })
+        body: JSON.stringify({ name, email, plan, fb_event_id })
       });
       const data = await res.json();
 

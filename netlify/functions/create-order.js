@@ -87,7 +87,8 @@ exports.handler = async (event) => {
     order_meta: {
       return_url: `${siteUrl}/payment-success.html?order_id={order_id}&plan=${plan}`,
       notify_url: `${siteUrl}/.netlify/functions/cashfree-webhook`,
-      cancel_url: `${siteUrl}/#pricing`,
+      // Upgrade cancels → back to dashboard; new purchase cancels → back to pricing
+      cancel_url: plan === 'upgrade' ? `${siteUrl}/dashboard.html` : `${siteUrl}/#pricing`,
     },
     order_note: selectedPlan.label,
     order_tags: {
