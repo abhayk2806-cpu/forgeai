@@ -171,13 +171,19 @@
 </div>
 
 <script>
-  const params  = new URLSearchParams(window.location.search);
-  const orderId = params.get('order_id') || params.get('cf_order_id') || '';
-  const plan    = params.get('plan') || '';
+  const params    = new URLSearchParams(window.location.search);
+  const orderId   = params.get('order_id') || params.get('cf_order_id') || '';
+  const plan      = params.get('plan') || '';
   const isUpgrade = plan === 'upgrade';
+  const isPreview = params.get('preview') === '1';
 
+  // Preview mode — skip verification, show UI directly (for design review only)
+  if (isPreview) {
+    document.getElementById('verifying-state').style.display = 'none';
+    document.getElementById(isUpgrade ? 'upgrade-state' : 'success-state').style.display = 'block';
+    document.documentElement.style.visibility = '';
   // No order_id — redirect based on context
-  if (!orderId) {
+  } else if (!orderId) {
     window.location.replace(isUpgrade ? '/dashboard.html' : '/#pricing');
   } else {
     verifyAndShow(orderId);
