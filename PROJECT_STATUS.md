@@ -1,5 +1,5 @@
 # ForgeAI — Project Status & External Memory
-> **Last updated:** 2026-03-28
+> **Last updated:** 2026-03-28 (Session 2)
 > **Purpose:** Live project memory. Read this before doing ANY work on this codebase.
 
 ---
@@ -23,13 +23,13 @@
 
 **ForgeAI** is a SaaS product that sells structured AI prompt systems ("engines") that transform Claude.ai into specialist AI agents for business and marketing tasks.
 
-- **Domain:** `aiconversionengine.io` (production)
+- **Domain:** `www.forgeai.digital` (production) ← UPDATED from aiconversionengine.io
 - **Staging URL:** `https://ai-conversion-engines.netlify.app`
 - **Hosting:** Netlify (static site + serverless functions)
 - **Database:** Supabase (PostgreSQL)
 - **Payment — India:** Cashfree (INR)
 - **Payment — International:** Gumroad (USD)
-- **Email:** Resend API (transactional emails via `onboarding@resend.dev`)
+- **Email:** Resend API (transactional emails via `hello@forgeai.digital`) ← UPDATED from onboarding@resend.dev
 - **Analytics:** Facebook Pixel + Conversions API (CAPI)
 - **Auth:** Supabase Auth (email + password)
 
@@ -220,6 +220,18 @@
 - Also updates Supabase Auth `user_metadata.tier` to `'pro'`
 - Sends upgrade email
 
+### Post-Payment Redirects (Fixed Session 2)
+| Scenario | On Success | On Cancel/Fail |
+|----------|-----------|----------------|
+| New purchase (Starter/Pro) | `/payment-success.html?plan=starter/pro` | `/#pricing` |
+| Upgrade | `/payment-success.html?plan=upgrade` | `/dashboard.html` |
+
+- `payment-success.html` detects `plan=upgrade` from URL params
+- Shows "You're now Pro!" UI + "Open Dashboard" button for upgrades
+- Shows "Payment Successful!" + "Create Account" button for new purchases
+- `?preview=1` mode available to skip verification for UI review
+- Cancel URL set conditionally in `create-order.js`: upgrades → `/dashboard.html`, others → `/#pricing`
+
 ---
 
 ## 7. ⚠️ CRITICAL: Test Prices — Must Revert Before Launch
@@ -348,6 +360,17 @@ const PRICING = { IN: { core: 999, complete: 1999, upgrade: 1000 } ... }
 - [x] First-time user onboarding overlay (4-step, localStorage-gated, replayable)
 - [x] welcome.html updated — Starter/Pro plan names throughout
 - [x] `content_items` rows seeded for engine-0 through engine-7
+- [x] **payment-success.html** — Separate upgrade vs new purchase UI, preview mode added
+- [x] **create-order.js** — Conditional cancel URL (upgrade→dashboard, new→pricing), domain updated
+- [x] **welcome.html** — Critical tier bug fixed (`complete` → `pro` in `applyTier()`), `fb_event_id` added to upgrade checkout
+- [x] **login.html** — Brand color fixed: `#1A1A1A` → `#F97316` throughout, tagline updated
+- [x] **signup.html** — Brand color fixed, card titles rewritten for post-purchase clarity
+- [x] **forgot-password.html** — CRITICAL BUG FIXED: was a fake simulation, now calls real Supabase `resetPasswordForEmail()`; Supabase scripts were missing entirely, now added
+- [x] **reset-password.html** — Logo mark and input focus colors updated to orange
+- [x] **access-denied.html** — Rebranded to "Pro Access Required", upgrade CTA added, brand color fixed
+- [x] **cashfree-webhook.js** — Domain updated, email `from` updated, accessInfo copy updated, email CTA button orange, upgrade email completely redesigned
+- [x] **gumroad-webhook.js** — Same as above
+- [x] **SITE_URL fallback** — All functions now default to `https://www.forgeai.digital`
 
 ### ⏳ Pending / Not Yet Done
 - [ ] **Engine content** — All 14 engine prompts are empty. Must fill via admin panel before selling.
@@ -355,7 +378,8 @@ const PRICING = { IN: { core: 999, complete: 1999, upgrade: 1000 } ... }
 - [ ] **Engine ratings** — Simple thumbs up/down per engine (discussed, not built)
 - [ ] **Testing complete flow** — End-to-end: buy → email → signup → dashboard → copy engine → paste to Claude
 - [ ] **Admin password change** — Change from default before launch
-- [ ] **Custom domain DNS** — Verify `aiconversionengine.io` fully propagated and SSL active
+- [ ] **Custom domain DNS** — Connect `www.forgeai.digital` in Netlify → update DNS in domain registrar, verify SSL
+- [ ] **Netlify SITE_URL env var** — Must be set to `https://www.forgeai.digital` in Netlify dashboard before launch
 
 ### 🔮 Future / Parked
 - [ ] Claude Plugin/Skills conversion (when Anthropic opens web plugin ecosystem)
@@ -390,6 +414,8 @@ const PRICING = { IN: { core: 999, complete: 1999, upgrade: 1000 } ... }
 | Test prices live in production | HIGH | Active — revert after testing |
 | Engine content is empty | HIGH | Active — fill before selling |
 | Admin password is default | MEDIUM | Active — change before launch |
+| SITE_URL env var not set in Netlify | MEDIUM | Active — must set to `https://www.forgeai.digital` before launch |
+| Custom domain not yet connected | MEDIUM | Active — connect domain in Netlify, update DNS |
 | Cashfree tier detection fallback breaks with test prices | LOW | Mitigated — order_note detection fires first |
 | Supabase anon key in public JS (supabase.js) | LOW | Acceptable — anon key is limited by RLS; service key is server-only |
 | Gumroad doesn't pass frontend fb_event_id | LOW | Known — uses `purchase_gum_{sale_id}` as eventId, low duplicate risk |
@@ -413,3 +439,67 @@ const PRICING = { IN: { core: 999, complete: 1999, upgrade: 1000 } ... }
 7. **Admin panel is not linked publicly** — Access via direct URL only. No nav link from portal pages.
 
 8. **`panelContentCache` doesn't cache fallback strings** — Cache only stores real content (strings not starting with `[`), preventing stale fallback text from persisting across sessions.
+
+9. **Separate success pages for upgrade vs new purchase** — `payment-success.html` uses URL param `plan=upgrade` to detect and show distinct UI: "You're now Pro!" + Open Dashboard (upgrade) vs "Payment Successful!" + Create Account (new purchase). This prevents confusion where upgrading users were shown the signup flow.
+
+10. **Domain migrated to `www.forgeai.digital`** — All code fallbacks, email `from` address, and Resend sender updated. `SITE_URL` Netlify env var must be updated manually before launch to match.
+
+11. **`forgot-password.html` was silently broken since launch** — The submit handler was a fake 1200ms setTimeout simulation. No email was ever sent. Supabase scripts were missing too. Both fixed. Passwords can now actually be reset.
+
+---
+
+## 15. Session Log
+
+### Session 1 — 2026-03-28
+- Added `last_updated` + `update_notes` to engines table
+- Seeded all 14 engines with default values
+- Updated admin-write.js auto-stamp logic
+- Added onboarding overlay (4-step, localStorage-gated)
+- Added Help & Support floating button on all 5 portal pages
+- Added copy disclaimer toast to dashboard copy functions
+- Added ConversionOS Pipeline guide (E0-E7) to dashboard
+- Engine 0 featured with "START HERE" badge
+- Seeded content_items rows for engine-0 through engine-7 (empty)
+- Set test prices: ₹2 / ₹5 / ₹3
+- Updated welcome.html plan names (Core→Starter, Complete→Pro)
+
+### Session 2 — 2026-03-28
+**Domain & Email:**
+- Production domain changed: `aiconversionengine.io` → `www.forgeai.digital`
+- Email sender changed: `onboarding@resend.dev` → `hello@forgeai.digital`
+- All SITE_URL fallbacks in serverless functions updated
+
+**Payment Flow Fixes:**
+- `payment-success.html`: Added separate `#upgrade-state` div, JS detects `plan=upgrade` URL param, shows appropriate UI
+- `create-order.js`: `cancel_url` now conditional — upgrades → `/dashboard.html`, new purchases → `/#pricing`
+- `payment-success.html`: Added `?preview=1` mode to skip verification for design review
+
+**welcome.html Bug Fix:**
+- `applyTier()` was checking `t === 'complete'` — Pro users saw Starter UI. Fixed to `t === 'pro'`
+- Removed orphaned `const tier = 'core'` placeholder
+- Added `fb_event_id` to upgrade checkout `submitCheckout()` call
+
+**Auth Pages — Brand Color Fix (all pages had black `#1A1A1A` instead of orange `#F97316`):**
+- `login.html`: `--accent`, `--accent-hover`, `--input-focus`, focus shadow, logo shadow → orange; tagline rewritten
+- `signup.html`: Same color changes; card title → "Activate Your Access"; subtitle → post-purchase focused copy
+- `forgot-password.html`: Same color changes
+- `reset-password.html`: Logo mark + input focus → orange
+
+**forgot-password.html Critical Fix:**
+- Supabase scripts were completely absent — page was broken
+- Submit handler was a fake 1200ms setTimeout simulation — no email was ever sent
+- Fixed: Added Supabase scripts, implemented real `supabase.auth.resetPasswordForEmail()` call with `redirectTo: https://www.forgeai.digital/reset-password.html`
+- Resend button also fixed to call Supabase properly
+
+**access-denied.html Rebrand:**
+- H1: "Access Denied" → "Pro Access Required"
+- Copy updated to highlight Pro value
+- Primary button: "Go to Login" → "Upgrade to Pro →" (links to /dashboard.html)
+- Secondary: "Back to Dashboard" → "Sign In"
+- Button color: `#1A1A1A` → `#F97316`
+
+**Email Templates (cashfree-webhook.js + gumroad-webhook.js):**
+- Email CTA button: `background:#1A1A1A` → `background:#F97316`
+- `accessInfo` for Pro: updated to "All engines + ConversionOS Pipeline (8 specialist engines) + every future engine, forever"
+- `accessInfo` for Starter: updated to "4 Starter engines — EmailForge, CopyForge, SocialForge, MusicForge"
+- Upgrade email: completely redesigned with proper branded HTML template

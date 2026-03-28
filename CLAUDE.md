@@ -50,7 +50,7 @@ The payment flow is the most critical path. It touches: `index.html` → `create
 
 ## SECTION B — Current Phase (Updates With Project Phase)
 
-### Phase: PRE-LAUNCH (as of 2026-03-28)
+### Phase: PRE-LAUNCH (as of 2026-03-28, Session 2)
 
 **Current priority:** Complete testing → revert test prices → fill engine content → launch.
 
@@ -115,14 +115,15 @@ Default: `ForgeAI@Admin2025`. Must change in Netlify env vars before launch.
 ### B4. Contacts & Accounts
 
 - **Support email:** thesaanvihub@gmail.com (all Help & Support modal links go here)
-- **Email from:** `onboarding@resend.dev` via Resend API
+- **Email from:** `hello@forgeai.digital` via Resend API ← UPDATED (was `onboarding@resend.dev`)
 - **Netlify site name:** ai-conversion-engines
 - **Supabase project ID:** hutpurgvhbiouxmqkmpz
-- **Production domain:** aiconversionengine.io
+- **Production domain:** `www.forgeai.digital` ← UPDATED (was `aiconversionengine.io`)
+- **SITE_URL env var:** Must be set to `https://www.forgeai.digital` in Netlify before launch
 
 ---
 
-### B5. What Was Done in Last Session (2026-03-28)
+### B5. What Was Done in Last Session (2026-03-28, Session 1)
 
 - Added `last_updated` (date) and `update_notes` (text) columns to Supabase `engines` table
 - Seeded all 14 engines with `last_updated = '2026-03-01'` and default update notes
@@ -137,3 +138,35 @@ Default: `ForgeAI@Admin2025`. Must change in Netlify env vars before launch.
 - Added ConversionOS Pipeline full guide with E0-E7 engine cards to dashboard
 - Engine 0 featured with gradient, border, "START HERE" badge
 - Seeded `content_items` rows for engine-0 through engine-7 (empty)
+
+---
+
+### B6. What Was Done in Session 2 (2026-03-28)
+
+**Domain & Email (updated everywhere in code):**
+- Production domain: `aiconversionengine.io` → `www.forgeai.digital`
+- Email from: `onboarding@resend.dev` → `hello@forgeai.digital`
+- SITE_URL fallback in all functions updated to `https://www.forgeai.digital`
+
+**Payment Flow Fixes:**
+- `payment-success.html`: Split into two states — `#success-state` (new purchase) and `#upgrade-state` (upgrade). JS reads `plan=upgrade` from URL param.
+- `create-order.js`: `cancel_url` now conditional — upgrades go to `/dashboard.html`, new purchases go to `/#pricing`
+- `payment-success.html`: Added `?preview=1` mode for design review without payment
+
+**Critical Bug Fixes:**
+- `welcome.html`: `applyTier()` was checking `t === 'complete'` — Pro users saw wrong UI. Fixed to `t === 'pro'`
+- `forgot-password.html`: Submit was a fake setTimeout simulation. No Supabase scripts loaded. No emails were ever sent. Fully rewritten with real `supabase.auth.resetPasswordForEmail()` call.
+
+**Brand Color Consistency (all auth pages had black `#1A1A1A` instead of brand orange `#F97316`):**
+- Fixed: `login.html`, `signup.html`, `forgot-password.html`, `reset-password.html`, `access-denied.html`
+- All CTAs, logo marks, input focus states, box shadows now use `#F97316` / `#EA580C`
+
+**Copywriting Updates:**
+- `login.html`: Tagline rewritten for returning users
+- `signup.html`: Title "Activate Your Access", subtitle references the payment they already made
+- `access-denied.html`: "Access Denied" → "Pro Access Required", upgrade CTA added
+
+**Email Templates (cashfree-webhook.js + gumroad-webhook.js):**
+- CTA buttons: `#1A1A1A` → `#F97316`
+- `accessInfo` copy updated for Starter and Pro
+- Upgrade email completely redesigned with branded HTML template
