@@ -18,7 +18,7 @@ const SUPABASE_URL     = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE = process.env.SUPABASE_SERVICE_KEY;
 const CF_SECRET_KEY    = process.env.CASHFREE_WEBHOOK_SECRET;
 const RESEND_API_KEY   = process.env.RESEND_API_KEY;
-const SITE_URL         = (process.env.SITE_URL || 'https://ai-conversion-engines.netlify.app').replace(/\/$/, '');
+const SITE_URL         = (process.env.SITE_URL || 'https://www.forgeai.digital').replace(/\/$/, '');
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE);
 
@@ -221,8 +221,8 @@ async function sendWelcomeEmail({ email, name, licenseKey, tier, currency }) {
     ? (tier === 'pro' ? '₹1,999' : '₹999')
     : (tier === 'pro' ? '$67' : '$37');
   const accessInfo = tier === 'pro'
-    ? 'All 11 engines + ForgeAI Pipeline + ALL future engines forever'
-    : '4 Starter engines (EmailForge, Copy Forge, Social Forge, Music Forge)';
+    ? 'All engines + ConversionOS Pipeline (8 specialist engines) + every future engine, forever'
+    : '4 Starter engines — EmailForge, CopyForge, SocialForge, MusicForge';
 
   const emailHtml = `<!DOCTYPE html><html><head><meta charset="UTF-8">
   <style>
@@ -240,7 +240,7 @@ async function sendWelcomeEmail({ email, name, licenseKey, tier, currency }) {
     .step{display:flex;gap:14px;margin-bottom:12px;align-items:flex-start}
     .sn{width:24px;height:24px;min-width:24px;background:#1A1A1A;color:#fff;border-radius:50%;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;margin-top:1px}
     .st{font-size:14px;color:#4A4A4A;line-height:1.5}
-    .btn{display:block;background:#1A1A1A;color:#fff!important;text-decoration:none;text-align:center;padding:15px 24px;border-radius:10px;font-size:15px;font-weight:800;margin:24px 0}
+    .btn{display:block;background:#F97316;color:#fff!important;text-decoration:none;text-align:center;padding:15px 24px;border-radius:10px;font-size:15px;font-weight:800;margin:24px 0}
     hr{border:none;border-top:1px solid #E2E0DA;margin:24px 0}
     .footer{font-size:12px;color:#ABABAB;text-align:center;line-height:1.6}
   </style></head><body>
@@ -275,7 +275,7 @@ async function sendWelcomeEmail({ email, name, licenseKey, tier, currency }) {
     method: 'POST',
     headers: { 'Authorization': `Bearer ${RESEND_API_KEY}`, 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      from:    'ForgeAI <onboarding@resend.dev>',
+      from:    'ForgeAI <hello@forgeai.digital>',
       to:      [email],
       subject: `⚡ Your ForgeAI ${planLabel} is ready — license key inside`,
       html:    emailHtml,
@@ -292,16 +292,40 @@ async function sendUpgradeEmail(email) {
     method: 'POST',
     headers: { 'Authorization': `Bearer ${RESEND_API_KEY}`, 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      from:    'ForgeAI <onboarding@resend.dev>',
+      from:    'ForgeAI <hello@forgeai.digital>',
       to:      [email],
-      subject: '🚀 Upgraded to ForgeAI Pro!',
-      html: `<div style="font-family:sans-serif;padding:40px;max-width:500px;margin:0 auto">
-        <h2>⚡ ForgeAI</h2>
-        <h1>You've been upgraded to Pro! 🚀</h1>
-        <p>Your account now has access to all engines + ALL future engines forever.</p>
-        <a href="${SITE_URL}/dashboard.html" style="display:block;background:#1A1A1A;color:#fff;text-decoration:none;text-align:center;padding:14px;border-radius:10px;font-weight:700;margin:24px 0">Open Dashboard →</a>
-        <p style="font-size:12px;color:#999">© ForgeAI · The AI Engine for Everything</p>
-      </div>`,
+      subject: '⚡ You\'re now Pro — all engines unlocked',
+      html: `<!DOCTYPE html><html><head><meta charset="UTF-8">
+      <style>
+        body{font-family:-apple-system,sans-serif;background:#F4F2EE;margin:0;padding:24px}
+        .card{background:#fff;border-radius:16px;max-width:520px;margin:0 auto;padding:36px 32px;border:1px solid #E2E0DA}
+        .badge{font-size:11px;font-weight:700;background:#FFF4E6;color:#C2410C;padding:3px 10px;border-radius:100px}
+        h1{font-size:24px;font-weight:800;color:#1A1A1A;margin:0 0 8px}
+        p{font-size:15px;color:#4A4A4A;line-height:1.65;margin:0 0 14px}
+        .unlock-box{background:#FFF7ED;border:1px solid #FED7AA;border-radius:10px;padding:16px 18px;margin:0 0 20px}
+        .unlock-box p{color:#C2410C;margin:0;font-size:14px}
+        hr{border:none;border-top:1px solid #E2E0DA;margin:24px 0}
+        .footer{font-size:12px;color:#ABABAB;text-align:center;line-height:1.6}
+      </style></head><body>
+      <div class="card">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:28px">
+          <span style="font-size:20px">⚡</span>
+          <span style="font-size:16px;font-weight:800;color:#1A1A1A">ForgeAI</span>
+          <span class="badge">Pro Plan</span>
+        </div>
+        <h1>You're now Pro! 🚀</h1>
+        <p>Your upgrade is confirmed. Every engine is now unlocked — including the full ConversionOS Pipeline and all future engines we add.</p>
+        <div class="unlock-box">
+          <p>✅ <strong>Full access active:</strong> All engines + ConversionOS Pipeline (8 specialist engines) + every future engine, forever</p>
+        </div>
+        <p>Open your dashboard — everything is already unlocked. No restart needed.</p>
+        <a href="${SITE_URL}/dashboard.html" style="display:block;background:#F97316;color:#fff!important;text-decoration:none;text-align:center;padding:15px 24px;border-radius:10px;font-size:15px;font-weight:800;margin:24px 0">Open Dashboard →</a>
+        <hr>
+        <div class="footer">
+          <p>Questions? Reply to this email — we read every one.</p>
+          <p style="margin-top:8px">© ForgeAI · The AI Engine for Everything</p>
+        </div>
+      </div></body></html>`,
     }),
   });
 }

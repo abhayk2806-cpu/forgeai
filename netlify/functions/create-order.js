@@ -59,7 +59,7 @@ exports.handler = async (event) => {
   const appId     = process.env.CASHFREE_APP_ID;
   const secretKey = process.env.CASHFREE_SECRET_KEY;
   const cfEnv     = (process.env.CASHFREE_ENV || 'PROD').toUpperCase();
-  const siteUrl   = (process.env.SITE_URL || 'https://ai-conversion-engines.netlify.app').replace(/\/$/, '');
+  const siteUrl   = (process.env.SITE_URL || 'https://www.forgeai.digital').replace(/\/$/, '');
 
   if (!appId || !secretKey) {
     console.error('Missing Cashfree credentials');

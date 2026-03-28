@@ -11,7 +11,7 @@ const { sendEvent }    = require('./fb-capi');
 const SUPABASE_URL     = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE = process.env.SUPABASE_SERVICE_KEY;
 const RESEND_API_KEY   = process.env.RESEND_API_KEY;
-const SITE_URL         = (process.env.SITE_URL || 'https://ai-conversion-engines.netlify.app').replace(/\/$/, '');
+const SITE_URL         = (process.env.SITE_URL || 'https://www.forgeai.digital').replace(/\/$/, '');
 
 const PRODUCT_PLAN_MAP = {
   'forgeai-starter':       'starter',
@@ -180,7 +180,7 @@ async function sendUpgradeEmail(email) {
     method: 'POST',
     headers: { 'Authorization': `Bearer ${RESEND_API_KEY}`, 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      from:    'ForgeAI <onboarding@resend.dev>',
+      from:    'ForgeAI <hello@forgeai.digital>',
       to:      [email],
       subject: '🚀 You\'ve been upgraded to ForgeAI Pro!',
       html: `<div style="font-family:sans-serif;padding:40px;max-width:500px;margin:0 auto">
@@ -217,8 +217,8 @@ async function sendWelcomeEmail({ email, name, licenseKey, tier, currency }) {
     ? (tier === 'pro' ? '$67' : '$37')
     : (tier === 'pro' ? '₹1,999' : '₹999');
   const accessInfo = tier === 'pro'
-    ? 'All 11 engines + ForgeAI Pipeline + ALL future engines forever'
-    : '4 Starter engines (EmailForge, Copy Forge, Social Forge, Music Forge)';
+    ? 'All engines + ConversionOS Pipeline (8 specialist engines) + every future engine, forever'
+    : '4 Starter engines — EmailForge, CopyForge, SocialForge, MusicForge';
 
   const emailHtml = `<!DOCTYPE html><html><head><meta charset="UTF-8">
   <style>
@@ -236,7 +236,7 @@ async function sendWelcomeEmail({ email, name, licenseKey, tier, currency }) {
     .step{display:flex;gap:14px;margin-bottom:12px;align-items:flex-start}
     .sn{width:24px;height:24px;min-width:24px;background:#1A1A1A;color:#fff;border-radius:50%;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;margin-top:1px}
     .st{font-size:14px;color:#4A4A4A;line-height:1.5}
-    .btn{display:block;background:#1A1A1A;color:#fff!important;text-decoration:none;text-align:center;padding:15px 24px;border-radius:10px;font-size:15px;font-weight:800;margin:24px 0}
+    .btn{display:block;background:#F97316;color:#fff!important;text-decoration:none;text-align:center;padding:15px 24px;border-radius:10px;font-size:15px;font-weight:800;margin:24px 0}
     hr{border:none;border-top:1px solid #E2E0DA;margin:24px 0}
     .footer{font-size:12px;color:#ABABAB;text-align:center;line-height:1.6}
   </style></head><body>
@@ -271,7 +271,7 @@ async function sendWelcomeEmail({ email, name, licenseKey, tier, currency }) {
     method:  'POST',
     headers: { 'Authorization': `Bearer ${RESEND_API_KEY}`, 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      from:    'ForgeAI <onboarding@resend.dev>',
+      from:    'ForgeAI <hello@forgeai.digital>',
       to:      [email],
       subject: `⚡ Your ForgeAI ${planLabel} license key is here!`,
       html:    emailHtml,
