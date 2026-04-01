@@ -221,8 +221,8 @@ async function sendWelcomeEmail({ email, name, licenseKey, tier, currency }) {
     ? (tier === 'pro' ? '₹1,999' : '₹999')
     : (tier === 'pro' ? '$67' : '$37');
   const accessInfo = tier === 'pro'
-    ? 'All engines + ConversionOS Pipeline (8 specialist engines) + every future engine, forever'
-    : '4 Starter engines — EmailForge, CopyForge, SocialForge, MusicForge';
+    ? 'All 13+ engines — Copy Forge, Email Forge, Social Forge, SEO Forge, Ad Forge, Video Forge, Image Forge, Resume Forge, Page Forge, Engine Builder, Claude Skill Forge, Instagram Growth Forge, Music Forge + ForgeAI Pipeline + every future engine, forever'
+    : '4 Starter engines — Copy Forge, Email Forge, Social Forge, Music Forge';
 
   const emailHtml = `<!DOCTYPE html><html><head><meta charset="UTF-8">
   <style>
