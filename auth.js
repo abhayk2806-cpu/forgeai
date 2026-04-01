@@ -70,18 +70,15 @@ document.documentElement.style.visibility = 'hidden';
   let tier = 'starter';
 
   try {
-    // Try by user_id first
-    let { data: p } = await sb.from('purchases').select('tier')
-      .eq('user_id', user.id).order('created_at', { ascending: false }).limit(1).single();
-
-    if (!p?.tier) {
-      // Fallback: by email
-      const res = await sb.from('purchases').select('tier')
-        .eq('email', user.email).order('created_at', { ascending: false }).limit(1).single();
-      p = res.data;
-    }
-
-    if (p?.tier) tier = p.tier;
+    // Fetch all purchases matching user_id OR email — pick highest tier (pro > starter)
+    // This handles cases where new purchases are inserted without user_id (pre-signup payments)
+    const [byId, byEmail] = await Promise.all([
+      sb.from('purchases').select('tier').eq('user_id', user.id).order('created_at', { ascending: false }),
+      sb.from('purchases').select('tier').eq('email', user.email).order('created_at', { ascending: false }),
+    ]);
+    const allTiers = [...(byId.data || []), ...(byEmail.data || [])].map(r => r.tier).filter(Boolean);
+    if (allTiers.includes('pro'))     tier = 'pro';
+    else if (allTiers.length > 0)     tier = 'starter';
   } catch(e) { /* default starter */ }
 
   window.COSU = { id: user.id, email: user.email, tier, isPro: tier === 'pro', session };

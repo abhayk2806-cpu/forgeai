@@ -18,8 +18,8 @@
       --text: #1A1A1A;
       --muted: #7A7A7A;
       --border: #E2E0DA;
-      --accent: #1A1A1A;
-      --accent-hover: #000;
+      --accent: #F97316;
+      --accent-hover: #EA580C;
       --success: #2D6A4F;
       --success-bg: #EDFBF3;
       --success-border: #B7E8CC;
@@ -520,12 +520,12 @@
       Purchase Confirmed
     </div>
 
-    <h1 class="hero-title">
+    <h1 class="hero-title" id="hero-title">
       You're in.<br>
       Let's build <span>funnels</span><br>that convert.
     </h1>
 
-    <p class="hero-desc">
+    <p class="hero-desc" id="hero-desc">
       Your ForgeAI engines are ready. Follow the steps below to get started in the next 5 minutes.
     </p>
   </div>
@@ -749,17 +749,24 @@
     </a>
 
     <p class="support-note">
-      Need help? Email us at <a href="/cdn-cgi/l/email-protection#9eeaf6fbedfffff0e8f7f6ebfcdef9f3fff7f2b0fdf1f3"><span class="__cf_email__" data-cfemail="75011d100614141b031c1d0017351218141c195b161a18">[email&#160;protected]</span></a> — we reply within 24 hrs.
+      Need help? Email us at <a href="mailto:hello@forgeai.digital">hello@forgeai.digital</a> — we reply within 24 hrs.
+    </p>
+  </div>
+
+  <!-- Facebook Ads Disclaimer -->
+  <div style="max-width:560px;width:100%;margin-top:32px;padding-top:24px;border-top:1px solid var(--border);">
+    <p style="font-size:11px;color:#ABABAB;line-height:1.7;text-align:center;">
+      <strong style="color:#C0B8B0;">Disclaimer:</strong> This site and its products are not affiliated with, endorsed by, or sponsored by Meta Platforms, Inc. (Facebook/Instagram). Facebook® and Instagram® are registered trademarks of Meta Platforms, Inc. Results mentioned on this site are illustrative and not guaranteed — individual results will vary based on effort, experience, and market conditions. This product is intended for educational and business productivity purposes only.
     </p>
   </div>
 
 </div><!-- /page-wrapper -->
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script>
   // ─── Confetti burst ───────────────────────────────────────────────
   (function spawnConfetti() {
     const wrap   = document.getElementById('confetti-wrap');
-    const colors = ['#1A1A1A','#4A90E2','#27AE60','#F39C12','#E74C3C','#8E44AD','#F4F2EE'];
+    const colors = ['#F97316','#EA580C','#4A90E2','#27AE60','#F39C12','#E74C3C','#1A1A1A'];
     const count  = 60;
     for (let i = 0; i < count; i++) {
       const el = document.createElement('div');
@@ -782,72 +789,59 @@
   const PRICING = {
     IN: {
       currency: 'INR',
-      symbol: '₹',
-      core:     2,
-      complete: 5,
-      upgrade:  3,
-      // Gumroad/Cashfree India upgrade link — replace with real link
-      upgradeUrl: 'https://app.cashfree.com/payment-link/UPGRADE_INR',
+      symbol:   '₹',
+      starter:  999,
+      pro:      1999,
+      upgrade:  1000,
       stripText: (p) => `Upgrade to Pro for just <strong>₹${p.upgrade.toLocaleString('en-IN')} more</strong>`
     },
     DEFAULT: {
       currency: 'USD',
-      symbol: '$',
-      core:     37,
-      complete: 67,
+      symbol:   '$',
+      starter:  37,
+      pro:      67,
       upgrade:  30,
-      // Gumroad global upgrade link — replace with real link
-      upgradeUrl: 'https://habitforge24.gumroad.com/l/conversionos-upgrade',
       stripText: (p) => `Upgrade to Pro for just <strong>$${p.upgrade} more</strong>`
     }
   };
 
-  // ─── IP-based country detection ──────────────────────────────────
-  // Uses free ipapi.co API (no key needed, 1000 req/day free)
-  async function detectCountry() {
-    try {
-      const res  = await fetch('https://ipapi.co/json/', { signal: AbortSignal.timeout(4000) });
-      const data = await res.json();
-      return data.country_code || 'DEFAULT';
-    } catch (e) {
-      // If API fails (network issue, ad blocker), fallback to DEFAULT (USD)
-      console.warn('IP detection failed, defaulting to USD:', e.message);
-      return 'DEFAULT';
-    }
-  }
-
   // ─── Apply pricing to upgrade strip ──────────────────────────────
   function applyPricing(countryCode) {
     const p = countryCode === 'IN' ? PRICING.IN : PRICING.DEFAULT;
-
-    // Update upgrade strip text
     const textEl = document.getElementById('upgrade-price-text');
-    textEl.innerHTML = p.stripText(p);
+    if (textEl) textEl.innerHTML = p.stripText(p);
 
-    // Update upgrade button — use checkout modal for INR, Gumroad for USD
     const upgradeBtn = document.getElementById('upgrade-btn');
-    upgradeBtn.onclick = function(e) {
-      e.preventDefault();
-      if (countryCode === 'IN') {
-        openCheckoutModal('upgrade');
-      } else {
-        window.location.href = 'https://habitforge24.gumroad.com/l/conversionos-upgrade';
-      }
-    };
+    if (upgradeBtn) {
+      upgradeBtn.onclick = function(e) {
+        e.preventDefault();
+        if (countryCode === 'IN') {
+          openCheckoutModal('upgrade');
+        } else {
+          window.location.href = 'https://habitforge24.gumroad.com/l/conversionos-upgrade';
+        }
+      };
+    }
   }
 
   // ─── Tier-based display ───────────────────────────────────────────
   function applyTier(t) {
     if (t === 'pro') {
-      // Update badge
+      // Update plan badge
       const badge = document.getElementById('tier-badge');
-      badge.textContent = 'Pro';
-      badge.className   = 'tier-badge tier-pro';
+      if (badge) { badge.textContent = 'Pro'; badge.className = 'tier-badge tier-pro'; }
 
-      // Unlock all tools
+      // Update hero copy for Pro users
+      const heroTitle = document.getElementById('hero-title');
+      const heroDesc  = document.getElementById('hero-desc');
+      if (heroTitle) heroTitle.innerHTML = `All engines unlocked.<br>You're on <span>Pro</span> — let's build.`;
+      if (heroDesc)  heroDesc.textContent = 'Every ForgeAI engine is now active. The full ConversionOS Pipeline is yours. Start with any engine below.';
+
+      // Unlock all Pro tools
       [8, 9, 10, 12, 13, 14].forEach(id => {
         const row  = document.getElementById(`tool-row-${id}`);
         const lock = document.getElementById(`lock-${id}`);
+        if (!row || !lock) return;
         row.classList.remove('locked');
         row.querySelector('.item-name').style.color = '';
         lock.className = 'item-check';
@@ -855,8 +849,9 @@
         row.querySelector('.item-desc').textContent = 'Included in your Pro plan';
       });
 
-      // Hide upgrade strip entirely for Pro users
-      document.getElementById('upgrade-strip').style.display = 'none';
+      // Hide upgrade strip for Pro users
+      const strip = document.getElementById('upgrade-strip');
+      if (strip) strip.style.display = 'none';
     }
   }
 
@@ -864,7 +859,7 @@
   // ─── Init ────────────────────────────────────────────────────────
   async function init() {
     // Get tier from COSU
-    const t = window.COSU?.tier ?? 'core';
+    const t = window.COSU?.tier ?? 'starter';
     applyTier(t);
 
     // Detect country for pricing

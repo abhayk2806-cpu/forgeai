@@ -93,8 +93,8 @@ exports.handler = async (event) => {
     const orderNote = (order.order_note ?? '').toLowerCase();
     let tier = null;
 
-    if      (orderNote.includes('pro'))     tier = 'pro';
-    else if (orderNote.includes('upgrade')) tier = 'upgrade';
+    if      (orderNote.includes('upgrade')) tier = 'upgrade';
+    else if (orderNote.includes('pro'))     tier = 'pro';
     else if (orderNote.includes('starter')) tier = 'starter';
     else    tier = amount >= 1800 ? 'pro' : 'starter';
 
