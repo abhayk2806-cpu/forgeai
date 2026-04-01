@@ -181,7 +181,7 @@
   if (isPreview) {
     document.getElementById('verifying-state').style.display = 'none';
     document.getElementById(isUpgrade ? 'upgrade-state' : 'success-state').style.display = 'block';
-    document.documentElement.style.visibility = '';
+    document.documentElement.style.visibility = 'visible';
   // No order_id — redirect based on context
   } else if (!orderId) {
     window.location.replace(isUpgrade ? '/dashboard.html' : '/#pricing');
@@ -200,7 +200,7 @@
         document.getElementById('verifying-state').style.display = 'none';
         // Show upgrade-specific or new-purchase success UI
         document.getElementById(isUpgrade ? 'upgrade-state' : 'success-state').style.display = 'block';
-        document.documentElement.style.visibility = '';
+        document.documentElement.style.visibility = 'visible';
       } else {
         // Not paid — redirect back appropriately
         window.location.replace(failRedirect);
@@ -209,7 +209,7 @@
       // On network error — show page anyway (webhook is the source of truth)
       document.getElementById('verifying-state').style.display = 'none';
       document.getElementById(isUpgrade ? 'upgrade-state' : 'success-state').style.display = 'block';
-      document.documentElement.style.visibility = '';
+      document.documentElement.style.visibility = 'visible';
     }
   }
 </script>
