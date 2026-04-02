@@ -90,13 +90,19 @@ exports.handler = async (event) => {
     }
 
     // ── Determine tier ─────────────────────────────────────
-    const orderNote = (order.order_note ?? '').toLowerCase();
+    // order_tags.plan is the explicit source of truth (set by create-order.js)
+    // order_note is NOT reliably present in Cashfree webhook payloads — never use alone
+    const planTag   = (orderTags.plan    ?? '').toLowerCase();
+    const orderNote = (order.order_note  ?? '').toLowerCase();
+    const tierSource = planTag || orderNote; // prefer explicit tag
     let tier = null;
 
-    if      (orderNote.includes('upgrade')) tier = 'upgrade';
-    else if (orderNote.includes('pro'))     tier = 'pro';
-    else if (orderNote.includes('starter')) tier = 'starter';
+    if      (tierSource.includes('upgrade')) tier = 'upgrade';
+    else if (tierSource.includes('pro'))     tier = 'pro';
+    else if (tierSource.includes('starter')) tier = 'starter';
     else    tier = amount >= 1800 ? 'pro' : 'starter';
+
+    console.log('Tier detection:', { planTag, orderNote, tierSource, tier, amount });
 
     // ── Handle Upgrade ─────────────────────────────────────
     if (tier === 'upgrade') {
