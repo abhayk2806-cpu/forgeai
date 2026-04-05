@@ -393,14 +393,14 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
       <button class="guide-nav-btn" onclick="switchGuide('page-forge', this)">🏠 Page Forge</button>
       <button class="guide-nav-btn" onclick="switchGuide('business-forge', this)">💼 Business Forge</button>
       <button class="guide-nav-btn" onclick="switchGuide('marketing-forge', this)">📈 Marketing Forge</button>
-      <button class="guide-nav-btn" onclick="switchGuide('pixel-ai', this)">🎨 Pixel AI</button>
+      <button class="guide-nav-btn" onclick="switchGuide('pixel-ai', this)">🎨 Image Prompt Architect</button>
       <button class="guide-nav-btn" onclick="switchGuide('cinematic-ai', this)">🎬 Cinematic AI</button>
       <button class="guide-nav-btn" onclick="switchGuide('ig-forge', this)">📸 Instagram Forge</button>
       <button class="guide-nav-btn" onclick="switchGuide('music-forge', this)">🎵 Music Forge</button>
-      <button class="guide-nav-btn" onclick="switchGuide('engine-forge', this)">⚙️ Engine Forge</button>
-      <button class="guide-nav-btn" onclick="switchGuide('skill-forge', this)">🧠 Skill Forge</button>
       <button class="guide-nav-btn" onclick="switchGuide('resume-forge', this)">📄 Resume Forge</button>
-      <button class="guide-nav-btn" onclick="switchGuide('pipeline', this)" style="background:var(--accent);border-color:var(--accent);color:white">⚡ ConversionOS Pipeline</button>
+      <button class="guide-nav-btn" onclick="switchGuide('fb-tracking', this)">🔬 Facebook Ads Tracking</button>
+      <button class="guide-nav-btn" onclick="switchGuide('google-tracking', this)">📊 Google Ads Tracking</button>
+      <button class="guide-nav-btn" onclick="switchGuide('pipeline', this)" style="background:var(--accent);border-color:var(--accent);color:white">⚡ ForgeAI Pipeline</button>
     </div>
 
     <!-- ══ GETTING STARTED ══ -->
@@ -421,7 +421,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
             <span class="g-callout-icon">💡</span>
             <span>You are not prompting an AI. You are activating a specialist. The engine is the training — your chat message is just the task you give to that specialist.</span>
           </div>
-          <p class="g-p">ForgeAI has 16 engines covering copywriting, ads, SEO, email, social media, video, music, business planning, Instagram growth, resume writing, and more. The ConversionOS Pipeline combines them all into one complete marketing system.</p>
+          <p class="g-p">ForgeAI has 15+ engines covering copywriting, ads, SEO, email, social media, video, music, business planning, Instagram growth, resume writing, tracking, and more. The ForgeAI Pipeline combines 8 of them into one complete marketing funnel system.</p>
         </div>
       </div>
 
@@ -883,13 +883,13 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
       </div>
     </div>
 
-    <!-- ══ PIXEL AI ══ -->
+    <!-- ══ IMAGE PROMPT ARCHITECT ══ -->
     <div class="guide-panel" id="guide-pixel-ai">
       <div class="guide-article">
         <div class="guide-article-header">
           <div class="guide-article-icon">🎨</div>
           <div>
-            <div class="guide-article-title">Pixel AI</div>
+            <div class="guide-article-title">Image Prompt Architect</div>
             <div class="guide-article-desc">Professional AI image prompts for Midjourney, DALL-E &amp; Stable Diffusion</div>
           </div>
         </div>
@@ -1051,85 +1051,97 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
       </div>
     </div>
 
-    <!-- ══ ENGINE FORGE ══ -->
-    <div class="guide-panel" id="guide-engine-forge">
+    <!-- ══ FACEBOOK ADS TRACKING ══ -->
+    <div class="guide-panel" id="guide-fb-tracking">
       <div class="guide-article">
         <div class="guide-article-header">
-          <div class="guide-article-icon">⚙️</div>
+          <div class="guide-article-icon">🔬</div>
           <div>
-            <div class="guide-article-title">Engine Forge</div>
-            <div class="guide-article-desc">Build your own custom AI engines for Claude</div>
+            <div class="guide-article-title">Facebook Ads Tracking Engine</div>
+            <div class="guide-article-desc">End-to-end Meta Pixel, CAPI &amp; conversion tracking diagnosis</div>
           </div>
         </div>
         <div class="guide-article-body">
           <div class="g-h2">What This Engine Does</div>
-          <p class="g-p">Engine Forge is meta — it's an engine that builds other engines. It helps you create custom AI system prompts for specific roles, tasks, or niches. Use it if you want to build your own AI specialist for your business, create engines to sell to clients, or build internal tools for your team. The output is a ready-to-use system prompt you can paste into any LLM project.</p>
+          <p class="g-p">Facebook Ads Tracking Engine is a step-by-step Meta tracking consultant. It doesn't ask "is your pixel working?" and take your word for it — it walks you through 3 ground truth checks (Pixel Helper, Events Manager diagnostics, Event Match Quality scores) to verify your actual tracking state. Then it diagnoses which of 6 failure paths you're on and builds a priority-ordered fix plan with step-by-step implementation. Covers Pixel setup, CAPI, COD tracking gaps, WhatsApp attribution, iOS 14+ data loss, and payment gateway redirect issues.</p>
           <div class="g-list">
-            <div class="g-list-item">Custom AI assistants for specific business roles</div>
-            <div class="g-list-item">Niche engines to sell as a product or service</div>
-            <div class="g-list-item">Internal team automation tools</div>
-            <div class="g-list-item">Prompt engineering for any use case</div>
+            <div class="g-list-item">Pixel installation and event setup verification</div>
+            <div class="g-list-item">Conversions API (CAPI) setup for server-side tracking</div>
+            <div class="g-list-item">COD order tracking (the blind spot most Indian advertisers miss)</div>
+            <div class="g-list-item">Payment gateway redirect fix (Razorpay, CCAvenue, Cashfree)</div>
+            <div class="g-list-item">WhatsApp attribution and Event Match Quality improvement</div>
+          </div>
+
+          <div class="g-callout" style="margin-top:16px">
+            <span class="g-callout-icon">⚠️</span>
+            <span><strong>India-specific warning:</strong> If 40–50% of your orders are COD, those conversions are invisible to Facebook Pixel. The engine diagnoses this and shows you how to fix it.</span>
           </div>
 
           <div class="g-h2">Your First Chat Message</div>
           <div class="g-first-chat">
             <div class="g-first-chat-label">Example first message</div>
-            <div class="g-first-chat-text">"Build me a custom AI engine for [role/job]. The engine should make Claude an expert in [specific domain]. Target user: [who will use it]. Main tasks it should handle: [list 3–5 tasks]. Tone and personality: [formal / casual / direct / encouraging]. Output format preferences: [bullet points / structured sections / conversational]. Any specific knowledge or frameworks it must always use: [describe]."</div>
+            <div class="g-first-chat-text">"I need to diagnose and fix my Facebook tracking. My business is [e-commerce / lead gen / coaching / SaaS]. Platform: [Shopify / WooCommerce / WordPress / custom site]. Payment gateway: [Razorpay / Cashfree / Stripe / etc.]. COD orders: [yes/no, approx % of orders]. Current issues: [what I'm seeing wrong — inflated ROAS, missing purchases, low EMQ score, etc.]. Monthly ad spend: [amount]. My technical level: [beginner / intermediate / advanced]."</div>
           </div>
           <div class="g-callout">
             <span class="g-callout-icon">💡</span>
-            <span>The more precisely you define the role, the better the engine. Think of it like writing a job description — what does this AI need to know, how should it behave, and what should it always and never do?</span>
+            <span>The engine will ask you to run Pixel Helper and paste what it shows. Have Chrome with Pixel Helper installed before you start — the whole diagnosis depends on real verified data, not what you think is working.</span>
           </div>
 
           <div class="g-h2">What to Tell It</div>
           <div class="g-list">
-            <div class="g-list-item">The role or specialist the engine should simulate</div>
-            <div class="g-list-item">Who will be using the engine and for what tasks</div>
-            <div class="g-list-item">Must-have behaviours, tone, and output format</div>
-            <div class="g-list-item">Any frameworks, methods, or knowledge to bake in</div>
-            <div class="g-list-item">What the engine should never do or say</div>
+            <div class="g-list-item">Your business type and website platform</div>
+            <div class="g-list-item">Your payment gateway (critical for redirect issue diagnosis)</div>
+            <div class="g-list-item">Whether you take COD orders and what % of total</div>
+            <div class="g-list-item">Your current tracking issues (what's wrong, what's missing)</div>
+            <div class="g-list-item">Your monthly ad spend (determines how much accuracy matters)</div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- ══ SKILL FORGE ══ -->
-    <div class="guide-panel" id="guide-skill-forge">
+    <!-- ══ GOOGLE ADS TRACKING ══ -->
+    <div class="guide-panel" id="guide-google-tracking">
       <div class="guide-article">
         <div class="guide-article-header">
-          <div class="guide-article-icon">🧠</div>
+          <div class="guide-article-icon">📊</div>
           <div>
-            <div class="guide-article-title">Skill Forge</div>
-            <div class="guide-article-desc">Learn any skill 10x faster with AI</div>
+            <div class="guide-article-title">Google Ads Tracking Engine</div>
+            <div class="guide-article-desc">GA4, Google Ads Tag, Enhanced Conversions &amp; Smart Bidding diagnosis</div>
           </div>
         </div>
         <div class="guide-article-body">
           <div class="g-h2">What This Engine Does</div>
-          <p class="g-p">Skill Forge turns Claude into a personalised learning coach. It doesn't give you a generic "how to learn X" guide — it builds a structured, progressive curriculum tailored to your current level, time availability, and end goal. Use it when you want to learn something new fast and need a real plan with exercises, milestones, and resources — not just a list of YouTube videos.</p>
+          <p class="g-p">Google Ads Tracking Engine is the companion to the Facebook tracking engine — same verification-first methodology, but for the Google stack. It verifies your GA4 property, Google Ads Tag, and conversion actions using Tag Assistant before building any plan. Then it diagnoses where the 3-layer tracking system (GA4 → Google Ads Tag → Enhanced Conversions) is broken and gives you a priority-ordered fix plan. Covers payment gateway redirect issues, COD tracking gaps, call conversion tracking, SaaS cross-domain tracking, Consent Mode v2, and Smart Bidding signal quality.</p>
           <div class="g-list">
-            <div class="g-list-item">30-day and 90-day personalised skill roadmaps</div>
-            <div class="g-list-item">Structured curriculum with daily/weekly tasks</div>
-            <div class="g-list-item">Practice exercises and feedback loops</div>
-            <div class="g-list-item">Mental models and expert frameworks for fast learning</div>
+            <div class="g-list-item">GA4 property and Google Ads Tag verification</div>
+            <div class="g-list-item">Conversion action setup and duplicate tag detection</div>
+            <div class="g-list-item">Enhanced Conversions (Google's equivalent of Facebook CAPI)</div>
+            <div class="g-list-item">COD tracking fix and phone call conversion setup</div>
+            <div class="g-list-item">SaaS cross-domain tracking for app subdomain setups</div>
+          </div>
+
+          <div class="g-callout" style="margin-top:16px">
+            <span class="g-callout-icon">⚠️</span>
+            <span><strong>Smart Bidding feeds on your conversion signals.</strong> If your tracking is broken, Smart Bidding optimises for the wrong thing — or nothing at all. Fix the signals first.</span>
           </div>
 
           <div class="g-h2">Your First Chat Message</div>
           <div class="g-first-chat">
             <div class="g-first-chat-label">Example first message</div>
-            <div class="g-first-chat-text">"Create a 30-day learning roadmap for [skill you want to learn]. My current level: [complete beginner / some basics / intermediate]. Time I can give: [X hours per day / week]. My end goal: [what you want to be able to do with this skill]. My learning style: [visual / reading / doing / watching]. Resources I already have: [books, courses, tools]."</div>
+            <div class="g-first-chat-text">"I need to diagnose and fix my Google Ads tracking. My business: [e-commerce / lead gen / SaaS / local business]. Platform: [Shopify / WooCommerce / WordPress / Wix / custom site]. Payment gateway: [Razorpay / Cashfree / Stripe / etc.]. Current problem: [missing conversions / wrong conversion counts / Smart Bidding not working / COD orders not tracked]. Monthly Google Ads spend: [amount]. My tech level: [beginner / intermediate / advanced]."</div>
           </div>
           <div class="g-callout">
             <span class="g-callout-icon">💡</span>
-            <span>Be honest about your time — if you can only give 30 minutes a day, say that. A realistic plan you follow beats an ambitious plan you abandon after 3 days.</span>
+            <span>Before starting, open tagassistant.google.com and run a check on your site. The engine will ask for the Tag Assistant results — having them ready saves significant back-and-forth.</span>
           </div>
 
           <div class="g-h2">What to Tell It</div>
           <div class="g-list">
-            <div class="g-list-item">The exact skill you want to learn</div>
-            <div class="g-list-item">Your current level (be honest)</div>
-            <div class="g-list-item">Time available per day or week</div>
-            <div class="g-list-item">Your specific end goal with this skill</div>
-            <div class="g-list-item">Any constraints (budget, tools, prior experience)</div>
+            <div class="g-list-item">Your business type and website platform</div>
+            <div class="g-list-item">Your payment gateway (redirect issue is the most common conversion killer)</div>
+            <div class="g-list-item">Whether phone calls are a conversion event for your business</div>
+            <div class="g-list-item">For SaaS: whether your app is on a subdomain (e.g., app.yoursite.com)</div>
+            <div class="g-list-item">Your current tracking symptoms — what's wrong, what numbers look off</div>
           </div>
         </div>
       </div>
@@ -1177,13 +1189,13 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
       </div>
     </div>
 
-    <!-- ══ CONVERSIONOS PIPELINE ══ -->
+    <!-- ══ FORGEAI PIPELINE ══ -->
     <div class="guide-panel" id="guide-pipeline">
       <div class="guide-article">
         <div class="guide-article-header">
           <div class="guide-article-icon" style="background:var(--accent);color:white">⚡</div>
           <div>
-            <div class="guide-article-title">ConversionOS Pipeline</div>
+            <div class="guide-article-title">ForgeAI Pipeline</div>
             <div class="guide-article-desc">The complete AI-powered conversion funnel — from zero to selling</div>
           </div>
         </div>
@@ -1195,8 +1207,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
             <span>This is a <strong>Pro Exclusive</strong> system — 8 connected AI engines that build a complete marketing funnel. What agencies charge ₹50,000–₹2,00,000 to build, you can get done in 1–4 hours.</span>
           </div>
 
-          <div class="g-h2">What is the ConversionOS Pipeline?</div>
-          <p class="g-p">ConversionOS Pipeline is not a single engine — it's a complete conversion funnel building system made of 8 connected engines working together. When you use the full pipeline, you get complete offer positioning, deep audience psychology, strategic hooks, Meta ad copy, full landing page architecture, email follow-up sequences, and a performance diagnosis system.</p>
+          <div class="g-h2">What is the ForgeAI Pipeline?</div>
+          <p class="g-p">ForgeAI Pipeline is not a single engine — it's a complete conversion funnel building system made of 8 connected engines working together. When you use the full pipeline, you get complete offer positioning, deep audience psychology, strategic hooks, Meta ad copy, full landing page architecture, email follow-up sequences, and a performance diagnosis system.</p>
 
           <!-- THE 8 PIPELINE ENGINES — CARDS -->
           <div class="g-h2" style="margin-top:28px">The 8 Engines Inside the Pipeline</div>
@@ -1280,7 +1292,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
               <div style="width:40px;height:40px;border-radius:10px;background:#F0FDF4;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">📧</div>
               <div style="flex:1">
                 <div style="font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:4px">Engine 6 — Email Follow-Up</div>
-                <div style="font-size:13px;color:var(--text-muted);line-height:1.6">Automatically detects which email sequence you need based on your funnel type. Outputs a complete 3–4 email sequence with full copy, subject lines, and send schedule. Designed to convert leads who didn't buy the first time.</div>
+                <div style="font-size:13px;color:var(--text-muted);line-height:1.6">Automatically detects which email sequence you need based on your funnel type. Outputs a complete 5–10 email sequence with full copy, subject lines, and optimised send schedule. Designed to convert leads who didn't buy the first time.</div>
               </div>
             </div>
           </div>
@@ -1291,7 +1303,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
               <div style="width:40px;height:40px;border-radius:10px;background:#FFF1F2;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">📊</div>
               <div style="flex:1">
                 <div style="font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:4px">Engine 7 — Performance Diagnosis</div>
-                <div style="font-size:13px;color:var(--text-muted);line-height:1.6">Run this only after your funnel has been live for 2+ weeks with real data. Paste your Foundation Block + real metrics. It diagnoses what is wrong and gives you a funnel health score, root cause identification, and a prioritised fix sequence.</div>
+                <div style="font-size:13px;color:var(--text-muted);line-height:1.6">Run this after your funnel has been live for 7+ days with real data. Paste your Foundation Block + real metrics. It diagnoses what is wrong and gives you a funnel health score, root cause identification, and a prioritised fix sequence.</div>
               </div>
             </div>
           </div>
@@ -1323,7 +1335,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
               <div class="g-step-num">1</div>
               <div class="g-step-body">
                 <div class="g-step-title">Start with Engine 0 — Intelligent Router</div>
-                <div class="g-step-desc">Go to your dashboard → ConversionOS Pipeline section → click Engine 0. Copy it, open Claude.ai, create a new Project, paste as instruction. Start a new chat and tell it what you want to build. Engine 0 asks: what to build, which mode (Quick or Deep), then your business details. At the end it gives you your Foundation Block + build plan.</div>
+                <div class="g-step-desc">Go to your dashboard → ForgeAI Pipeline section → click Engine 0. Copy it, open Claude.ai, create a new Project, paste as instruction. Start a new chat and tell it what you want to build. Engine 0 asks: what to build, which mode (Quick or Deep), then your business details. At the end it gives you your Foundation Block + build plan.</div>
               </div>
             </div>
             <div class="g-step">
@@ -1371,8 +1383,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
             <div class="g-step">
               <div class="g-step-num">8</div>
               <div class="g-step-body">
-                <div class="g-step-title">Run Engine 7 — Performance Diagnosis (after 2+ weeks live)</div>
-                <div class="g-step-desc">⚠️ Run Engine 7 only AFTER your funnel has been live for 2+ weeks with real data. Collect your real metrics (ad CTR, page conversion rate, ROAS, email open rates). Paste Foundation Block + real metrics. Engine 7 diagnoses what is wrong and gives you a prioritised fix plan.</div>
+                <div class="g-step-title">Run Engine 7 — Performance Diagnosis (after 7+ days live)</div>
+                <div class="g-step-desc">⚠️ Run Engine 7 only AFTER your funnel has been live for 7+ days with real data. Collect your real metrics (ad CTR, page conversion rate, ROAS, email open rates). Paste Foundation Block + real metrics. Engine 7 diagnoses what is wrong and gives you a prioritised fix plan.</div>
               </div>
             </div>
           </div>
