@@ -342,6 +342,47 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
   .topbar-title{font-size:15px}
   .ep-use-cases{grid-template-columns:1fr}
 }
+
+/* ═══════════════════════════════
+   PIPELINE HOME SECTION
+   ═══════════════════════════════ */
+.pipeline-home{margin:28px 0 4px}
+.pipeline-home-header{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:4px;flex-wrap:wrap}
+.pipeline-home-title-row{display:flex;align-items:center;gap:10px}
+.pipeline-home-icon{width:36px;height:36px;border-radius:10px;background:var(--accent);color:white;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+.pipeline-home-title{font-size:15px;font-weight:700;color:var(--text-primary)}
+.pipeline-home-badge{font-size:10px;font-weight:700;background:#FFF4ED;color:var(--accent);border:1px solid rgba(249,115,22,.25);padding:2px 8px;border-radius:20px;letter-spacing:.4px;text-transform:uppercase;white-space:nowrap}
+.pipeline-home-sub{font-size:12px;color:var(--text-muted);margin-top:2px;margin-bottom:14px}
+.pipeline-guide-link{font-size:12px;font-weight:600;color:var(--accent);cursor:pointer;white-space:nowrap;text-decoration:none;background:none;border:none;padding:0}
+.pipeline-guide-link:hover{text-decoration:underline}
+
+/* Horizontal scroll track */
+.pipeline-track-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:10px;margin:0 -4px}
+.pipeline-track-wrap::-webkit-scrollbar{height:4px}
+.pipeline-track-wrap::-webkit-scrollbar-track{background:var(--bg);border-radius:2px}
+.pipeline-track-wrap::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.pipeline-track{display:flex;gap:10px;padding:4px 4px 2px;min-width:max-content}
+
+/* Individual pipeline engine card */
+.pipe-card{width:172px;flex-shrink:0;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 14px 12px;cursor:pointer;transition:all .18s;position:relative;display:flex;flex-direction:column;gap:6px}
+.pipe-card:hover{border-color:var(--accent);box-shadow:0 4px 16px rgba(249,115,22,.1);transform:translateY(-2px)}
+.pipe-card.pipe-e0{background:linear-gradient(135deg,#fff7ed,#fff3e0);border:1.5px solid var(--accent)}
+.pipe-card-num{font-size:10px;font-weight:700;color:var(--accent);letter-spacing:.6px;text-transform:uppercase;font-family:monospace}
+.pipe-card-icon{font-size:22px;line-height:1;margin:2px 0}
+.pipe-card-name{font-size:12px;font-weight:700;color:var(--text-primary);line-height:1.35}
+.pipe-card-desc{font-size:11px;color:var(--text-muted);line-height:1.5;flex:1}
+.pipe-card-out{font-size:10px;color:var(--accent);font-weight:600;margin-top:4px;padding-top:6px;border-top:1px solid rgba(249,115,22,.15)}
+.pipe-start-badge{position:absolute;top:8px;right:8px;font-size:9px;font-weight:700;background:var(--accent);color:white;padding:2px 6px;border-radius:10px;letter-spacing:.3px}
+.pipe-card-arrow{position:absolute;right:-11px;top:50%;transform:translateY(-50%);font-size:13px;color:var(--text-muted);z-index:1;pointer-events:none;background:var(--bg);padding:1px 2px;border-radius:4px;line-height:1}
+.pipe-card:last-child .pipe-card-arrow{display:none}
+.pipe-locked-overlay{position:absolute;inset:0;border-radius:12px;background:rgba(255,255,255,.55);backdrop-filter:blur(2px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:default}
+.pipe-lock-icon{font-size:18px}
+.pipe-lock-label{font-size:10px;font-weight:700;color:var(--text-muted)}
+
+@media(max-width:480px){
+  .pipe-card{width:154px;padding:12px 12px 10px}
+  .pipeline-home-header{gap:6px}
+}
 </style>
 </head>
 <body>
@@ -399,7 +440,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
     <div class="stats-grid">
       <div class="stat-card"><div class="stat-icon" style="background:#FFF4ED">⚡</div><div><div class="stat-value" id="statTotal">—</div><div class="stat-label">Total Engines</div></div></div>
       <div class="stat-card"><div class="stat-icon" style="background:var(--green-light)">✅</div><div><div class="stat-value" id="statUnlocked">—</div><div class="stat-label">Unlocked</div></div></div>
-      <div class="stat-card"><div class="stat-icon" style="background:var(--blue-light)">📋</div><div><div class="stat-value">24</div><div class="stat-label">Engines Available</div></div></div>
+      <div class="stat-card"><div class="stat-icon" style="background:var(--blue-light)">📋</div><div><div class="stat-value">31</div><div class="stat-label">Engines Available</div></div></div>
       <div class="stat-card"><div class="stat-icon" style="background:#F5F3FF">🔄</div><div><div class="stat-value">∞</div><div class="stat-label">Updates</div></div></div>
     </div>
 
@@ -437,6 +478,27 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
         <div class="skeleton-card"><div class="skeleton" style="height:20px;width:60%;margin-bottom:10px"></div><div class="skeleton" style="height:14px;width:90%;margin-bottom:6px"></div><div class="skeleton" style="height:14px;width:75%"></div></div>
       </div>
     </div>
+
+    <!-- ══ FORGEAI PIPELINE SECTION ══ -->
+    <div class="pipeline-home" id="dashPipelineSection" style="display:none">
+      <div class="pipeline-home-header">
+        <div>
+          <div class="pipeline-home-title-row">
+            <div class="pipeline-home-icon">⚡</div>
+            <div class="pipeline-home-title">ForgeAI Pipeline</div>
+            <span class="pipeline-home-badge">Pro Exclusive</span>
+          </div>
+          <div class="pipeline-home-sub">8 connected engines — run in order to build a complete sales funnel</div>
+        </div>
+        <button class="pipeline-guide-link" onclick="showView('guides');setTimeout(()=>switchGuide('pipeline',document.querySelector('[onclick*=pipeline]')),200)">Read Guide →</button>
+      </div>
+      <div class="pipeline-track-wrap">
+        <div class="pipeline-track" id="pipelineTrack">
+          <!-- Rendered by JS -->
+        </div>
+      </div>
+    </div>
+
   </div>
 
   <!-- GUIDES VIEW -->
@@ -2022,6 +2084,60 @@ function renderDashboardRecent() {
   container.innerHTML = '';
   container.appendChild(grid);
   document.getElementById('dashSubtitle').textContent = `${allEngines.length} engines available`;
+  renderPipelineSection();
+}
+
+// ─── RENDER PIPELINE HOME SECTION ───
+const PIPELINE_IDS = ['conversionos','pipeline-e1','pipeline-e2','pipeline-e3','pipeline-e4','pipeline-e5','pipeline-e6','pipeline-e7'];
+const PIPELINE_META = {
+  'conversionos':  { num:'E0', label:'START HERE', desc:'Collects your business info, builds the Foundation Block, routes you to the right engines.', out:'Foundation Block + build plan' },
+  'pipeline-e1':   { num:'E1', label:'', desc:'Scores your offer and rebuilds the core message so buyers feel the value immediately.', out:'Stronger offer + updated block' },
+  'pipeline-e2':   { num:'E2', label:'', desc:'Maps your buyer\'s fears, objections, and trust gaps so every word hits the right nerve.', out:'Psychology map + updated block' },
+  'pipeline-e3':   { num:'E3', label:'', desc:'Generates 3–5 ranked hooks for your ads and page — cold vs warm traffic explained.', out:'Ranked hooks + updated block' },
+  'pipeline-e4':   { num:'E4', label:'', desc:'Writes 3–7 complete Meta ad variations using your hooks — copy, creative, compliance check.', out:'Ready-to-run ads + updated block' },
+  'pipeline-e5':   { num:'E5', label:'', desc:'Builds your full landing page section by section using everything from E0–E4.', out:'Full landing page copy + block' },
+  'pipeline-e6':   { num:'E6', label:'', desc:'Writes a complete 5–10 email sequence for leads who visited but didn\'t buy.', out:'Email sequence + send schedule' },
+  'pipeline-e7':   { num:'E7', label:'⚠️ After 7+ days live', desc:'Diagnoses your live funnel with real data — health score, root cause, fix priority.', out:'Fix plan + health score' }
+};
+
+function renderPipelineSection() {
+  const section = document.getElementById('dashPipelineSection');
+  const track   = document.getElementById('pipelineTrack');
+  if(!section || !track) return;
+
+  // Pull pipeline engines from allEngines in fixed order
+  const pipeEngines = PIPELINE_IDS.map(id => allEngines.find(e => e.id === id)).filter(Boolean);
+  if(!pipeEngines.length) { section.style.display='none'; return; }
+
+  const isPro = userTier === 'pro';
+  track.innerHTML = '';
+
+  pipeEngines.forEach((e, idx) => {
+    const meta    = PIPELINE_META[e.id] || { num:'E'+idx, label:'', desc:'', out:'' };
+    const isE0    = e.id === 'conversionos';
+    const isE7    = e.id === 'pipeline-e7';
+    const locked  = !isPro;
+    const isLast  = idx === pipeEngines.length - 1;
+
+    const card = document.createElement('div');
+    card.className = 'pipe-card' + (isE0 ? ' pipe-e0' : '') + (locked ? ' pipe-locked' : '');
+    card.style.position = 'relative';
+    if(!locked) card.onclick = () => openModal(e.id);
+
+    card.innerHTML = `
+      ${isE0 ? '<span class="pipe-start-badge">⭐ START</span>' : ''}
+      ${!isLast ? '<span class="pipe-card-arrow">→</span>' : ''}
+      <div class="pipe-card-num">${meta.num}</div>
+      <div class="pipe-card-icon">${e.icon || '⚡'}</div>
+      <div class="pipe-card-name">${e.name.replace('Pipeline Engine '+idx+' — ','').replace('Pipeline Engine 0 — ','')}</div>
+      <div class="pipe-card-desc">${meta.desc}</div>
+      <div class="pipe-card-out">📦 ${meta.out}</div>
+      ${locked ? `<div class="pipe-locked-overlay"><div class="pipe-lock-icon">🔒</div><div class="pipe-lock-label">Pro Only</div></div>` : ''}
+    `;
+    track.appendChild(card);
+  });
+
+  section.style.display = 'block';
 }
 
 // ─── RENDER FILTER TABS ───
