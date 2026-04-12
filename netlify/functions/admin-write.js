@@ -87,11 +87,9 @@ exports.handler = async (event) => {
     else if (action === 'engine:update') {
       const { id, ...fields } = payload;
       if (!id) throw new Error('id required');
-      // Auto-stamp last_updated to today whenever an engine is updated
-      // Only if update_notes is also being changed (meaningful update)
-      if (fields.update_notes !== undefined) {
-        fields.last_updated = new Date().toISOString().slice(0, 10);
-      }
+      // Auto-stamp last_updated to today on ANY field change
+      // This ensures the date always reflects the actual last modification
+      fields.last_updated = new Date().toISOString().slice(0, 10);
       ({ error } = await sb.from('engines').update(fields).eq('id', id));
     }
 

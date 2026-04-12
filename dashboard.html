@@ -46,7 +46,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 
 /* MAIN */
 .main{margin-left:var(--sidebar-w);min-height:100vh}
-.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:14px 28px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:50}
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:14px 28px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:99}
 .hamburger{display:none;background:none;border:none;cursor:pointer;padding:4px;font-size:22px;color:var(--text)}
 .topbar-title{font-size:18px;font-weight:700;color:var(--text);flex:1}
 .topbar-search{display:flex;align-items:center;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px 12px;gap:8px;width:240px}
@@ -288,9 +288,73 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
   .ep-header,.ep-toolbar{padding-left:16px;padding-right:16px}
 }
 @media(max-width:480px){.stats-grid{grid-template-columns:1fr 1fr;gap:8px}}
+
+/* ── DISCLAIMER TICKER ── */
+.disclaimer-ticker{background:#1A1A1A;color:rgba(255,255,255,.75);font-size:12px;font-weight:500;padding:7px 0;overflow:hidden;white-space:nowrap;position:sticky;top:0;z-index:200;flex-shrink:0}
+.disclaimer-ticker-track{display:inline-flex;gap:0;animation:tickerScroll 40s linear infinite}
+.disclaimer-ticker-track:hover{animation-play-state:paused}
+.disclaimer-ticker-item{padding:0 48px;white-space:nowrap}
+.disclaimer-ticker-item .ticker-warn{color:#F97316;font-weight:700;margin-right:6px}
+@keyframes tickerScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
+/* ── DISCLAIMER MODAL ── */
+.disclaimer-modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:600;align-items:center;justify-content:center;padding:16px}
+.disclaimer-modal-overlay.open{display:flex}
+.disclaimer-modal{background:white;border-radius:16px;width:100%;max-width:480px;box-shadow:0 25px 60px rgba(0,0,0,.2);overflow:hidden;animation:disclaimerIn .2s cubic-bezier(.34,1.56,.64,1)}
+@keyframes disclaimerIn{from{opacity:0;transform:scale(.95) translateY(8px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.disclaimer-modal-header{background:linear-gradient(135deg,#FFF4ED,#FFF8F4);border-bottom:1px solid #FED7AA;padding:20px 24px 16px;display:flex;align-items:center;gap:14px}
+.disclaimer-modal-icon{font-size:28px;flex-shrink:0}
+.disclaimer-modal-title{font-size:16px;font-weight:700;color:#92400E}
+.disclaimer-modal-engine{font-size:12px;color:#B45309;margin-top:2px;font-family:'JetBrains Mono',monospace}
+.disclaimer-modal-body{padding:20px 24px}
+.disclaimer-modal-text{font-size:13px;color:#374151;line-height:1.7;margin-bottom:16px}
+.disclaimer-modal-text strong{color:#1A1A1A}
+.disclaimer-checkbox-row{display:flex;align-items:flex-start;gap:10px;padding:12px 14px;background:#F9FAFB;border:1px solid #E5E7EB;border-radius:10px;cursor:pointer;margin-bottom:8px;transition:all .15s}
+.disclaimer-checkbox-row:hover{background:#F3F4F6;border-color:#D1D5DB}
+.disclaimer-checkbox-row input[type=checkbox]{width:18px;height:18px;flex-shrink:0;cursor:pointer;accent-color:#F97316;margin-top:1px}
+.disclaimer-checkbox-label{font-size:13px;color:#374151;line-height:1.5;cursor:pointer;font-weight:500}
+.disclaimer-skiprow{display:flex;align-items:center;gap:8px;padding:8px 0;cursor:pointer}
+.disclaimer-skiprow input[type=checkbox]{width:15px;height:15px;cursor:pointer;accent-color:#6B7280}
+.disclaimer-skiprow-label{font-size:12px;color:#6B7280;cursor:pointer}
+.disclaimer-agree-btn{width:100%;padding:13px;background:#F97316;color:white;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;margin-top:16px;display:flex;align-items:center;justify-content:center;gap:8px}
+.disclaimer-agree-btn:disabled{background:#D1D5DB;color:#9CA3AF;cursor:not-allowed;transform:none}
+.disclaimer-agree-btn:not(:disabled):hover{background:#EA6C0A}
+
+/* ── MOBILE IMPROVEMENTS ── */
+@media(max-width:768px){
+  .disclaimer-ticker{font-size:11px}
+  .guide-nav{gap:4px;padding-bottom:12px}
+  .guide-nav-btn{padding:6px 10px;font-size:11px}
+  .modal{margin:0;border-radius:16px 16px 0 0;max-height:85vh;position:fixed;bottom:0;left:0;right:0;max-width:100%}
+  .modal-overlay{align-items:flex-end;padding:0}
+  .modal-header{padding:16px 16px 12px;border-radius:16px 16px 0 0}
+  .modal-body{padding:14px 16px 24px}
+  .ep-toolbar{flex-wrap:wrap;gap:8px}
+  .ep-btn{flex:1;min-width:120px;justify-content:center;padding:10px 12px}
+  .ep-header{padding:16px 16px 14px}
+  .stat-card{padding:12px 14px}
+  .disclaimer-modal{border-radius:16px 16px 0 0;margin:0;position:fixed;bottom:0;left:0;right:0;max-width:100%}
+  .disclaimer-modal-overlay{align-items:flex-end;padding:0}
+  .engines-grid{grid-template-columns:1fr}
+}
+@media(max-width:480px){
+  .stats-grid{grid-template-columns:1fr 1fr;gap:8px}
+  .topbar-title{font-size:15px}
+  .ep-use-cases{grid-template-columns:1fr}
+}
 </style>
 </head>
 <body>
+
+<!-- ══ DISCLAIMER TICKER ══ -->
+<div class="disclaimer-ticker">
+  <div class="disclaimer-ticker-track" id="tickerTrack">
+    <span class="disclaimer-ticker-item"><span class="ticker-warn">⚠️ IMPORTANT:</span> ForgeAI engines are AI thinking systems. All output requires human review and verification before use. AI cannot guarantee accuracy — always fact-check and apply your own judgment before acting on any result.</span>
+    <span class="disclaimer-ticker-item"><span class="ticker-warn">⚠️ IMPORTANT:</span> ForgeAI engines are AI thinking systems. All output requires human review and verification before use. AI cannot guarantee accuracy — always fact-check and apply your own judgment before acting on any result.</span>
+    <span class="disclaimer-ticker-item"><span class="ticker-warn">⚠️ IMPORTANT:</span> ForgeAI engines are AI thinking systems. All output requires human review and verification before use. AI cannot guarantee accuracy — always fact-check and apply your own judgment before acting on any result.</span>
+    <span class="disclaimer-ticker-item"><span class="ticker-warn">⚠️ IMPORTANT:</span> ForgeAI engines are AI thinking systems. All output requires human review and verification before use. AI cannot guarantee accuracy — always fact-check and apply your own judgment before acting on any result.</span>
+  </div>
+</div>
 
 <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
 
@@ -335,7 +399,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
     <div class="stats-grid">
       <div class="stat-card"><div class="stat-icon" style="background:#FFF4ED">⚡</div><div><div class="stat-value" id="statTotal">—</div><div class="stat-label">Total Engines</div></div></div>
       <div class="stat-card"><div class="stat-icon" style="background:var(--green-light)">✅</div><div><div class="stat-value" id="statUnlocked">—</div><div class="stat-label">Unlocked</div></div></div>
-      <div class="stat-card"><div class="stat-icon" style="background:var(--blue-light)">📋</div><div><div class="stat-value">15</div><div class="stat-label">Templates</div></div></div>
+      <div class="stat-card"><div class="stat-icon" style="background:var(--blue-light)">📋</div><div><div class="stat-value">24</div><div class="stat-label">Engines Available</div></div></div>
       <div class="stat-card"><div class="stat-icon" style="background:#F5F3FF">🔄</div><div><div class="stat-value">∞</div><div class="stat-label">Updates</div></div></div>
     </div>
 
@@ -1530,7 +1594,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
           <div class="guide-article-icon" style="background:var(--accent);color:white">⚡</div>
           <div>
             <div class="guide-article-title">ForgeAI Pipeline</div>
-            <div class="guide-article-desc">The complete AI-powered conversion funnel — from zero to selling</div>
+            <div class="guide-article-desc">8 engines that work together to build your complete sales funnel — from idea to launch</div>
           </div>
         </div>
         <div class="guide-article-body">
@@ -1538,30 +1602,31 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
           <!-- WHAT IS THE PIPELINE -->
           <div class="g-callout" style="margin-bottom:20px">
             <span class="g-callout-icon">⭐</span>
-            <span>This is a <strong>Pro Exclusive</strong> system — 8 connected AI engines that build a complete marketing funnel. What agencies charge ₹50,000–₹2,00,000 to build, you can get done in 1–4 hours.</span>
+            <span>This is a <strong>Pro Exclusive</strong> feature. What a professional marketing agency charges ₹50,000–₹2,00,000 to build, you can get done in 1–4 hours using the Pipeline.</span>
           </div>
 
           <div class="g-h2">What is the ForgeAI Pipeline?</div>
-          <p class="g-p">ForgeAI Pipeline is not a single engine — it's a complete conversion funnel building system made of 8 connected engines working together. When you use the full pipeline, you get complete offer positioning, deep audience psychology, strategic hooks, Meta ad copy, full landing page architecture, email follow-up sequences, and a performance diagnosis system.</p>
+          <p class="g-p">Think of the Pipeline as a team of 8 expert specialists — each one does one specific job, and they pass their work to the next. You just answer some questions, and by the end you have a complete sales system: your offer, your ads, your landing page, and your follow-up emails — all ready to go.</p>
+          <p class="g-p">You don't need any marketing knowledge. You don't need to write anything from scratch. You just copy each engine into Claude, answer the questions it asks, and it does the expert work for you.</p>
 
           <!-- THE 8 PIPELINE ENGINES — CARDS -->
-          <div class="g-h2" style="margin-top:28px">The 8 Engines Inside the Pipeline</div>
-          <p class="g-p" style="margin-bottom:16px">Click any engine below to open it from your dashboard. Always start with Engine 0 — it routes you to the right engines automatically.</p>
+          <div class="g-h2" style="margin-top:28px">Meet the 8 Engines</div>
+          <p class="g-p" style="margin-bottom:16px">Each engine has one job. They work in order — the output from one engine feeds into the next. You can find all 8 engines in your dashboard under <strong>Business &amp; Strategy</strong>.</p>
 
           <!-- ENGINE 0 — FEATURED -->
           <div style="background:linear-gradient(135deg,#fff7ed 0%,#fff3e0 100%);border:2px solid var(--accent);border-radius:16px;padding:20px 20px 16px;margin-bottom:12px;position:relative;overflow:hidden">
-            <div style="position:absolute;top:12px;right:14px;background:var(--accent);color:white;font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;letter-spacing:.5px">⭐ START HERE</div>
+            <div style="position:absolute;top:12px;right:14px;background:var(--accent);color:white;font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;letter-spacing:.5px">⭐ ALWAYS START HERE</div>
             <div style="display:flex;align-items:flex-start;gap:14px">
               <div style="width:48px;height:48px;border-radius:12px;background:var(--accent);color:white;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">🧭</div>
               <div style="flex:1">
                 <div style="font-size:15px;font-weight:700;color:var(--text-primary);margin-bottom:2px">Engine 0 — Intelligent Router</div>
-                <div style="font-size:12px;font-weight:600;color:var(--accent);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px">Master Controller</div>
-                <div style="font-size:13px;color:var(--text-muted);line-height:1.6">Your starting point for everything. Tell it what you want to build — it decides which engines you need, asks all the right questions in one session, creates your Foundation Block, and routes you to the next engine. You don't need to know the pipeline. Engine 0 figures it out for you.</div>
+                <div style="font-size:12px;font-weight:600;color:var(--accent);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">The Planner</div>
+                <div style="font-size:13px;color:var(--text-muted);line-height:1.7"><strong>What it does:</strong> This is your starting point — every single time. You tell it what you want to build (a course, a service, a product — anything). It asks you a few simple questions about your business, then creates a "Foundation Block" and tells you exactly which engines to run next. You don't need to figure out anything. Engine 0 makes the plan for you.</div>
               </div>
             </div>
-            <div style="margin-top:14px;padding-top:12px;border-top:1px solid rgba(249,115,22,.2);display:flex;gap:8px;align-items:center">
-              <span style="font-size:11px;color:var(--accent);font-weight:600">🔑 KEY OUTPUT:</span>
-              <span style="font-size:12px;color:var(--text-muted)">Foundation Block (JSON) + your personalised build plan</span>
+            <div style="margin-top:14px;padding-top:12px;border-top:1px solid rgba(249,115,22,.2);display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+              <span style="font-size:11px;color:var(--accent);font-weight:600">📦 YOU GET:</span>
+              <span style="font-size:12px;color:var(--text-muted)">Foundation Block (your business profile) + a step-by-step engine plan</span>
             </div>
           </div>
 
@@ -1570,8 +1635,10 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
             <div style="display:flex;align-items:flex-start;gap:12px">
               <div style="width:40px;height:40px;border-radius:10px;background:#FFF4ED;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">🎯</div>
               <div style="flex:1">
-                <div style="font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:4px">Engine 1 — Offer &amp; Positioning</div>
-                <div style="font-size:13px;color:var(--text-muted);line-height:1.6">Strengthens your offer's core positioning. Takes your Foundation Block and gives you: Positioning Strength Score, core promise, unique mechanism, and transformation map. Run this second — weak positioning makes everything downstream worse.</div>
+                <div style="font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:2px">Engine 1 — Offer &amp; Positioning</div>
+                <div style="font-size:11px;font-weight:600;color:var(--text-muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px">Runs after Engine 0</div>
+                <div style="font-size:13px;color:var(--text-muted);line-height:1.7"><strong>What it does:</strong> Takes your Foundation Block and looks at your offer — what you're selling and how you're explaining it. It tells you what's weak, what's strong, and rewrites your core message so that when someone hears it, they immediately understand why it's for them. Think of it as the engine that makes your product sound irresistible.</div>
+                <div style="margin-top:8px;font-size:12px;color:var(--accent);font-weight:500">📦 You get: A stronger offer message + updated Foundation Block</div>
               </div>
             </div>
           </div>
@@ -1581,8 +1648,10 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
             <div style="display:flex;align-items:flex-start;gap:12px">
               <div style="width:40px;height:40px;border-radius:10px;background:#F0FDF4;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">🧠</div>
               <div style="flex:1">
-                <div style="font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:4px">Engine 2 — Audience Psychology</div>
-                <div style="font-size:13px;color:var(--text-muted);line-height:1.6">Maps your buyer's psychology, objections, and trust gaps. Outputs a psychology map, objection hierarchy, trust gap score, and messaging tone guide. Run this after Engine 1 — it turns your positioning into buyer-specific language.</div>
+                <div style="font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:2px">Engine 2 — Audience Psychology</div>
+                <div style="font-size:11px;font-weight:600;color:var(--text-muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px">Runs after Engine 1</div>
+                <div style="font-size:13px;color:var(--text-muted);line-height:1.7"><strong>What it does:</strong> Figures out how your buyer thinks. What are they scared of? What stops them from buying? What do they need to hear before they trust you? This engine maps all of that out so that every word you write — in your ads, your page, your emails — speaks directly to what your buyer is already thinking. It's like reading your customer's mind.</div>
+                <div style="margin-top:8px;font-size:12px;color:var(--accent);font-weight:500">📦 You get: Buyer psychology map + objection list + updated Foundation Block</div>
               </div>
             </div>
           </div>
@@ -1592,8 +1661,10 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
             <div style="display:flex;align-items:flex-start;gap:12px">
               <div style="width:40px;height:40px;border-radius:10px;background:#FFF7ED;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">🪝</div>
               <div style="flex:1">
-                <div style="font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:4px">Engine 3 — Hook &amp; Angle</div>
-                <div style="font-size:13px;color:var(--text-muted);line-height:1.6">Generates 3–5 strategic hooks for your ads and landing page, scored and explained. Tells you the best hook for cold vs warm traffic. These hooks feed directly into Engine 4 — no re-entering data.</div>
+                <div style="font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:2px">Engine 3 — Hook &amp; Angle</div>
+                <div style="font-size:11px;font-weight:600;color:var(--text-muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px">Runs after Engine 2</div>
+                <div style="font-size:13px;color:var(--text-muted);line-height:1.7"><strong>What it does:</strong> Writes the opening lines that make people stop scrolling and pay attention. A "hook" is the first thing someone sees in your ad or post — and it decides whether they read more or keep scrolling. This engine gives you 3–5 different hooks with a score for each one, and tells you which hook works best for different types of audiences.</div>
+                <div style="margin-top:8px;font-size:12px;color:var(--accent);font-weight:500">📦 You get: 3–5 ranked hooks with explanations + updated Foundation Block</div>
               </div>
             </div>
           </div>
@@ -1603,8 +1674,10 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
             <div style="display:flex;align-items:flex-start;gap:12px">
               <div style="width:40px;height:40px;border-radius:10px;background:#EFF6FF;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">📱</div>
               <div style="flex:1">
-                <div style="font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:4px">Engine 4 — Meta Ads</div>
-                <div style="font-size:13px;color:var(--text-muted);line-height:1.6">Creates 3–7 complete Meta ad variations using your hooks from Engine 3 automatically. Includes compliance check, AI image prompts, and a rotation strategy. Outputs ready-to-launch ad copy.</div>
+                <div style="font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:2px">Engine 4 — Meta Ads</div>
+                <div style="font-size:11px;font-weight:600;color:var(--text-muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px">Runs after Engine 3</div>
+                <div style="font-size:13px;color:var(--text-muted);line-height:1.7"><strong>What it does:</strong> Writes your complete Facebook and Instagram ads — ready to copy and paste into your Ads Manager. It already knows your hooks from Engine 3, so you don't need to explain anything again. You get 3–7 different ad versions, image/video creative directions, a policy check (so your ad doesn't get rejected), and a plan for which ad to test first.</div>
+                <div style="margin-top:8px;font-size:12px;color:var(--accent);font-weight:500">📦 You get: 3–7 complete ad copies + creative prompts + updated Foundation Block</div>
               </div>
             </div>
           </div>
@@ -1614,8 +1687,10 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
             <div style="display:flex;align-items:flex-start;gap:12px">
               <div style="width:40px;height:40px;border-radius:10px;background:#F5F3FF;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">🏗️</div>
               <div style="flex:1">
-                <div style="font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:4px">Engine 5 — Conversion Page</div>
-                <div style="font-size:13px;color:var(--text-muted);line-height:1.6">Builds a complete landing page blueprint or code using everything from Engines 1–4. Outputs full page structure, visual strategy, and trust stack. Every section is informed by your positioning, psychology, and hooks — nothing generic.</div>
+                <div style="font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:2px">Engine 5 — Conversion Page</div>
+                <div style="font-size:11px;font-weight:600;color:var(--text-muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px">Runs after Engine 4</div>
+                <div style="font-size:13px;color:var(--text-muted);line-height:1.7"><strong>What it does:</strong> Builds your landing page — section by section. It knows everything about your offer, your buyer, your hooks, and your ads (from the previous engines), so it writes a page that actually connects with the people clicking your ads. Every headline, every bullet point, every button — all written specifically for your product and your audience. Nothing copy-pasted from a template.</div>
+                <div style="margin-top:8px;font-size:12px;color:var(--accent);font-weight:500">📦 You get: Full landing page copy + visual strategy + updated Foundation Block</div>
               </div>
             </div>
           </div>
@@ -1625,100 +1700,106 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
             <div style="display:flex;align-items:flex-start;gap:12px">
               <div style="width:40px;height:40px;border-radius:10px;background:#F0FDF4;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">📧</div>
               <div style="flex:1">
-                <div style="font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:4px">Engine 6 — Email Follow-Up</div>
-                <div style="font-size:13px;color:var(--text-muted);line-height:1.6">Automatically detects which email sequence you need based on your funnel type. Outputs a complete 5–10 email sequence with full copy, subject lines, and optimised send schedule. Designed to convert leads who didn't buy the first time.</div>
+                <div style="font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:2px">Engine 6 — Email Follow-Up</div>
+                <div style="font-size:11px;font-weight:600;color:var(--text-muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px">Runs after Engine 5</div>
+                <div style="font-size:13px;color:var(--text-muted);line-height:1.7"><strong>What it does:</strong> Most people who see your offer don't buy on the first visit — they need follow-up. This engine writes a complete series of 5–10 emails that go out automatically after someone visits your page. It figures out what type of email sequence you need (welcome, abandoned, launch, etc.) and writes every email with the subject line, the body, and exactly when to send it.</div>
+                <div style="margin-top:8px;font-size:12px;color:var(--accent);font-weight:500">📦 You get: 5–10 emails fully written + subject lines + send schedule</div>
               </div>
             </div>
           </div>
 
           <!-- ENGINE 7 -->
-          <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:24px">
+          <div style="background:var(--surface);border:1px solid #FECACA;border-radius:12px;padding:16px;margin-bottom:24px">
             <div style="display:flex;align-items:flex-start;gap:12px">
               <div style="width:40px;height:40px;border-radius:10px;background:#FFF1F2;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">📊</div>
               <div style="flex:1">
-                <div style="font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:4px">Engine 7 — Performance Diagnosis</div>
-                <div style="font-size:13px;color:var(--text-muted);line-height:1.6">Run this after your funnel has been live for 7+ days with real data. Paste your Foundation Block + real metrics. It diagnoses what is wrong and gives you a funnel health score, root cause identification, and a prioritised fix sequence.</div>
+                <div style="font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:2px">Engine 7 — Performance Diagnosis</div>
+                <div style="font-size:11px;font-weight:600;color:#EF4444;margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px">⚠️ Run ONLY after 7+ days of real data</div>
+                <div style="font-size:13px;color:var(--text-muted);line-height:1.7"><strong>What it does:</strong> Once your funnel has been running for at least a week and you have real numbers (how many people clicked, how many bought, what your cost per sale is), this engine looks at those numbers and tells you exactly what is broken. Not just "your ads are weak" — it pinpoints <em>which part</em> of the funnel has the problem, why, and which engine you should re-run to fix it.</div>
+                <div style="margin-top:8px;font-size:12px;color:var(--accent);font-weight:500">📦 You get: Funnel health score + root cause + prioritised fix plan</div>
               </div>
             </div>
           </div>
 
           <hr class="g-divider">
 
-          <!-- FOUNDATION BLOCK -->
-          <div class="g-h2">What is the Foundation Block?</div>
-          <p class="g-p">The Foundation Block is a data file (JSON format) that Engine 0 creates after collecting your business information. Think of it as your business profile that all engines share.</p>
-          <div class="g-list">
-            <div class="g-list-item">Engine 1 adds positioning data to the Foundation Block</div>
-            <div class="g-list-item">Engine 2 reads that and adds psychology data</div>
-            <div class="g-list-item">Engine 3 reads both and adds hooks</div>
-            <div class="g-list-item">Engine 4 uses the hooks from Engine 3 automatically — no re-entering</div>
-            <div class="g-list-item">By Engine 5 and 6, every engine already knows everything about your business</div>
-          </div>
-          <div class="g-callout" style="margin-top:14px">
+          <!-- FOUNDATION BLOCK — SIMPLE EXPLANATION -->
+          <div class="g-h2">What is the "Foundation Block"?</div>
+          <p class="g-p">When you run Engine 0 and answer its questions, it creates something called a <strong>Foundation Block</strong>. Think of it like a Google Form that gets filled in with your business details — your product, your audience, your goal, your budget. It looks like a block of text.</p>
+          <p class="g-p">Every engine after Engine 0 reads that Foundation Block. So instead of you having to explain your business again and again to each engine, you just paste the Foundation Block and the engine already knows everything. Each engine adds its own results to it and gives you an updated version to pass to the next engine.</p>
+          <div class="g-callout" style="margin-top:4px">
             <span class="g-callout-icon">💾</span>
-            <span><strong>Always copy and save your Foundation Block</strong> after each engine. You'll need to paste it into the next engine to continue the chain.</span>
+            <span><strong>Important: Always copy and save the Foundation Block</strong> after each engine finishes. You'll paste it into the next engine to continue the chain. If you lose it, you'll have to start over.</span>
           </div>
 
           <hr class="g-divider">
 
-          <!-- STEP BY STEP -->
-          <div class="g-h2">How to Run the Complete Pipeline — Step by Step</div>
+          <!-- STEP BY STEP — SIMPLE VERSION -->
+          <div class="g-h2">How to Use the Pipeline — Step by Step</div>
+          <p class="g-p" style="margin-bottom:18px">Follow these steps in order. Each step takes 5–30 minutes. Total time: 1.5–4 hours for the full pipeline.</p>
 
           <div class="g-steps">
             <div class="g-step">
               <div class="g-step-num">1</div>
               <div class="g-step-body">
-                <div class="g-step-title">Start with Engine 0 — Intelligent Router</div>
-                <div class="g-step-desc">Go to your dashboard → ForgeAI Pipeline section → click Engine 0. Copy it, open Claude.ai, create a new Project, paste as instruction. Start a new chat and tell it what you want to build. Engine 0 asks: what to build, which mode (Quick or Deep), then your business details. At the end it gives you your Foundation Block + build plan.</div>
+                <div class="g-step-title">Open Engine 0 from your dashboard</div>
+                <div class="g-step-desc">Go to your dashboard → scroll to <strong>Business &amp; Strategy</strong> → click <strong>Pipeline Engine 0</strong>. Click "Open Engine" to read it, or "Copy Engine" to copy the text. Then open <strong>claude.ai</strong>, go to <strong>Projects</strong> → Create a new project → paste the engine text as the <strong>Project Instructions</strong> (system prompt). Now start a new chat inside that project and type: <em>"I want to build a sales funnel."</em></div>
               </div>
             </div>
             <div class="g-step">
               <div class="g-step-num">2</div>
               <div class="g-step-body">
-                <div class="g-step-title">Run Engine 1 — Offer &amp; Positioning</div>
-                <div class="g-step-desc">Copy the Foundation Block from Engine 0's output. Open a NEW Claude Project. Copy Engine 1 from dashboard → paste as instruction. Start chat — paste your Foundation Block when asked. Engine 1 strengthens your positioning and gives you an updated Foundation Block.</div>
+                <div class="g-step-title">Answer Engine 0's questions</div>
+                <div class="g-step-desc">Engine 0 will ask you questions like: What are you selling? Who is your target customer? What's your budget? What result does your product give? Just answer honestly in simple language — you don't need to be a marketing expert. At the end, Engine 0 gives you your <strong>Foundation Block</strong> and a plan showing which engines to run. <strong>Copy the Foundation Block and save it somewhere</strong> (Notepad, Google Docs, anywhere).</div>
               </div>
             </div>
             <div class="g-step">
               <div class="g-step-num">3</div>
               <div class="g-step-body">
-                <div class="g-step-title">Run Engine 2 — Audience Psychology</div>
-                <div class="g-step-desc">Copy updated Foundation Block from Engine 1. Open a new Claude Project → Copy Engine 2 → paste as instruction. Paste your Foundation Block. Engine 2 maps your buyer psychology, objections, and trust gaps.</div>
+                <div class="g-step-title">Run Engine 1 — Offer &amp; Positioning</div>
+                <div class="g-step-desc">Go back to your dashboard → open <strong>Pipeline Engine 1</strong> → copy it. On Claude.ai, create a <strong>new project</strong> (don't reuse the Engine 0 project). Paste Engine 1 as the project instruction. Start a new chat and paste your Foundation Block when it asks. Engine 1 will fix and strengthen your offer message. Save the updated Foundation Block it gives you at the end.</div>
               </div>
             </div>
             <div class="g-step">
               <div class="g-step-num">4</div>
               <div class="g-step-body">
-                <div class="g-step-title">Run Engine 3 — Hooks &amp; Angles</div>
-                <div class="g-step-desc">Copy updated Foundation Block from Engine 2. New Claude Project → Copy Engine 3 → paste as instruction. Paste Foundation Block. Engine 3 generates 3–5 strategic hooks for your ads and page.</div>
+                <div class="g-step-title">Run Engine 2 — Audience Psychology</div>
+                <div class="g-step-desc">New project on Claude.ai → paste Engine 2 as the instruction → start chat → paste the Foundation Block from Engine 1. Engine 2 will map out how your customer thinks, what stops them from buying, and what language to use. Save the updated Foundation Block.</div>
               </div>
             </div>
             <div class="g-step">
               <div class="g-step-num">5</div>
               <div class="g-step-body">
-                <div class="g-step-title">Run Engine 4 — Meta Ads</div>
-                <div class="g-step-desc">Copy updated Foundation Block from Engine 3. New Claude Project → Copy Engine 4 → paste as instruction. Engine 4 automatically uses your hooks from Engine 3 — no re-entering. You get complete Meta ad copy, compliance check, AI creative prompts.</div>
+                <div class="g-step-title">Run Engine 3 — Hooks &amp; Angles</div>
+                <div class="g-step-desc">New project → paste Engine 3 → paste Foundation Block from Engine 2. Engine 3 gives you 3–5 different opening lines (hooks) for your ads, ranked by strength. Save the updated Foundation Block.</div>
               </div>
             </div>
             <div class="g-step">
               <div class="g-step-num">6</div>
               <div class="g-step-body">
-                <div class="g-step-title">Run Engine 5 — Conversion Page</div>
-                <div class="g-step-desc">Copy updated Foundation Block from Engine 4. New Claude Project → Copy Engine 5 → paste as instruction. Engine 5 uses your positioning, psychology, hooks, and ads to build the perfect landing page blueprint or full code.</div>
+                <div class="g-step-title">Run Engine 4 — Meta Ads</div>
+                <div class="g-step-desc">New project → paste Engine 4 → paste Foundation Block from Engine 3. Engine 4 already knows your hooks, so it writes 3–7 complete Facebook/Instagram ads for you — copy, creative direction, and all. Save the updated Foundation Block.</div>
               </div>
             </div>
             <div class="g-step">
               <div class="g-step-num">7</div>
               <div class="g-step-body">
-                <div class="g-step-title">Run Engine 6 — Email Sequences</div>
-                <div class="g-step-desc">Copy updated Foundation Block from Engine 5. New Claude Project → Copy Engine 6 → paste as instruction. Engine 6 detects which email sequence you need based on your funnel type and delivers complete email copy with send schedule.</div>
+                <div class="g-step-title">Run Engine 5 — Conversion Page</div>
+                <div class="g-step-desc">New project → paste Engine 5 → paste Foundation Block from Engine 4. Engine 5 builds your entire landing page section by section — headline, subheadline, benefits, trust, offer, CTA — all written specifically for your product and audience. Save the updated Foundation Block.</div>
               </div>
             </div>
             <div class="g-step">
               <div class="g-step-num">8</div>
               <div class="g-step-body">
-                <div class="g-step-title">Run Engine 7 — Performance Diagnosis (after 7+ days live)</div>
-                <div class="g-step-desc">⚠️ Run Engine 7 only AFTER your funnel has been live for 7+ days with real data. Collect your real metrics (ad CTR, page conversion rate, ROAS, email open rates). Paste Foundation Block + real metrics. Engine 7 diagnoses what is wrong and gives you a prioritised fix plan.</div>
+                <div class="g-step-title">Run Engine 6 — Email Follow-Up</div>
+                <div class="g-step-desc">New project → paste Engine 6 → paste Foundation Block from Engine 5. Engine 6 writes your complete email sequence — 5–10 emails with subject lines and send timing. These go to people who visited your page but didn't buy. Save everything.</div>
+              </div>
+            </div>
+            <div class="g-step">
+              <div class="g-step-num">9</div>
+              <div class="g-step-body">
+                <div class="g-step-title">Launch your funnel, then run Engine 7 after 7+ days</div>
+                <div class="g-step-desc">Put your ads live. Let your landing page run. Send your emails. After at least 7 days, collect your real numbers: how many people clicked, how many bought, what your cost per purchase is. Then open <strong>Pipeline Engine 7</strong>, paste your Foundation Block + your real numbers. Engine 7 diagnoses what's weak and tells you exactly which engine to re-run to fix it.</div>
               </div>
             </div>
           </div>
@@ -1726,51 +1807,56 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
           <hr class="g-divider">
 
           <!-- QUICK REFERENCE TABLE -->
-          <div class="g-h2">Do You Need to Run All Engines?</div>
-          <p class="g-p">No. You only run the engines you need for your current goal. Engine 0 will tell you exactly which engines to run when you tell it your goal.</p>
+          <div class="g-h2">Don't Need the Full Pipeline?</div>
+          <p class="g-p">No problem. You can run only the engines you need. Engine 0 will tell you which ones to skip based on your goal. Here's a quick guide:</p>
           <div style="overflow-x:auto;margin:16px 0">
             <table style="width:100%;border-collapse:collapse;font-size:13px">
               <thead>
                 <tr style="background:#F7F7F5">
-                  <th style="text-align:left;padding:10px 12px;border:1px solid var(--border);color:var(--text-primary);font-weight:600">Your Goal</th>
-                  <th style="text-align:left;padding:10px 12px;border:1px solid var(--border);color:var(--text-primary);font-weight:600">Engines to Run</th>
+                  <th style="text-align:left;padding:10px 12px;border:1px solid var(--border);color:var(--text-primary);font-weight:600">What you want to build</th>
+                  <th style="text-align:left;padding:10px 12px;border:1px solid var(--border);color:var(--text-primary);font-weight:600">Engines to run</th>
                 </tr>
               </thead>
               <tbody>
-                <tr><td style="padding:9px 12px;border:1px solid var(--border);color:var(--text-muted)">Complete funnel from scratch</td><td style="padding:9px 12px;border:1px solid var(--border);color:var(--text-primary);font-weight:500">E0 → E1 → E2 → E3 → E4 → E5 → E6</td></tr>
-                <tr style="background:#FAFAF9"><td style="padding:9px 12px;border:1px solid var(--border);color:var(--text-muted)">Just a landing page</td><td style="padding:9px 12px;border:1px solid var(--border);color:var(--text-primary);font-weight:500">E0 → E1 → E5</td></tr>
-                <tr><td style="padding:9px 12px;border:1px solid var(--border);color:var(--text-muted)">Just ad copy</td><td style="padding:9px 12px;border:1px solid var(--border);color:var(--text-primary);font-weight:500">E0 → E1 → E3 → E4</td></tr>
-                <tr style="background:#FAFAF9"><td style="padding:9px 12px;border:1px solid var(--border);color:var(--text-muted)">Just email sequences</td><td style="padding:9px 12px;border:1px solid var(--border);color:var(--text-primary);font-weight:500">E0 → E1 → E2 → E6</td></tr>
-                <tr><td style="padding:9px 12px;border:1px solid var(--border);color:var(--text-muted)">Just hooks and angles</td><td style="padding:9px 12px;border:1px solid var(--border);color:var(--text-primary);font-weight:500">E0 → E1 → E3</td></tr>
-                <tr style="background:#FAFAF9"><td style="padding:9px 12px;border:1px solid var(--border);color:var(--text-muted)">Optimize existing funnel</td><td style="padding:9px 12px;border:1px solid var(--border);color:var(--text-primary);font-weight:500">E7 first → then specific engines</td></tr>
-                <tr><td style="padding:9px 12px;border:1px solid var(--border);color:var(--text-muted)">Offer positioning only</td><td style="padding:9px 12px;border:1px solid var(--border);color:var(--text-primary);font-weight:500">E0 → E1</td></tr>
+                <tr><td style="padding:9px 12px;border:1px solid var(--border);color:var(--text-muted)">The full funnel (ads + page + emails)</td><td style="padding:9px 12px;border:1px solid var(--border);color:var(--text-primary);font-weight:500">E0 → E1 → E2 → E3 → E4 → E5 → E6</td></tr>
+                <tr style="background:#FAFAF9"><td style="padding:9px 12px;border:1px solid var(--border);color:var(--text-muted)">Only a landing page</td><td style="padding:9px 12px;border:1px solid var(--border);color:var(--text-primary);font-weight:500">E0 → E1 → E5</td></tr>
+                <tr><td style="padding:9px 12px;border:1px solid var(--border);color:var(--text-muted)">Only Facebook/Instagram ads</td><td style="padding:9px 12px;border:1px solid var(--border);color:var(--text-primary);font-weight:500">E0 → E1 → E3 → E4</td></tr>
+                <tr style="background:#FAFAF9"><td style="padding:9px 12px;border:1px solid var(--border);color:var(--text-muted)">Only follow-up emails</td><td style="padding:9px 12px;border:1px solid var(--border);color:var(--text-primary);font-weight:500">E0 → E1 → E2 → E6</td></tr>
+                <tr><td style="padding:9px 12px;border:1px solid var(--border);color:var(--text-muted)">Only ad hooks to test</td><td style="padding:9px 12px;border:1px solid var(--border);color:var(--text-primary);font-weight:500">E0 → E1 → E3</td></tr>
+                <tr style="background:#FAFAF9"><td style="padding:9px 12px;border:1px solid var(--border);color:var(--text-muted)">Fix an existing funnel that isn't working</td><td style="padding:9px 12px;border:1px solid var(--border);color:var(--text-primary);font-weight:500">E7 first → then the engine E7 recommends</td></tr>
+                <tr><td style="padding:9px 12px;border:1px solid var(--border);color:var(--text-muted)">Just clarify your offer message</td><td style="padding:9px 12px;border:1px solid var(--border);color:var(--text-primary);font-weight:500">E0 → E1</td></tr>
               </tbody>
             </table>
           </div>
 
           <!-- TIME REFERENCE -->
-          <div class="g-h2">How Long Does It Take?</div>
+          <div class="g-h2">How Long Does Each Engine Take?</div>
           <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin:12px 0 24px">
             <div style="background:#FFF4ED;border:1px solid rgba(249,115,22,.2);border-radius:10px;padding:14px;text-align:center">
               <div style="font-size:13px;font-weight:700;color:var(--accent)">Quick Mode</div>
-              <div style="font-size:11px;color:var(--text-muted);margin-top:4px">All engines</div>
+              <div style="font-size:11px;color:var(--text-muted);margin-top:4px">All 7 engines</div>
               <div style="font-size:16px;font-weight:700;color:var(--text-primary);margin-top:6px">1.5–2 hrs</div>
             </div>
             <div style="background:#F7F7F5;border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center">
               <div style="font-size:13px;font-weight:700;color:var(--text-primary)">Deep Mode</div>
-              <div style="font-size:11px;color:var(--text-muted);margin-top:4px">All engines</div>
+              <div style="font-size:11px;color:var(--text-muted);margin-top:4px">All 7 engines</div>
               <div style="font-size:16px;font-weight:700;color:var(--text-primary);margin-top:6px">3–4 hrs</div>
             </div>
             <div style="background:#F7F7F5;border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center">
-              <div style="font-size:13px;font-weight:700;color:var(--text-primary)">Single Engine</div>
-              <div style="font-size:11px;color:var(--text-muted);margin-top:4px">One at a time</div>
+              <div style="font-size:13px;font-weight:700;color:var(--text-primary)">One Engine</div>
+              <div style="font-size:11px;color:var(--text-muted);margin-top:4px">Single engine</div>
               <div style="font-size:16px;font-weight:700;color:var(--text-primary);margin-top:6px">5–30 min</div>
             </div>
           </div>
 
-          <div class="g-callout green">
+          <!-- IMPORTANT RULES -->
+          <div class="g-callout green" style="margin-bottom:12px">
             <span class="g-callout-icon">✅</span>
-            <span><strong>Each engine is a separate Claude Project.</strong> Don't mix multiple engines in the same project — create a new Project for each engine. The Foundation Block is how they stay connected.</span>
+            <span><strong>Each engine needs its own Claude Project.</strong> Don't put two engines in the same project — they'll conflict. Create a fresh project for each engine. The Foundation Block is the link between them.</span>
+          </div>
+          <div class="g-callout blue">
+            <span class="g-callout-icon">💡</span>
+            <span><strong>Not sure where to start?</strong> Just run Engine 0 and tell it your goal. It will decide the rest for you. You don't need to read this entire guide before starting.</span>
           </div>
 
         </div>
@@ -2081,6 +2167,12 @@ function handleSearch(q) {
 
 // ─── PREVIEW MODAL ───
 function openModal(id) {
+  const e=allEngines.find(x=>x.id===id); if(!e) return;
+  // Show disclaimer first (skips automatically if user opted out)
+  showDisclaimerModal(e.name, () => _openModalActual(id));
+}
+
+function _openModalActual(id) {
   const e=allEngines.find(x=>x.id===id); if(!e) return;
   const isLocked=userTier==='starter'&&e.tier==='pro';
   currentEngine=e;
@@ -2544,15 +2636,36 @@ async function submitUpgrade() {
   </div>
 </div>
 
-<!-- ══ COPY DISCLAIMER TOAST ══ -->
-<div id="copyDisclaimerToast" style="display:none;position:fixed;bottom:90px;left:50%;transform:translateX(-50%);z-index:700;max-width:420px;width:calc(100% - 32px);background:white;border:1px solid #FED7AA;border-radius:14px;box-shadow:0 8px 24px rgba(0,0,0,.12);padding:14px 16px;animation:fadeInUp .2s ease">
-  <div style="display:flex;gap:10px;align-items:flex-start">
-    <div style="font-size:20px;flex-shrink:0;margin-top:1px">⚠️</div>
-    <div style="flex:1">
-      <div style="font-size:13px;font-weight:700;color:#92400E;margin-bottom:4px" id="disclaimerEngineName">Important Notice</div>
-      <div style="font-size:12px;color:#78350F;line-height:1.6">This is a powerful AI thinking system, but all output generated requires <strong>human review and verification</strong> before use. No AI engine can guarantee 100% accurate results. Always review, fact-check, and apply your own judgment before acting on any output.</div>
+<!-- ══ DISCLAIMER MODAL ══ -->
+<div class="disclaimer-modal-overlay" id="disclaimerModalOverlay">
+  <div class="disclaimer-modal" id="disclaimerModal">
+    <div class="disclaimer-modal-header">
+      <div class="disclaimer-modal-icon">⚠️</div>
+      <div>
+        <div class="disclaimer-modal-title">Before You Continue</div>
+        <div class="disclaimer-modal-engine" id="disclaimerModalEngine">ForgeAI Engine</div>
+      </div>
     </div>
-    <button onclick="document.getElementById('copyDisclaimerToast').style.display='none'" style="background:none;border:none;cursor:pointer;font-size:16px;color:#92400E;flex-shrink:0;padding:0;margin-top:1px">✕</button>
+    <div class="disclaimer-modal-body">
+      <p class="disclaimer-modal-text">
+        ForgeAI engines are <strong>AI-powered thinking systems</strong>. They produce structured, high-quality output — but all AI output requires <strong>human review and verification</strong> before use in your business, campaigns, or communications.<br><br>
+        ForgeAI does not guarantee accuracy, legal compliance, or suitability for your specific situation. <strong>Always review, fact-check, and apply your own judgment</strong> before acting on any AI-generated result.
+      </p>
+
+      <label class="disclaimer-checkbox-row" for="disclaimerCheck">
+        <input type="checkbox" id="disclaimerCheck" onchange="disclaimerCheckChanged()">
+        <span class="disclaimer-checkbox-label">I understand that AI output requires human review and I take responsibility for how I use the results.</span>
+      </label>
+
+      <label class="disclaimer-skiprow" for="disclaimerSkipCheck">
+        <input type="checkbox" id="disclaimerSkipCheck">
+        <span class="disclaimer-skiprow-label">Don't show this again — I understand and accept the terms.</span>
+      </label>
+
+      <button class="disclaimer-agree-btn" id="disclaimerAgreeBtn" disabled onclick="disclaimerAgree()">
+        ✓ I Agree — Continue to Engine
+      </button>
+    </div>
   </div>
 </div>
 
@@ -2672,14 +2785,52 @@ function resetOnboarding() {
   document.body.style.overflow = 'hidden';
 }
 
-function showCopyDisclaimer(engineName) {
-  const toast = document.getElementById('copyDisclaimerToast');
-  const nameEl = document.getElementById('disclaimerEngineName');
-  nameEl.textContent = engineName ? `${engineName} — Important Notice` : 'Important Notice';
-  toast.style.display = 'block';
-  if (window._disclaimerTimer) clearTimeout(window._disclaimerTimer);
-  window._disclaimerTimer = setTimeout(() => { toast.style.display = 'none'; }, 8000);
+// ══════════════════════════════════════════════════
+// DISCLAIMER MODAL SYSTEM
+// ══════════════════════════════════════════════════
+const DISCLAIMER_KEY = 'forgeai_disclaimer_v2';
+let _disclaimerCallback = null;
+
+function shouldShowDisclaimer() {
+  return localStorage.getItem(DISCLAIMER_KEY) !== 'skip';
 }
+
+function showDisclaimerModal(engineName, onAccept) {
+  if (!shouldShowDisclaimer()) {
+    onAccept();
+    return;
+  }
+  _disclaimerCallback = onAccept;
+  document.getElementById('disclaimerModalEngine').textContent = engineName || 'ForgeAI Engine';
+  document.getElementById('disclaimerCheck').checked = false;
+  document.getElementById('disclaimerSkipCheck').checked = false;
+  document.getElementById('disclaimerAgreeBtn').disabled = true;
+  document.getElementById('disclaimerModalOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeDisclaimerModal() {
+  document.getElementById('disclaimerModalOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+  _disclaimerCallback = null;
+}
+
+function disclaimerCheckChanged() {
+  const checked = document.getElementById('disclaimerCheck').checked;
+  document.getElementById('disclaimerAgreeBtn').disabled = !checked;
+}
+
+function disclaimerAgree() {
+  if (document.getElementById('disclaimerSkipCheck').checked) {
+    localStorage.setItem(DISCLAIMER_KEY, 'skip');
+  }
+  closeDisclaimerModal();
+  if (_disclaimerCallback) _disclaimerCallback();
+}
+
+// Keep backward compat (no-op — disclaimer now shows on engine open, not on copy)
+function showCopyDisclaimer(engineName) {}
+
 </script>
 </body>
 </html>

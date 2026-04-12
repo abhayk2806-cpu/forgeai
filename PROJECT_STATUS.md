@@ -1,5 +1,5 @@
 # ForgeAI — Project Status & External Memory
-> **Last updated:** 2026-03-28 (Session 2)
+> **Last updated:** 2026-04-12 (Sessions 3 & 4)
 > **Purpose:** Live project memory. Read this before doing ANY work on this codebase.
 
 ---
@@ -16,6 +16,8 @@
 - **Netlify auto-deploys** on every push to `main` branch.
 - **Admin panel** is at `/admin/index.html` — password-protected. Not linked publicly.
 - **When in doubt, ask before implementing.** Irreversible actions (Supabase deletes, Netlify deploys) require confirmation.
+- **Engine content is EMPTY.** All 31 engine prompts need to be filled via admin panel before launch (8 pipeline engines + 23 others).
+- **Pipeline engines are now INDIVIDUAL entries.** Engine 0 = `conversionos`, Engines 1–7 = `pipeline-e1` through `pipeline-e7`. All in Business & Strategy category, sort 13–20.
 
 ---
 
@@ -36,8 +38,8 @@
 ### Product Tiers
 | Tier | India Price | USD Price | Access |
 |------|------------|-----------|--------|
-| Starter | ₹999 | $37 | 4 engines (EmailForge, CopyForge, SocialForge, MusicForge) |
-| Pro | ₹1,999 | $67 | All 11+ engines + ConversionOS Pipeline + all future engines |
+| Starter | ₹999 | $37 | 4 engines (Copy Forge, Email Forge, Social Forge, Music Forge) |
+| Pro | ₹1,999 | $67 | All 31 engines including all 8 Pipeline engines + all future engines |
 | Upgrade | ₹1,000 | $30 | Starter → Pro upgrade |
 
 > ⚠️ **CURRENT TEST PRICES (India only):** Starter ₹2, Pro ₹5, Upgrade ₹3. Must revert before public launch. See Section 7.
@@ -131,7 +133,7 @@
 | badge | text | Optional badge label |
 | sort_order | int | Display order |
 | is_active | bool | Show/hide |
-| last_updated | date | Auto-stamped by admin-write on meaningful update |
+| last_updated | date | Auto-stamped by admin-write on ANY field change (session 3 fix) |
 | update_notes | text | Changelog text shown on dashboard |
 
 ### `content_items`
@@ -142,7 +144,8 @@
 | content | text | The actual AI prompt (can be very long) |
 | updated_at | timestamptz | Auto-set on upsert |
 
-> **Status:** All 14 engines + 8 pipeline engines (E0-E7) have rows. All content is EMPTY — must be filled via admin panel before launch.
+> **Status:** 31 total engines have rows. All content is EMPTY — must be filled via admin panel before launch.
+> Engine count breakdown: 14 original + 10 new (fb-tracking, google-tracking, prompt-forge, diagnostic-forge, content-idea-forge, decision-forge, client-forge, offer-forge, focus-forge, skill-roadmap-forge) + 7 new pipeline individual engines (pipeline-e1 through pipeline-e7). `conversionos` updated to be Pipeline Engine 0.
 
 ### `purchases`
 | Column | Type | Notes |
@@ -308,10 +311,14 @@ const PRICING = { IN: { core: 999, complete: 1999, upgrade: 1000 } ... }
 | `showView(view)` | Switch between dashboard/engines/guides views |
 | `updateStats()` | Recalculate and display engine counts |
 | `renderEngineCard(engine)` | Build individual engine card HTML |
-| `openEngineModal(engine)` | Show full engine detail + copy prompt |
-| `copyEngineFromModal()` | Copy prompt from modal + show disclaimer toast |
-| `copyEngineFromPanel()` | Copy prompt from side panel + show disclaimer toast |
-| `showCopyDisclaimer(name)` | Display 8-second disclaimer toast with engine name |
+| `openModal(id)` | Shows disclaimer modal first, then calls `_openModalActual(id)` |
+| `_openModalActual(id)` | Original openModal logic — opens engine preview modal |
+| `showDisclaimerModal(engineName, callback)` | Shows blocking disclaimer modal before any engine opens |
+| `disclaimerCheckChanged()` | Enables/disables "I Agree" button based on checkbox state |
+| `disclaimerAgree()` | Handles agree action — saves skip pref if checked, fires callback |
+| `copyEngineFromModal()` | Copy prompt from modal |
+| `copyEngineFromPanel()` | Copy prompt from side panel |
+| `showCopyDisclaimer()` | No-op shim for backward compat (disclaimer is now pre-open, not post-copy) |
 | `maybeShowOnboarding()` | Show 4-step onboarding overlay on first login |
 | `toggleUpdateNotes(safeId)` | Expand/collapse engine changelog strip |
 
@@ -319,6 +326,17 @@ const PRICING = { IN: { core: 999, complete: 1999, upgrade: 1000 } ... }
 - `window.COSU` — Auth + tier object (set by auth.js)
 - `window.supabase` — Supabase client (set by supabase.js)
 - `panelContentCache` — Object caching engine prompt content (only caches real content, not fallback strings starting with `[`)
+
+### localStorage Keys
+| Key | Value | Purpose |
+|-----|-------|---------|
+| `forgeai_onboarded_v1` | `'true'` | Gates 4-step onboarding overlay (shown once) |
+| `forgeai_disclaimer_v2` | `'skip'` | Skip disclaimer modal for all future engine opens |
+
+### Dashboard UI Elements Added (Session 3)
+- **Disclaimer ticker** — sticky strip above topbar, infinite scroll animation, always-visible legal warning
+- **Disclaimer modal** — blocking modal that fires before any engine opens. Has: engine name in header, explanation text, "I understand" checkbox (must check to enable agree button), "Don't show again" checkbox, "I Agree — Continue" button
+- Both the engine preview modal and disclaimer modal use **mobile bottom-sheet** pattern on screens ≤768px
 
 ---
 
@@ -352,14 +370,20 @@ const PRICING = { IN: { core: 999, complete: 1999, upgrade: 1000 } ... }
 - [x] Gumroad payment integration (International)
 - [x] Welcome email via Resend
 - [x] Facebook CAPI tracking
-- [x] ConversionOS Pipeline guide (E0-E7) with engine cards
+- [x] ConversionOS Pipeline guide — fully rewritten in simple language (Session 4)
 - [x] Engine 0 featured as "START HERE" with visual prominence
 - [x] Help & Support floating button on all 5 portal pages
-- [x] Copy disclaimer toast (fires on every engine copy with dynamic name)
-- [x] Engine last_updated + update_notes system (DB columns + admin panel + dashboard strip)
+- [x] **Disclaimer modal** — blocks engine open, requires checkbox + agree button. "Don't show again" option stored in `forgeai_disclaimer_v2` localStorage (Session 3)
+- [x] **Disclaimer ticker** — sticky always-scrolling warning strip in dashboard header (Session 3)
+- [x] Engine last_updated + update_notes system — now auto-stamps on ANY field change (Session 3)
 - [x] First-time user onboarding overlay (4-step, localStorage-gated, replayable)
-- [x] welcome.html updated — Starter/Pro plan names throughout
-- [x] `content_items` rows seeded for engine-0 through engine-7
+- [x] **welcome.html** — Updated to show all 24 engines (4 Starter + 20 Pro locked rows) with corrected unlock loop (Session 3)
+- [x] **6 categories** renamed: Writing & Content, Marketing & Ads, Visual & Video, Business & Strategy, AI Productivity, Personal & Career (Session 3, Supabase only)
+- [x] **14 existing engines** — names, taglines, category assignments all updated in Supabase (Session 3)
+- [x] **10 new engines** seeded in Supabase: fb-tracking, google-tracking, prompt-forge, diagnostic-forge, content-idea-forge, decision-forge, client-forge, offer-forge, focus-forge, skill-roadmap-forge (Session 3)
+- [x] **8 Pipeline engines** — now individual Supabase entries (Engine 0 updated, E1–E7 inserted), each available for content via admin panel (Session 4)
+- [x] **Pipeline guide** — rewritten in plain, simple language — usable by a first-time user with no marketing knowledge (Session 4)
+- [x] `content_items` rows seeded for all 31 engines (empty — needs filling)
 - [x] **payment-success.html** — Separate upgrade vs new purchase UI, preview mode added
 - [x] **create-order.js** — Conditional cancel URL (upgrade→dashboard, new→pricing), domain updated
 - [x] **welcome.html** — Critical tier bug fixed (`complete` → `pro` in `applyTier()`), `fb_event_id` added to upgrade checkout
@@ -373,11 +397,11 @@ const PRICING = { IN: { core: 999, complete: 1999, upgrade: 1000 } ... }
 - [x] **SITE_URL fallback** — All functions now default to `https://www.forgeai.digital`
 
 ### ⏳ Pending / Not Yet Done
-- [ ] **Engine content** — All 14 engine prompts are empty. Must fill via admin panel before selling.
-- [ ] **Test price revert** — Do after April 1, 2026 testing
+- [ ] **Engine content** — All 31 engine prompts are empty. Owner must fill via Admin Panel → Content tab before selling.
+- [ ] **Test price revert** — Do after April 1, 2026 testing (testing delayed — prices still at ₹2/₹5/₹3)
 - [ ] **Engine ratings** — Simple thumbs up/down per engine (discussed, not built)
 - [ ] **Testing complete flow** — End-to-end: buy → email → signup → dashboard → copy engine → paste to Claude
-- [ ] **Admin password change** — Change from default before launch
+- [ ] **Admin password change** — Change from default `ForgeAI@Admin2025` before launch
 - [ ] **Custom domain DNS** — Connect `www.forgeai.digital` in Netlify → update DNS in domain registrar, verify SSL
 - [ ] **Netlify SITE_URL env var** — Must be set to `https://www.forgeai.digital` in Netlify dashboard before launch
 
@@ -432,7 +456,7 @@ const PRICING = { IN: { core: 999, complete: 1999, upgrade: 1000 } ... }
 
 4. **welcome.html plan names** — "Core" and "Complete" replaced with "Starter" and "Pro" everywhere to eliminate naming confusion.
 
-5. **Engine update date auto-stamped only on meaningful changes** — `last_updated` is only updated in `admin-write.js` when `update_notes` is also being changed. Prevents false "recently updated" signals.
+5. **Engine update date now auto-stamped on ANY field change** — Changed in Session 3. `last_updated` is updated in `admin-write.js` whenever any field is edited, not just when `update_notes` changes. Previous note about "meaningful changes only" is outdated.
 
 6. **Copy disclaimer is global, not per-engine** — Hooked into the two copy functions (`copyEngineFromModal`, `copyEngineFromPanel`), not into each engine individually. Works for all current and future engines automatically.
 
@@ -503,3 +527,57 @@ const PRICING = { IN: { core: 999, complete: 1999, upgrade: 1000 } ... }
 - `accessInfo` for Pro: updated to "All engines + ConversionOS Pipeline (8 specialist engines) + every future engine, forever"
 - `accessInfo` for Starter: updated to "4 Starter engines — EmailForge, CopyForge, SocialForge, MusicForge"
 - Upgrade email: completely redesigned with proper branded HTML template
+
+---
+
+### Session 3 — 2026-04-12 (Part 1)
+
+**Supabase — Engine & Category Overhaul:**
+- Renamed all 6 categories: Writing & Content, Marketing & Ads, Visual & Video, Business & Strategy, AI Productivity, Personal & Career (kept same IDs, only updated display names/icons/colors)
+- Updated all 14 existing engines with new names, taglines, and correct category assignments
+- Inserted 10 new engines: `fb-tracking`, `google-tracking` (Marketing & Ads), `prompt-forge`, `diagnostic-forge`, `content-idea-forge`, `decision-forge` (AI Productivity), `client-forge`, `offer-forge`, `focus-forge`, `skill-roadmap-forge` (Personal & Career)
+- Created empty `content_items` rows for all 10 new engines
+
+**admin-write.js:**
+- Fixed: `last_updated` now auto-stamped on ANY field change during engine update, not only when `update_notes` is present
+
+**dashboard.html — Disclaimer System Overhaul:**
+- Removed old post-copy toast, replaced with blocking disclaimer modal that fires when user clicks an engine card (before it opens)
+- Modal requires checking "I understand" checkbox before "I Agree" button becomes clickable
+- "Don't show this again" option saves `forgeai_disclaimer_v2 = 'skip'` to localStorage
+- `openModal(id)` now calls `showDisclaimerModal()` first, then `_openModalActual(id)` as callback
+- `showCopyDisclaimer()` kept as no-op shim for backward compatibility
+
+**dashboard.html — Disclaimer Ticker:**
+- Sticky always-scrolling warning strip at top of dashboard
+- 4 repeated disclaimer spans for seamless infinite loop via CSS `tickerScroll` animation
+- Topbar z-index updated 50 → 99 (ticker is z-index 200)
+
+**dashboard.html — Mobile Fixes:**
+- Both engine preview modal and disclaimer modal use bottom-sheet pattern on ≤768px
+- Mobile fixes for guide-nav, engine panel, buttons
+
+**welcome.html — 24 Engines:**
+- Replaced 10-item list with all 24 engines (4 Starter unlocked + 20 Pro locked)
+- Row IDs: `tool-row-pro-1` through `tool-row-pro-20`
+- `applyTier()` updated to loop pro-1 to pro-20
+- Upgrade strip: "13+ engines" → "24 engines"
+
+---
+
+### Session 4 — 2026-04-12 (Part 2)
+
+**Supabase — Pipeline Engines Split Into Individual Entries:**
+- `conversionos` updated → "Pipeline Engine 0 — Intelligent Router"
+- Shifted sort_order of all engines at 14+ up by 7 to make room
+- Inserted 7 new individual pipeline engines: `pipeline-e1` through `pipeline-e7` (sort 14–20)
+- Empty `content_items` rows created for all 7 new pipeline engines
+- **Total engines in Supabase: 31** (all empty — must fill via admin panel before launch)
+
+**dashboard.html — Pipeline Guide Rewrite:**
+- Entire pipeline guide rewritten in plain everyday language (10th grade level)
+- Each engine has "What it does" + "You get" in simple terms
+- Foundation Block explained with a simple analogy
+- Step-by-step now has 9 concrete steps
+- Engine 7 visually marked in red/warning so users don't run it prematurely
+- Added "Not sure? Just run Engine 0" callout at end
