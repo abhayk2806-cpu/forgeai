@@ -800,6 +800,92 @@ section {
 }
 
 /* ═══════════════════════════════════════
+   FEATURED ENGINES SECTION
+   ═══════════════════════════════════════ */
+.featured-engines-section {
+  background: var(--bg-secondary);
+  border-top: 1px solid var(--border-subtle);
+  border-bottom: 1px solid var(--border-subtle);
+}
+.featured-engines-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  margin-top: 40px;
+}
+@media (max-width: 768px) {
+  .featured-engines-grid { grid-template-columns: 1fr; }
+}
+.featured-engine-card {
+  background: var(--surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  transition: all 0.25s ease;
+}
+.featured-engine-card:hover {
+  border-color: var(--border-accent);
+  box-shadow: 0 8px 32px rgba(249,115,22,0.08);
+}
+.featured-engine-top {
+  background: linear-gradient(135deg, rgba(249,115,22,0.06), rgba(249,115,22,0.02));
+  border-bottom: 1px solid var(--border-subtle);
+  padding: 20px 24px;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+.featured-engine-icon {
+  font-size: 1.6rem;
+  flex-shrink: 0;
+  line-height: 1;
+  margin-top: 2px;
+}
+.featured-engine-problem {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.45;
+  font-style: italic;
+}
+.featured-engine-body {
+  padding: 20px 24px;
+}
+.featured-engine-name {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+.featured-engine-desc {
+  font-size: 0.875rem;
+  color: var(--text-tertiary);
+  line-height: 1.6;
+  margin-bottom: 14px;
+}
+.featured-engine-bullets {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+.feat-bullet {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+.feat-bullet::first-letter { color: var(--accent); }
+.featured-engine-result {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-accent);
+  padding: 10px 14px;
+  background: var(--bg-accent-glow);
+  border-radius: var(--radius-sm);
+  line-height: 1.4;
+}
+
+/* ═══════════════════════════════════════
    ENGINE GRID
    ═══════════════════════════════════════ */
 .engines-grid {
@@ -1579,7 +1665,7 @@ body.region-international .inr-only { display: none !important; }
   <div class="container">
     <div class="hero-badge fade-up">
       <span class="dot"></span>
-      15+ engines live · New engines added regularly
+      23 engines live · New engines added regularly
     </div>
 
     <h1 class="heading-xl fade-up">
@@ -1604,7 +1690,7 @@ body.region-international .inr-only { display: none !important; }
       <a href="#pricing" class="btn-secondary"
          data-track="checkout" data-tier="pro"
          data-value="1999" data-currency="INR">
-        Get Pro — All 15+ Engines →
+        Get Pro — All 23 Engines →
       </a>
     </div>
 
@@ -1666,7 +1752,7 @@ body.region-international .inr-only { display: none !important; }
             <span class="sidebar-icon">🎯</span> Ad Forge
           </div>
           <div class="portal-sidebar-item">
-            <span class="sidebar-icon">🎬</span> Cinematic AI
+            <span class="sidebar-icon">🎬</span> Video Script Forge
           </div>
           <div class="portal-sidebar-item">
             <span class="sidebar-icon">🎨</span> Image Forge
@@ -1923,12 +2009,103 @@ body.region-international .inr-only { display: none !important; }
   </div>
 </section>
 
+<!-- ════════════════════════ FEATURED ENGINES ════════════════════════ -->
+<section class="featured-engines-section">
+  <div class="container">
+    <div class="section-header fade-up">
+      <div class="section-label"><span class="label">★ Engines People Use Every Week</span></div>
+      <h2 class="heading-lg">If any of these sound like<br>your exact problem — read this.</h2>
+      <p class="body-lg">These four engines solve the most common, most painful problems we hear from freelancers, founders, and AI users. If one of these is your problem, this was built specifically for you.</p>
+    </div>
+
+    <div class="featured-engines-grid fade-up">
+
+      <!-- PROMPT FORGE -->
+      <div class="featured-engine-card">
+        <div class="featured-engine-top">
+          <div class="featured-engine-icon">🧠</div>
+          <div class="featured-engine-problem">"I keep getting mediocre output from AI no matter what I try."</div>
+        </div>
+        <div class="featured-engine-body">
+          <div class="featured-engine-name">Prompt Forge <span class="engine-badge badge-pro" style="font-size:0.65rem;vertical-align:middle;">PRO</span></div>
+          <p class="featured-engine-desc">The #1 AI complaint isn't the AI — it's the prompt. Prompt Forge diagnoses exactly why your prompt is failing, selects the right engineering framework for your task, and rebuilds it from scratch — tuned specifically for Claude, ChatGPT, or Gemini.</p>
+          <div class="featured-engine-bullets">
+            <div class="feat-bullet">✓ Identifies the structural failure in your current prompt</div>
+            <div class="feat-bullet">✓ Chooses from 6 prompt frameworks based on what you're trying to do</div>
+            <div class="feat-bullet">✓ Different optimization for ChatGPT vs Claude vs Gemini</div>
+            <div class="feat-bullet">✓ 9 quality checks before the rewrite is delivered</div>
+          </div>
+          <div class="featured-engine-result">Paste the new prompt. Get the output you actually needed — on the first try.</div>
+        </div>
+      </div>
+
+      <!-- CLIENT FORGE -->
+      <div class="featured-engine-card">
+        <div class="featured-engine-top">
+          <div class="featured-engine-icon">🤝</div>
+          <div class="featured-engine-problem">"I have the skill. I just can't get consistent clients."</div>
+        </div>
+        <div class="featured-engine-body">
+          <div class="featured-engine-name">Client Forge <span class="engine-badge badge-pro" style="font-size:0.65rem;vertical-align:middle;">PRO</span></div>
+          <p class="featured-engine-desc">Client Forge diagnoses why your current outreach isn't converting, picks the highest-leverage acquisition channel for your exact situation, and produces ready-to-send outreach templates — calibrated to how Indian clients actually respond.</p>
+          <div class="featured-engine-bullets">
+            <div class="feat-bullet">✓ Diagnoses your acquisition failure before recommending anything</div>
+            <div class="feat-bullet">✓ Ranks channels based on your proof level and available time</div>
+            <div class="feat-bullet">✓ Actual outreach message copy — not frameworks</div>
+            <div class="feat-bullet">✓ Handles Hinglish input natively</div>
+          </div>
+          <div class="featured-engine-result">Not a generic LinkedIn checklist. An acquisition system built for where you are right now.</div>
+        </div>
+      </div>
+
+      <!-- FOCUS FORGE -->
+      <div class="featured-engine-card">
+        <div class="featured-engine-top">
+          <div class="featured-engine-icon">⚡</div>
+          <div class="featured-engine-problem">"I know exactly what I need to do. I'm still not doing it."</div>
+        </div>
+        <div class="featured-engine-body">
+          <div class="featured-engine-name">Focus Forge <span class="engine-badge badge-pro" style="font-size:0.65rem;vertical-align:middle;">PRO</span></div>
+          <p class="featured-engine-desc">Focus Forge isn't a productivity coach — it's an execution diagnostician. It identifies the exact mechanism blocking you: whether it's a confidence gap disguised as procrastination, the wrong environment, or a system that was never built for how you think.</p>
+          <div class="featured-engine-bullets">
+            <div class="feat-bullet">✓ Classifies your complaint into 1 of 4 specific failure types</div>
+            <div class="feat-bullet">✓ Detects fear disguised as laziness (the most missed diagnosis)</div>
+            <div class="feat-bullet">✓ Never gives the same fix twice — tracks what you've already tried</div>
+            <div class="feat-bullet">✓ No motivation. No generic tips. Just the actual cause and fix.</div>
+          </div>
+          <div class="featured-engine-result">You're not lazy. You're undiagnosed. Focus Forge finds the block and removes it.</div>
+        </div>
+      </div>
+
+      <!-- DIAGNOSTIC FORGE -->
+      <div class="featured-engine-card">
+        <div class="featured-engine-top">
+          <div class="featured-engine-icon">🔍</div>
+          <div class="featured-engine-problem">"Something in my business is broken. I can't figure out what."</div>
+        </div>
+        <div class="featured-engine-body">
+          <div class="featured-engine-name">Diagnostic Forge <span class="engine-badge badge-pro" style="font-size:0.65rem;vertical-align:middle;">PRO</span></div>
+          <p class="featured-engine-desc">Diagnostic Forge maps every possible root cause for your problem, asks 3 targeted questions to rank them by probability, and tells you specifically what to fix — with a verification method to confirm the diagnosis was right.</p>
+          <div class="featured-engine-bullets">
+            <div class="feat-bullet">✓ Separates what you observe from what you assume</div>
+            <div class="feat-bullet">✓ Builds the full cause map — including causes you'd never think of</div>
+            <div class="feat-bullet">✓ Ranks by probability, not by what's obvious</div>
+            <div class="feat-bullet">✓ Tells you exactly how to verify the fix worked</div>
+          </div>
+          <div class="featured-engine-result">Not "try A/B testing." The actual root cause, ranked, with a fix and a verification step.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
 <!-- ════════════════════════ ENGINES ════════════════════════ -->
 <section id="engines">
   <div class="container">
     <div class="section-header fade-up">
       <div class="section-label"><span class="label">The Engine Library</span></div>
-      <h2 class="heading-lg">15+ specialist engines.<br>One for every professional AI task.</h2>
+      <h2 class="heading-lg">23 specialist engines.<br>One for every professional AI task.</h2>
       <p class="body-lg">Each engine is a complete thinking system — not a template. They interview you, adapt to your situation, and produce structured output ready to use. No editing, no re-prompting, no guesswork.</p>
     </div>
 
@@ -1984,7 +2161,7 @@ body.region-international .inr-only { display: none !important; }
       <div class="engine-card fade-up">
         <div class="engine-icon" style="background: var(--bg-accent-glow);">🎯</div>
         <div>
-          <h4>Facebook Ads Engine</h4>
+          <h4>Facebook Ads Forge</h4>
           <p>Get 3–7 ready-to-run Facebook ad variations in one session — headlines, body copy, and creative direction included. Interviews you first, checks current Meta policies, adapts to your market.</p>
           <span class="engine-badge badge-pro">PRO</span>
         </div>
@@ -1992,7 +2169,7 @@ body.region-international .inr-only { display: none !important; }
       <div class="engine-card fade-up">
         <div class="engine-icon" style="background: var(--bg-accent-glow);">📊</div>
         <div>
-          <h4>Facebook Ads Tracking</h4>
+          <h4>Facebook Tracking Forge</h4>
           <p>Fix broken Facebook tracking in one session. Verifies your actual Pixel state before recommending anything — catches the COD blind spot and payment gateway issues most agencies miss.</p>
           <span class="engine-badge badge-pro">PRO</span>
         </div>
@@ -2000,7 +2177,7 @@ body.region-international .inr-only { display: none !important; }
       <div class="engine-card fade-up">
         <div class="engine-icon" style="background: var(--blue-bg);">📉</div>
         <div>
-          <h4>Google Ads Tracking</h4>
+          <h4>Google Tracking Forge</h4>
           <p>Fix your Google tracking so Smart Bidding actually works. Diagnoses GA4, Google Ads Tag, and Enhanced Conversions — and catches the payment redirect that silently kills purchase tracking.</p>
           <span class="engine-badge badge-pro">PRO</span>
         </div>
@@ -2008,7 +2185,7 @@ body.region-international .inr-only { display: none !important; }
       <div class="engine-card fade-up">
         <div class="engine-icon" style="background: var(--bg-accent-glow);">🎬</div>
         <div>
-          <h4>Cinematic AI</h4>
+          <h4>Video Script Forge</h4>
           <p>Get AI video prompts that look directed, not random — for Runway, Kling, Pika, Sora and more. Camera angles, lighting, movement, and scene structure built in per tool.</p>
           <span class="engine-badge badge-pro">PRO</span>
         </div>
@@ -2016,7 +2193,7 @@ body.region-international .inr-only { display: none !important; }
       <div class="engine-card fade-up">
         <div class="engine-icon" style="background: var(--bg-accent-glow);">🎨</div>
         <div>
-          <h4>Image Prompt Architect</h4>
+          <h4>Image Prompt Forge</h4>
           <p>Get AI image prompts that produce professional visuals — for Midjourney, DALL·E, Flux, Stable Diffusion. Composition, lighting, and tool-specific syntax handled so you're not guessing.</p>
           <span class="engine-badge badge-pro">PRO</span>
         </div>
@@ -2032,7 +2209,7 @@ body.region-international .inr-only { display: none !important; }
       <div class="engine-card fade-up">
         <div class="engine-icon" style="background: var(--bg-accent-glow);">🏗️</div>
         <div>
-          <h4>Landing Page Builder</h4>
+          <h4>Landing Page Forge</h4>
           <p>Get a full landing page — every section written with copy and visual direction — built specifically for your traffic source and offer type. No generic templates, no filler sections.</p>
           <span class="engine-badge badge-pro">PRO</span>
         </div>
@@ -2054,6 +2231,70 @@ body.region-international .inr-only { display: none !important; }
         </div>
       </div>
       <div class="engine-card fade-up">
+        <div class="engine-icon" style="background: var(--bg-accent-glow);">🧠</div>
+        <div>
+          <h4>Prompt Forge</h4>
+          <p>Stop getting mediocre AI output. Prompt Forge diagnoses why your prompt is failing, selects the right engineering framework, and rebuilds it from scratch — tuned for Claude, ChatGPT, or Gemini. 9 quality gates. First-try results.</p>
+          <span class="engine-badge badge-pro">PRO</span>
+        </div>
+      </div>
+      <div class="engine-card fade-up">
+        <div class="engine-icon" style="background: var(--bg-accent-glow);">🔍</div>
+        <div>
+          <h4>Diagnostic Forge</h4>
+          <p>Something's broken and generic advice hasn't fixed it. Diagnostic Forge maps every possible root cause, ranks them by probability, and gives you a precise fix with a verification method — not "try A/B testing."</p>
+          <span class="engine-badge badge-pro">PRO</span>
+        </div>
+      </div>
+      <div class="engine-card fade-up">
+        <div class="engine-icon" style="background: var(--bg-accent-glow);">🤝</div>
+        <div>
+          <h4>Client Forge</h4>
+          <p>You have the skill but not the clients. Client Forge diagnoses your acquisition failure, picks the highest-leverage channel for your situation, and gives you actual outreach templates — calibrated for Indian client communication norms.</p>
+          <span class="engine-badge badge-pro">PRO</span>
+        </div>
+      </div>
+      <div class="engine-card fade-up">
+        <div class="engine-icon" style="background: var(--bg-accent-glow);">💡</div>
+        <div>
+          <h4>Offer Forge</h4>
+          <p>Your offer sounds fine but doesn't convert. Offer Forge scores it on 4 specificity dimensions, diagnoses whether it's a positioning or offer problem, and rebuilds it with the exact language that makes the price feel obvious — not negotiable.</p>
+          <span class="engine-badge badge-pro">PRO</span>
+        </div>
+      </div>
+      <div class="engine-card fade-up">
+        <div class="engine-icon" style="background: var(--bg-accent-glow);">⚡</div>
+        <div>
+          <h4>Focus Forge</h4>
+          <p>You know what to do. You're still not doing it. Focus Forge classifies your execution block into 1 of 4 failure types, detects fear disguised as procrastination, and gives you a targeted fix — never the same advice twice.</p>
+          <span class="engine-badge badge-pro">PRO</span>
+        </div>
+      </div>
+      <div class="engine-card fade-up">
+        <div class="engine-icon" style="background: var(--bg-accent-glow);">💎</div>
+        <div>
+          <h4>Skill Roadmap Forge</h4>
+          <p>Stop learning in circles. Skill Roadmap Forge builds a dependency-ordered skill plan for any goal — disambiguates your objective, detects dark skills that cause plateaus, applies a feasibility gate, and shows you what "ready to earn" actually looks like.</p>
+          <span class="engine-badge badge-pro">PRO</span>
+        </div>
+      </div>
+      <div class="engine-card fade-up">
+        <div class="engine-icon" style="background: var(--bg-accent-glow);">🎯</div>
+        <div>
+          <h4>Content Idea Forge</h4>
+          <p>Posting consistently but not growing? Content Idea Forge maps your audience psychology, applies platform behavior logic, and gives you 2 high-leverage content ideas — plus exactly what NOT to create so you stop wasting time on content that was never going to work.</p>
+          <span class="engine-badge badge-pro">PRO</span>
+        </div>
+      </div>
+      <div class="engine-card fade-up">
+        <div class="engine-icon" style="background: var(--bg-accent-glow);">⚖️</div>
+        <div>
+          <h4>Decision Forge</h4>
+          <p>Big decision coming up? Decision Forge maps your full option space (including options you haven't considered), surfaces every hidden assumption, and stress-tests your choice before you commit. Structured analysis, not a pros/cons list.</p>
+          <span class="engine-badge badge-pro">PRO</span>
+        </div>
+      </div>
+      <div class="engine-card fade-up">
         <div class="engine-icon" style="background: var(--bg-accent-glow);">🔄</div>
         <div>
           <h4>ForgeAI Pipeline</h4>
@@ -2067,7 +2308,7 @@ body.region-international .inr-only { display: none !important; }
       <a href="#pricing" class="btn-primary"
          data-track="checkout" data-tier="pro"
          data-value="1999" data-currency="INR">
-        Get All 15+ Engines →
+        Get All 23 Engines →
       </a>
     </div>
   </div>
@@ -2244,7 +2485,7 @@ body.region-international .inr-only { display: none !important; }
           <span class="usd-only"><span class="currency">$</span>67</span>
           <span class="period"> / one-time</span>
         </div>
-        <div class="pricing-tagline">All 15+ engines + every future engine free</div>
+        <div class="pricing-tagline">All 23 engines + every future engine free</div>
         <ul class="pricing-features">
           <li>
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M13.3 4.3L6.3 11.3L2.7 7.7" stroke="#F97316" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -2252,15 +2493,15 @@ body.region-international .inr-only { display: none !important; }
           </li>
           <li>
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M13.3 4.3L6.3 11.3L2.7 7.7" stroke="#F97316" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            SEO Forge, Facebook Ads Engine, Cinematic AI, Image Prompt Architect
+            SEO Forge, Facebook Ads Forge, Video Script Forge, Image Prompt Forge
           </li>
           <li>
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M13.3 4.3L6.3 11.3L2.7 7.7" stroke="#F97316" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            Resume Forge, Landing Page Builder, Instagram Growth Forge
+            Resume Forge, Landing Page Forge, Instagram Growth Forge
           </li>
           <li>
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M13.3 4.3L6.3 11.3L2.7 7.7" stroke="#F97316" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            Business Forge, Marketing Forge, Facebook Ads Tracking, Google Ads Tracking
+            Business Forge, Marketing Forge, Facebook Tracking Forge, Google Tracking Forge
           </li>
           <li>
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M13.3 4.3L6.3 11.3L2.7 7.7" stroke="#F97316" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -2286,7 +2527,7 @@ body.region-international .inr-only { display: none !important; }
     </div>
 
     <div class="pricing-bottom fade-up">
-      <strong>Launch pricing — locked at 15 engines.</strong> When we hit 25 engines, the price goes up. Your access doesn't — every engine added after your purchase lands in your dashboard automatically, at no extra cost.
+      <strong>Launch pricing — 23 engines now, growing to 25.</strong> When we hit 25 engines, the price goes up. Your access doesn't — every engine added after your purchase lands in your dashboard automatically, at no extra cost.
     </div>
   </div>
 </section>
@@ -2371,7 +2612,7 @@ body.region-international .inr-only { display: none !important; }
         </button>
         <div class="faq-answer">
           <div class="faq-answer-inner">
-            Exactly what it says. Every new engine we build and add to the platform — Pro users get it automatically in their dashboard at no additional cost. Today you get 15+ engines. Every engine added next quarter, next year — yours at no extra cost. Your one-time Pro payment covers all of it, forever.
+            Exactly what it says. Every new engine we build and add to the platform — Pro users get it automatically in their dashboard at no additional cost. Today you get 23 engines. Every engine added next quarter, next year — yours at no extra cost. Your one-time Pro payment covers all of it, forever.
           </div>
         </div>
       </div>
@@ -2405,7 +2646,7 @@ body.region-international .inr-only { display: none !important; }
         </button>
         <div class="faq-answer">
           <div class="faq-answer-inner">
-            Yes. Current pricing is launch pricing — locked at 15 engines. When we hit 25 engines, the price goes up for new buyers. If you buy Pro today, your price never changes and every new engine gets added to your dashboard automatically. You're grandfathered in, forever.
+            Yes. Current pricing is launch pricing — we're at 23 engines now and growing to 25. When we hit 25 engines, the price goes up for new buyers. If you buy Pro today, your price never changes and every new engine gets added to your dashboard automatically. You're grandfathered in, forever.
           </div>
         </div>
       </div>
@@ -2467,7 +2708,7 @@ body.region-international .inr-only { display: none !important; }
         <span class="text-gradient">Make them actually work.</span>
       </h2>
       <p class="body-lg">
-        One payment. Lifetime access. 15 engines now — every engine added after you buy lands in your dashboard automatically. Price goes up at 25 engines. Lock it in today.
+        One payment. Lifetime access. 23 engines now — every engine added after you buy lands in your dashboard automatically. Price goes up at 25 engines. Lock it in today.
       </p>
       <div class="final-cta-buttons">
         <a href="#pricing" class="btn-primary"
