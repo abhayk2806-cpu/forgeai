@@ -581,3 +581,39 @@ const PRICING = { IN: { core: 999, complete: 1999, upgrade: 1000 } ... }
 - Step-by-step now has 9 concrete steps
 - Engine 7 visually marked in red/warning so users don't run it prematurely
 - Added "Not sure? Just run Engine 0" callout at end
+
+---
+
+### Session 5 — 2026-05-07
+
+**Pipeline Home Section (dashboard.html):**
+- Added dedicated `#dashPipelineSection` HTML block on dashboard home view
+- 8 pipeline engines now render in horizontal scrollable track (E0–E7) in fixed order
+- `renderPipelineSection()` function added — pulls engines by ID, not sort_order
+- Starter users see locked overlay on E1–E7, Pro users see all unlocked
+- E0 has special gradient card + "⭐ START" badge
+- CSS added: `.pipeline-home`, `.pipe-card`, `.pipe-locked-overlay`, `.pipe-start-badge`, etc.
+- Stats card updated: 24 → 31 engines
+
+**Landing Page Copy Overhaul (index.html):**
+- All "23 engines" references → "31 engines" across hero, CTA, pricing, FAQ
+- Hero h1 rewritten: new hook focused on output quality vs AI-sounding text
+- Pro pricing features restructured by category (Marketing, Tracking, AI Productivity, Business & Career, Pipeline)
+- Pipeline section description rewritten — explains WHY connected engines matter
+- All 8 pipeline flow cards updated with proper names and descriptions
+
+**Lead Magnet Email System:**
+- `engines/copy-forge.txt` added to repo — full Copy Forge engine served as static file at `/engines/copy-forge.txt`
+- `netlify/functions/save-lead.js` updated — now sends Resend email after Supabase save
+- Email includes: branded HTML template, download button linking to engine file, 3-step usage guide (Claude Projects + ChatGPT), soft upgrade CTA
+- Email is non-blocking — Supabase save succeeds even if Resend fails
+- Committed and pushed: `feat: lead magnet email system — Copy Forge engine delivery on signup`
+
+**Social Media Strategy Folder Created:**
+- `/ForgeAI-Workspace/social-media-strategy/` — new dedicated folder, separate from dev workspace
+- `business-context.md` — comprehensive business context file for content/social media sessions
+- `testimonial-request-templates.md` — 3 WhatsApp/email templates for collecting real customer testimonials post-purchase, with editing guide and display format options
+
+**Memory & Session Protocol:**
+- `.claude/CLAUDE.md` updated — now has mandatory SESSION START PROTOCOL (read PROJECT_STATUS.md + CLAUDE.md every session) and AFTER EVERY ACTION rule (update PROJECT_STATUS.md immediately after each change)
+- `ForgeAI-Workspace/CLAUDE.md` — A1 rule updated with auto-update requirement and business-context.md read rule
